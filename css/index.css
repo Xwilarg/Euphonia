@@ -2,3 +2,7 @@
     border: 1px solid black;
     cursor: pointer;
 }
+
+.current {
+    background-color: greenyellow;
+}

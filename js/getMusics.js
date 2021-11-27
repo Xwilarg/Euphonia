@@ -1,16 +1,22 @@
 let json;
 let remainingIndexs;
 
-function startSong(path) {
+function startSong(name, path) {
     let player = document.getElementById("player");
     player.src = path;
     player.play();
+
+    let current = document.getElementsByClassName("current");
+    if (current.length > 0) {
+        current[0].classList.remove("current");
+    }
+    document.getElementById(name).classList.add("current");
 }
 
-function playSong(path, index) {
+function playSong(name, path, index) {
     remainingIndexs = [...Array(json.length).keys()];
     remainingIndexs.splice(index, 1);
-    startSong(path);
+    startSong(name, path);
 }
 
 window.onload = async function() {
@@ -21,7 +27,7 @@ window.onload = async function() {
     let index = 0;
     for (let elem of json) {
         html += `
-        <div class="song" onclick="playSong('/data/${elem.path}', ${index})">
+        <div class="song" id="${elem.name}" onclick="playSong('${elem.name}', '/data/${elem.path}', ${index})">
             ${elem.name}
         </div>
         `;
@@ -31,7 +37,7 @@ window.onload = async function() {
     document.getElementById("player").addEventListener('ended', function() {
         let rand = remainingIndexs[Math.floor(Math.random() * remainingIndexs.length)];
         let item = json[rand];
-        startSong("/data/" + item.path);
+        startSong(item.name, "/data/" + item.path);
         remainingIndexs.splice(rand, 1);
     });
     document.getElementById("songlist").innerHTML = html;
