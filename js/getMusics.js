@@ -1,8 +1,16 @@
 let json;
+let remainingIndexs;
 
-function playSong(path) {
-    document.getElementById("player").src = path;
-    document.getElementById("player").play();
+function startSong(path) {
+    let player = document.getElementById("player");
+    player.src = path;
+    player.play();
+}
+
+function playSong(path, index) {
+    remainingIndexs = [...Array(json.length).keys()];
+    remainingIndexs.splice(index, 1);
+    startSong(path);
 }
 
 window.onload = async function() {
@@ -10,13 +18,21 @@ window.onload = async function() {
     json = await resp.json();
 
     let html = "";
+    let index = 0;
     for (let elem of json) {
         html += `
-        <div class="song" onclick="playSong('/data/${elem.path}')">
+        <div class="song" onclick="playSong('/data/${elem.path}', ${index})">
             ${elem.name}
         </div>
         `;
+        index++;
     }
 
+    document.getElementById("player").addEventListener('ended', function() {
+        let rand = remainingIndexs[Math.floor(Math.random() * remainingIndexs.length)];
+        let item = json[rand];
+        startSong("/data/" + item.path);
+        remainingIndexs.splice(rand, 1);
+    });
     document.getElementById("songlist").innerHTML = html;
 }
