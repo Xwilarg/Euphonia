@@ -6,3 +6,15 @@
 .current {
     background-color: greenyellow;
 }
+
+img {
+    width: 250px;
+    height: 250px;
+}
+
+#songlist {
+    display: flex;
+    flex-flow: wrap;
+    justify-content: center;
+    text-align: center;
+}
