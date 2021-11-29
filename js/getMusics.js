@@ -35,7 +35,9 @@ window.onload = async function() {
         index++;
     }
 
-    document.getElementById("player").addEventListener('ended', function() {
+    let player = document.getElementById("player");
+    player.volume = 0.1;
+    player.addEventListener('ended', function() {
         let rand = remainingIndexs[Math.floor(Math.random() * remainingIndexs.length)];
         let item = json[rand];
         startSong(item.name, "/data/" + item.path);
