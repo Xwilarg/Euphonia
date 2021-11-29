@@ -1,6 +1,7 @@
 .song {
     border: 1px solid black;
     cursor: pointer;
+    width: 250px;
 }
 
 .current {
