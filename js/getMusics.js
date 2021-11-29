@@ -29,7 +29,8 @@ window.onload = async function() {
         html += `
         <div class="song" id="${elem.name}" onclick="playSong('${elem.name}', '/data/${elem.path}', ${index})">
             <img src="${elem.icon === undefined ? "/img/CD.png" : "/data/" + elem.icon}"/><br/>
-            ${elem.name}
+            ${elem.name}<br/>
+            ${elem.artist}
         </div>
         `;
         index++;
