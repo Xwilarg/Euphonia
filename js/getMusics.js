@@ -1,9 +1,11 @@
 let json;
 let remainingIndexs;
 
+const url = "https://music.zirk.eu/"; // TODO: Need to do a way to change this
+
 function startSong(name, path) {
     let player = document.getElementById("player");
-    player.src = path;
+    player.src = url + path;
     player.play();
 
     let current = document.getElementsByClassName("current");
@@ -20,7 +22,7 @@ function playSong(name, path, index) {
 }
 
 window.onload = async function() {
-    const resp = await fetch("php/getInfoJson.php");
+    const resp = await fetch(url + "php/getInfoJson.php");
     json = await resp.json();
 
     let html = "";
@@ -28,7 +30,7 @@ window.onload = async function() {
     for (let elem of json) {
         html += `
         <div class="song" id="${elem.name}" onclick="playSong('${elem.name}', '/data/${elem.path}', ${index})">
-            <img src="${elem.icon === undefined ? "/img/CD.png" : "/data/" + elem.icon}"/><br/>
+            <img src="${url + (elem.icon === undefined ? "/img/CD.png" : "/data/" + elem.icon)}"/><br/>
             ${elem.name}<br/>
             ${elem.artist}
         </div>

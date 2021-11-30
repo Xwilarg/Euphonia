@@ -1,0 +1,22 @@
+{
+  "name": "euphonia",
+  "version": "1.0.0",
+  "description": "An easy way to store and listen to your music",
+  "main": "index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Xwilarg/Euphonia.git"
+  },
+  "author": "Xwilarg",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Xwilarg/Euphonia/issues"
+  },
+  "homepage": "https://github.com/Xwilarg/Euphonia#readme",
+  "devDependencies": {
+    "electron": "^16.0.2"
+  }
+}
