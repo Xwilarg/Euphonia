@@ -1,7 +1,6 @@
 let json;
 let remainingIndexs;
-
-var url = "";
+let url = "";
 
 function startSong(name, path) {
     let player = document.getElementById("player");
@@ -49,8 +48,14 @@ async function loadPage() {
     document.getElementById("songlist").innerHTML = html;
 }
 
-window.onload = async function() {
-    if (location.hostname !== "") { // Don't init if we are local
-        await loadPage();
+async function resetServer() {
+    url = document.getElementById("remoteUrl").value
+    if (!url.endsWith("/")) {
+        url += "/";
     }
+    await loadPage();
+}
+
+window.onload = async function() {
+    await loadPage();
 }
