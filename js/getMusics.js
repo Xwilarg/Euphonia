@@ -2,9 +2,11 @@ let json;
 let remainingIndexs;
 let url = "";
 
-function startSong(name, path) {
+async function startSong(name, path) {
     let player = document.getElementById("player");
-    player.src = url + path;
+    const resp = await fetch(url + "php/getMusic.php?file=" + path);
+    let audio = await resp.blob();
+    player.src = window.URL.createObjectURL(audio);
     player.play();
 
     let current = document.getElementsByClassName("current");
@@ -37,7 +39,7 @@ async function loadPage() {
     let index = 0;
     for (let elem of json) {
         html += `
-        <div class="song" id="${sanitize(elem.name)}" onclick="playSong('${sanitize(elem.name)}', '/data/${elem.path}', ${index})">
+        <div class="song" id="${sanitize(elem.name)}" onclick="playSong('${sanitize(elem.name)}', '${elem.path}', ${index})">
             <img src="${url + (elem.icon === undefined ? "/img/CD.png" : "/data/" + elem.icon)}"/><br/>
             ${sanitize(elem.name)}<br/>
             ${sanitize(elem.artist)}
@@ -51,7 +53,7 @@ async function loadPage() {
     player.addEventListener('ended', function() {
         let rand = remainingIndexs[Math.floor(Math.random() * remainingIndexs.length)];
         let item = json[rand];
-        startSong(item.name, "/data/" + item.path);
+        startSong(item.name, item.path);
         remainingIndexs.splice(rand, 1);
     });
     document.getElementById("songlist").innerHTML = html;
