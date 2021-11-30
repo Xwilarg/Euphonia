@@ -20,6 +20,15 @@ function playSong(name, path, index) {
     startSong(name, path);
 }
 
+function sanitize(text) {
+    return text
+        .replaceAll('&', '$amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll('\'', '&#39;');
+}
+
 async function loadPage() {
     const resp = await fetch(url + "php/getInfoJson.php");
     json = await resp.json();
@@ -28,10 +37,10 @@ async function loadPage() {
     let index = 0;
     for (let elem of json) {
         html += `
-        <div class="song" id="${elem.name}" onclick="playSong('${elem.name}', '/data/${elem.path}', ${index})">
+        <div class="song" id="${sanitize(elem.name)}" onclick="playSong('${sanitize(elem.name)}', '/data/${elem.path}', ${index})">
             <img src="${url + (elem.icon === undefined ? "/img/CD.png" : "/data/" + elem.icon)}"/><br/>
-            ${elem.name}<br/>
-            ${elem.artist}
+            ${sanitize(elem.name)}<br/>
+            ${sanitize(elem.artist)}
         </div>
         `;
         index++;
