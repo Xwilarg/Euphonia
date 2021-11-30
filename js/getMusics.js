@@ -1,7 +1,7 @@
 let json;
 let remainingIndexs;
 
-const url = "https://music.zirk.eu/"; // TODO: Need to do a way to change this
+var url = "";
 
 function startSong(name, path) {
     let player = document.getElementById("player");
@@ -21,7 +21,7 @@ function playSong(name, path, index) {
     startSong(name, path);
 }
 
-window.onload = async function() {
+async function loadPage() {
     const resp = await fetch(url + "php/getInfoJson.php");
     json = await resp.json();
 
@@ -47,4 +47,10 @@ window.onload = async function() {
         remainingIndexs.splice(rand, 1);
     });
     document.getElementById("songlist").innerHTML = html;
+}
+
+window.onload = async function() {
+    if (location.hostname !== "") { // Don't init if we are local
+        await loadPage();
+    }
 }
