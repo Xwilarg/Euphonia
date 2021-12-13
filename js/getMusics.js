@@ -36,6 +36,7 @@ function nextSong() {
 
 // Create a random playlist with the parameter as the first song
 function prepareShuffle(index) {
+    playlist = [];
     playlist.push(index);
 
     let indexes = [...Array(json.length).keys()];
