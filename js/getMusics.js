@@ -18,7 +18,7 @@ function nextSong() {
             .join("<br/>");
 
     // Select current song and move playlist forward
-    let elem = json[0];
+    let elem = json[playlist[0]];
     playlist.shift();
 
     // Load song and play it
