@@ -1,4 +1,10 @@
+# Configuration and data
 data/*
 !data/README.md
-node_modules/
 config.json
+
+# Javascript
+node_modules/
+
+# PHP
+composer.lock
