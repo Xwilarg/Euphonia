@@ -24,7 +24,8 @@ else
         if (array_key_exists("code", $answer)) {
             exit("An error occured: " . $answer["message"]);
         } else {
-            echo "<script>document.cookie = 'userToken=" . $answer["id"] . "; path=/'</script>";
+            echo "<script>document.cookie = 'canUpload=" . ($answer["id"] === $json["adminId"]) . "; path=/'</script>";
+            echo "<script>document.cookie = 'user=" . $answer["username"] . "#" . $answer["discriminator"] . "; path=/'</script>";
             echo "You are logged as " . $answer["username"] . "#" . $answer["discriminator"] . "<br/>";
             echo "You can now close this page";
         }

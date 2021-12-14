@@ -6,8 +6,16 @@
         <link rel="stylesheet" href="css/index.css"/>
     </head>
     <body>
-        Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button><br/>
-        <a id="loginUrl" href="" target="blank">Login</a> (This will use cookies)<br/>
+        <button onclick="toggleSettings()">Show/Hide settings</button><br/>
+        <div id="settings">
+            Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button><br/>
+            <span id="alreadyLogged" hidden>
+            </span>
+            <span id="needLogin">
+                <a id="loginUrl" href="" target="blank">Login</a> (This will use cookies)<br/>
+                Already logged? Refresh the page or click <button onclick="updateCookieSettings()">here</button>
+            </span>
+        </div>
         <audio id="player" controls src=""></audio>
         <div id="playlist">
         </div>

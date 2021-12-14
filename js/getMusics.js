@@ -7,6 +7,8 @@ let url = "";
 // Next songs to play
 let playlist = [];
 
+// #region Music management
+
 // Play the next song of the playlist
 function nextSong() {
     // Update playlist text
@@ -62,6 +64,10 @@ function sanitize(text) {
         .replaceAll('\'', '&#39;');
 }
 
+// #endregion
+
+// #region On page load
+
 async function loadPage() {
     const resp = await fetch(url + "php/getInfoJson.php");
     json = await resp.json();
@@ -91,9 +97,26 @@ async function loadPage() {
     });
     document.getElementById("songlist").innerHTML = html;
 
+    // Redirect to login page
     document.getElementById("loginUrl").href = url + "/php/login.php";
+
+    // Update stuffs that uses cookies (like logins)
+    updateCookieSettings();
+}
+// #endregion
+
+// #region onclick events
+
+// Hide / show settings
+function toggleSettings() {
+    if (document.getElementById("settings").hidden) {
+        document.getElementById("settings").hidden = false;
+    } else {
+        document.getElementById("settings").hidden = true;
+    }
 }
 
+// Called when changing remote server URL
 async function resetServer() {
     url = document.getElementById("remoteUrl").value
     if (!url.endsWith("/")) {
@@ -101,6 +124,28 @@ async function resetServer() {
     }
     await loadPage();
 }
+
+// https://stackoverflow.com/a/15724300/6663248
+function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+}
+
+function updateCookieSettings() {
+    // Display Discord username if set
+    const user = getCookie("user");
+    if (user !== undefined) {
+        const canUpload = getCookie("canUpload");
+        document.getElementById("needLogin").hidden = true;
+        document.getElementById("alreadyLogged").hidden = false;
+        document.getElementById("alreadyLogged").innerHTML = `You are logged as ${user}, you are ${canUpload === "1" ? "allowed" : "not allowed"} to upload songs`;
+    } else {
+        document.getElementById("needLogin").hidden = false;
+        document.getElementById("alreadyLogged").hidden = true;
+    }
+}
+// #endregion
 
 window.onload = async function() {
     await loadPage();
