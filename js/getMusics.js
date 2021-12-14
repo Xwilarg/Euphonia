@@ -9,6 +9,16 @@ let playlist = [];
 
 // #region Music management
 
+// Start playing if audio player is paused, else pause it
+function togglePlay() {
+    let player = document.getElementById("player");
+    if (player.paused) {
+        player.play();
+    } else {
+        player.pause();
+    }
+}
+
 // Play the next song of the playlist
 function nextSong() {
     // Update playlist text
@@ -145,4 +155,11 @@ function updateCookieSettings() {
 
 window.onload = async function() {
     await loadPage();
+}
+
+window.onkeydown = function(e){
+    if (e.key == ' ') {
+        e.preventDefault(); // Prevent page from scrolling down
+        togglePlay();
+    }
 }
