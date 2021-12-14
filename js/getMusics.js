@@ -90,6 +90,8 @@ async function loadPage() {
         }
     });
     document.getElementById("songlist").innerHTML = html;
+
+    document.getElementById("loginUrl").href = url + "/php/login.php";
 }
 
 async function resetServer() {
