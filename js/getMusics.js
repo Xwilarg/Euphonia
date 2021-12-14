@@ -109,11 +109,7 @@ async function loadPage() {
 
 // Hide / show settings
 function toggleSettings() {
-    if (document.getElementById("settings").hidden) {
-        document.getElementById("settings").hidden = false;
-    } else {
-        document.getElementById("settings").hidden = true;
-    }
+    document.getElementById("settings").hidden = !document.getElementById("settings").hidden;
 }
 
 // Called when changing remote server URL
