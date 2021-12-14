@@ -24,8 +24,7 @@ else
         if (array_key_exists("code", $answer)) {
             exit("An error occured: " . $answer["message"]);
         } else {
-            // Probably a better way to do that
-            echo "<script>document.cookie = 'userToken=" . $answer["id"] . "; expires=Sun, 1 Jan 9999 00:00:00 UTC; path=/'</script>";
+            echo "<script>document.cookie = 'userToken=" . $answer["id"] . "; path=/'</script>";
             echo "You are logged as " . $answer["username"] . "#" . $answer["discriminator"] . "<br/>";
             echo "You can now close this page";
         }
