@@ -43,7 +43,7 @@ function nextSong() {
         title: elem.name,
         artist: elem.artist,
         artwork: [
-            { src:  `${url}/data/${elem.icon}` }
+            { src: `${url}/data/${elem.icon}` }
         ]
     });
     navigator.mediaSession.setActionHandler('nexttrack', function() { nextSong(); });
