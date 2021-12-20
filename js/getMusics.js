@@ -38,6 +38,16 @@ function nextSong() {
     player.src = `${url}/data/${elem.path}`;
     player.play();
 
+    // Set media session
+    navigator.mediaSession.metadata = new MediaMetadata({
+        title: elem.name,
+        artist: elem.artist,
+        artwork: [
+            { src:  `${url}/data/${elem.icon}` }
+        ]
+    });
+    navigator.mediaSession.setActionHandler('nexttrack', function() { nextSong(); });
+
     // Color the currently played song
     let current = document.getElementsByClassName("current");
     if (current.length > 0) {
