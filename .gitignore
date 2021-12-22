@@ -2,6 +2,7 @@
 data/*
 !data/README.md
 config.json
+tmp/
 
 # Javascript
 node_modules/
