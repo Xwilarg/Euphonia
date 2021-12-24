@@ -26,11 +26,11 @@ function nextSong() {
         `${playlist.length} song${playlist.length > 1 ? 's' : ''} queued:<br/>` +
         playlist
             .slice(0, 3)
-            .map(x => sanitize(json[x].name))
+            .map(x => sanitize(json.musics[x].name))
             .join("<br/>");
 
     // Select current song and move playlist forward
-    let elem = json[playlist[0]];
+    let elem = json.musics[playlist[0]];
     playlist.shift();
 
     // Load song and play it
@@ -61,7 +61,7 @@ function prepareShuffle(index) {
     playlist = [];
     playlist.push(index);
 
-    let indexes = [...Array(json.length).keys()];
+    let indexes = [...Array(json.musics.length).keys()];
     indexes.splice(index, 1);
 
     // https://stackoverflow.com/a/46545530/6663248
@@ -94,10 +94,20 @@ async function loadPage() {
 
     let html = "";
     let index = 0;
-    for (let elem of json) {
+    let musics = json.musics;
+    musics.sort((a, b) => a.name.localeCompare(b.name));
+    for (let elem of musics) {
+        let albumImg = url;
+        if (elem.album === null) {
+            albumImg += "/img/CD.png"
+        } else if (elem.album === "NAME") {
+            albumImg += "/data/icon/" + json.albums[elem.name].path
+        } else {
+            albumImg += "/data/icon/" + json.albums[elem.album].path
+        }
         html += `
         <div class="song" id="${sanitize(elem.name)}" onclick="prepareShuffle(${index})">
-            <img src="${url + (elem.icon === undefined ? "/img/CD.png" : "/data/" + elem.icon)}"/><br/>
+            <img src="${albumImg}"/><br/>
             ${sanitize(elem.name)}<br/>
             ${sanitize(elem.artist)}
         </div>
