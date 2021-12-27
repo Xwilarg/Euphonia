@@ -1,6 +1,7 @@
 import json
 import os
 import subprocess
+import sys
 
 data = {}
 
@@ -17,6 +18,9 @@ if any(x["youtube"] == url for x in data["musics"]):
     print("There is already a song with the same URL")
     exit(1)
 
-os.mdpir("tmp")
-subprocess.run(["youtube-dl", url, "-o", "tmp/" + name], capture_output=True)
-#subprocess.run(["ffmpeg", "-i", "{LS RESULT}", "../data/" + name + ".wav"], capture_output=True)
+if not os.path.isdir("tmp"):
+    os.mkdir("tmp")
+subprocess.run(["youtube-dl", url, "-o", "tmp/" + name], stderr=sys.stderr, stdout=sys.stdout)
+newName = subprocess.check_output(['ls', '"tmp/' + name + '".*'])
+subprocess.run(["ffmpeg", "-i", newName, "../data/" + name + ".wav"], capture_output=True)
+subprocess.run(["rm", '"tmp/' + name + '".*'], capture_output=True)
