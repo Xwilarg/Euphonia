@@ -51,7 +51,7 @@ if album not in data["albums"]:
         "path": "TODO"
     }
 
-with open('../data/info.json', 'r', encoding='utf-8') as fd:
+with open('../data/info.json', 'w', encoding='utf-8') as fd:
     json.dump(data, fd)
 
 print("Done!")
