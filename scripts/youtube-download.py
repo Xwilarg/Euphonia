@@ -2,6 +2,10 @@ import json
 import os
 import subprocess
 import sys
+import glob
+
+def is_audio(name):
+    return name.endswith(".wav") or name.endswith(".mp3") or name.endswith("webm") or name.endswith(".mp4") or name.endswith(".mkv")
 
 data = {}
 
@@ -21,6 +25,6 @@ if any(x["youtube"] == url for x in data["musics"]):
 if not os.path.isdir("tmp"):
     os.mkdir("tmp")
 subprocess.run(["youtube-dl", url, "-o", "tmp/" + name], stderr=sys.stderr, stdout=sys.stdout)
-newName = subprocess.check_output(['ls', '"tmp/' + name + '".*'])
+newName = [x for x in glob.glob("tmp/" + name + "*") if is_audio(x)][0]
 subprocess.run(["ffmpeg", "-i", newName, "../data/" + name + ".wav"], capture_output=True)
 subprocess.run(["rm", '"tmp/' + name + '".*'], capture_output=True)
