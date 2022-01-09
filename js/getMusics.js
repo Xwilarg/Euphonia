@@ -88,10 +88,7 @@ function sanitize(text) {
 
 // #region On page load
 
-async function loadPage() {
-    const resp = await fetch(url + "php/getInfoJson.php");
-    json = await resp.json();
-
+function displaySongs(filter) {
     let html = "";
     let index = 0;
     let musics = json.musics;
@@ -105,15 +102,25 @@ async function loadPage() {
         } else {
             albumImg += "/data/icon/" + json.albums[elem.album].path
         }
-        html += `
-        <div class="song" id="${sanitize(elem.name)}" onclick="prepareShuffle(${index})">
-            <img src="${albumImg}"/><br/>
-            ${sanitize(elem.name)}<br/>
-            ${sanitize(elem.artist)}
-        </div>
-        `;
+        if (sanitize(elem.name).toLowerCase().includes(filter) || sanitize(elem.artist).toLowerCase().includes(filter)) {
+            html += `
+            <div class="song" id="${sanitize(elem.name)}">
+                <img onclick="prepareShuffle(${index})" src="${albumImg}"/><br/>
+                ${sanitize(elem.name)}<br/>
+                ${sanitize(elem.artist)}
+            </div>
+            `;
+        }
         index++;
     }
+    document.getElementById("songlist").innerHTML = html;
+}
+
+async function loadPage() {
+    const resp = await fetch(url + "php/getInfoJson.php");
+    json = await resp.json();
+
+    displaySongs("");
 
     // Audio player config
     let player = document.getElementById("player");
@@ -125,10 +132,14 @@ async function loadPage() {
             nextSong();
         }
     });
-    document.getElementById("songlist").innerHTML = html;
 
     // Redirect to login page
     document.getElementById("loginUrl").href = url + "/php/login.php";
+
+    // Filter text bar
+    document.getElementById("filter").addEventListener("input", (e) => {
+        displaySongs(e.target.value.toLowerCase());
+    });
 
     // Update stuffs that uses cookies (like logins)
     updateCookieSettings();
