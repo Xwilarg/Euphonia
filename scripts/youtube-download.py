@@ -48,7 +48,7 @@ data["musics"].append({
 if album not in data["albums"]:
     print("Missing album data, you'll need to add the image manually")
     data["albums"][album] = {
-        "path": "TODO"
+        "path": album + ".jpg"
     }
 
 with open('../data/info.json', 'w', encoding='utf-8') as fd:
