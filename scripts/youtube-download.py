@@ -52,6 +52,6 @@ if album not in data["albums"]:
     }
 
 with open('../data/info.json', 'w', encoding='utf-8') as fd:
-    json.dump(data, fd)
+    json.dump(data, fd, ensure_ascii=False)
 
 print("Done!")
