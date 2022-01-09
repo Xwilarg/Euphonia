@@ -35,7 +35,7 @@ if not os.path.isdir("tmp"):
 subprocess.run(["youtube-dl", url, "-o", "tmp/" + id], stderr=sys.stderr, stdout=sys.stdout)
 newName = [x for x in glob.glob("tmp/" + id + "*") if is_audio(x)][0]
 subprocess.run(["ffmpeg", "-i", newName, "../data/" + name + ".wav"], capture_output=True)
-subprocess.run(["rm", newName], capture_output=True)
+os.remove(newName)
 
 data["musics"].append({
     "name": name,
