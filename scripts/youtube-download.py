@@ -32,10 +32,7 @@ id = str(uuid4())
 if not os.path.isdir("tmp"):
     os.mkdir("tmp")
 
-subprocess.run(["youtube-dl", url, "-o", "tmp/" + id], stderr=sys.stderr, stdout=sys.stdout)
-newName = [x for x in glob.glob("tmp/" + id + "*") if is_audio(x)][0]
-subprocess.run(["ffmpeg", "-i", newName, "../data/" + name + ".wav"], capture_output=True)
-os.remove(newName)
+subprocess.run(["youtube-dl", url, "-o", "../data/" + name + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
 
 data["musics"].append({
     "name": name,
