@@ -38,6 +38,10 @@ function nextSong() {
     player.src = `${url}/data/${elem.path}`;
     player.play();
 
+    // Display song data
+    document.getElementById("currentImage").src = `${url}${getAlbumImage(elem)}`;
+    document.getElementById("currentSong").innerHTML = `${elem.name}<br/>by ${elem.artist}`;
+
     // Set media session
     navigator.mediaSession.metadata = new MediaMetadata({
         title: elem.name,

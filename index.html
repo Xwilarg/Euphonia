@@ -7,7 +7,7 @@
     </head>
     <body>
         <button onclick="toggleSettings()">Show/Hide settings</button><br/>
-        <div id="settings">
+        <div id="settings" hidden>
             Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button><br/>
             <span id="alreadyLogged" hidden>
             </span>
@@ -16,7 +16,11 @@
                 Already logged? Refresh the page or click <button onclick="updateCookieSettings()">here</button>
             </span>
         </div>
-        <audio id="player" controls src=""></audio><br/>
+        <div id="fullPlayer">
+            <img id="currentImage" src=""/>
+            <audio id="player" controls src=""></audio>
+            <h3 id="currentSong"></h3>
+        </div>
         Filter: <input type="text" id="filter"/>
         <div id="playlist">
         </div>
