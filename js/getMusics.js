@@ -43,7 +43,7 @@ function nextSong() {
         title: elem.name,
         artist: elem.artist,
         artwork: [
-            { src: `${url}/data/${elem.icon}` }
+            { src: `${url}${getAlbumImage(elem)}` }
         ]
     });
     navigator.mediaSession.setActionHandler('nexttrack', function() { nextSong(); });
@@ -88,20 +88,23 @@ function sanitize(text) {
 
 // #region On page load
 
+function getAlbumImage(elem) {
+    if (elem.album === null) {
+        return "/img/CD.png";
+    }
+    if (elem.album === "NAME") {
+        return "/data/icon/" + json.albums[elem.name].path;
+    }
+    return "/data/icon/" + json.albums[elem.album].path;
+}
+
 function displaySongs(filter) {
     let html = "";
     let index = 0;
     let musics = json.musics;
     musics.sort((a, b) => a.name.localeCompare(b.name));
     for (let elem of musics) {
-        let albumImg = url;
-        if (elem.album === null) {
-            albumImg += "/img/CD.png"
-        } else if (elem.album === "NAME") {
-            albumImg += "/data/icon/" + json.albums[elem.name].path
-        } else {
-            albumImg += "/data/icon/" + json.albums[elem.album].path
-        }
+        let albumImg = url + getAlbumImage(elem);
         if (sanitize(elem.name).toLowerCase().includes(filter) || sanitize(elem.artist).toLowerCase().includes(filter)) {
             html += `
             <div class="song" id="${sanitize(elem.name)}">
