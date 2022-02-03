@@ -122,7 +122,7 @@ function displaySongs(filter) {
         if (sanitize(elem.name).toLowerCase().includes(filter) || sanitize(elem.artist).toLowerCase().includes(filter)) {
             html += `
             <div class="song" id="${sanitize(elem.name)}">
-                <img onclick="prepareShuffle(${index})" src="${albumImg}"/><br/>
+                <img onclick="prepareShuffle(${elem.index})" src="${albumImg}"/><br/>
                 ${sanitize(elem.name)}<br/>
                 ${sanitize(elem.artist)}
             </div>
@@ -136,6 +136,10 @@ function displaySongs(filter) {
 async function loadPage() {
     const resp = await fetch(url + "php/getInfoJson.php");
     json = await resp.json();
+
+    for (let index in json.musics) {
+        json.musics[index].index = index;
+    }
 
     displaySongs("");
 
