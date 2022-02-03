@@ -156,12 +156,18 @@ async function loadPage() {
 
     // Filter text bar
     document.getElementById("filter").addEventListener("input", (e) => {
-        displaySongs(e.target.value.toLowerCase());
+        let filterValue = e.target.value.toLowerCase();
+        document.getElementById("refresh").disabled = filterValue !== "";
+        displaySongs(filterValue);
     });
 }
 // #endregion
 
 // #region onclick events
+
+function refresh() {
+    displaySongs("");
+}
 
 // Hide / show settings
 function toggleSettings() {
@@ -182,7 +188,7 @@ window.onload = async function() {
 }
 
 window.onkeydown = function(e){
-    if (e.key == ' ') {
+    if (e.key == ' ') { // Spacebar switch play/pause
         e.preventDefault(); // Prevent page from scrolling down
         togglePlay();
     }

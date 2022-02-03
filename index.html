@@ -6,19 +6,27 @@
         <link rel="stylesheet" href="css/index.css"/>
     </head>
     <body>
-        <button onclick="toggleSettings()">Show/Hide settings</button><br/>
-        <div id="settings" hidden>
-            Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button>
+        <div id="banner">Euphonia</div>
+        <div id="settings-container">
+            <button onclick="toggleSettings()">Show/Hide settings</button><br/>
+            <div id="settings" hidden>
+                Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button>
+            </div>
         </div>
-        <div id="fullPlayer">
-            <img id="currentImage" src=""/>
-            <audio id="player" controls src=""></audio>
-            <h3 id="currentSong"></h3>
-        </div>
-        Filter: <input type="text" id="filter"/>
-        <div id="playlist">
-        </div>
-        <div id="songlist">
+        <div id="canvas">
+            <div id="fullPlayer">
+                <img id="currentImage" src=""/>
+                <audio id="player" controls src=""></audio>
+                <h3 id="currentSong"></h3>
+            </div>
+            <div id="actions">
+                <input type="text" id="filter" placeholder="Filter"/>
+                <button id="refresh" onclick="refresh()">Refresh</button>
+            </div>
+            <div id="playlist">
+            </div>
+            <div id="songlist">
+            </div>
         </div>
     </body>
 </html>
