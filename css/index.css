@@ -30,6 +30,7 @@ input {
     padding: .8em;
     border-radius: 5px;
     background-color: #70C1B3;
+    border: none;
 }
 
 button {
@@ -37,6 +38,7 @@ button {
     border-radius: 5px;
     background-color: #70C1B3;
     box-shadow: .15em .15em;
+    border: none;
 }
 
 #settings-container {
