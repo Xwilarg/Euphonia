@@ -13,6 +13,10 @@
                 Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button>
             </div>
         </div>
+        <div id="playlist">
+            <p id="playlist-title"></p>
+            <p id="playlist-content"></p>
+        </div>
         <div id="canvas">
             <div id="fullPlayer">
                 <img id="currentImage" src=""/>
@@ -22,8 +26,6 @@
             <div id="actions">
                 <input type="text" id="filter" placeholder="Filter"/>
                 <button id="refresh" onclick="refresh()">Refresh</button>
-            </div>
-            <div id="playlist">
             </div>
             <div id="songlist">
             </div>

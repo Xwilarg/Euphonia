@@ -22,8 +22,9 @@ function togglePlay() {
 // Play the next song of the playlist
 function nextSong() {
     // Update playlist text
-    document.getElementById("playlist").innerHTML =
-        `${playlist.length} song${playlist.length > 1 ? 's' : ''} queued:<br/>` +
+    document.getElementById("playlist-title").innerHTML =
+    `${playlist.length} song${playlist.length > 1 ? 's' : ''} queued:<br/>`;
+    document.getElementById("playlist-content").innerHTML =
         playlist
             .slice(0, 3)
             .map(x => sanitize(json.musics[x].name))

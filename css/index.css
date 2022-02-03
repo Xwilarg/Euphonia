@@ -23,7 +23,7 @@ html {
 
 #actions {
     text-align: center;
-    margin-bottom: .2em;
+    margin-bottom: 2em;
 }
 
 input {
@@ -84,4 +84,22 @@ img {
 #fullPlayer > audio {
     width: 100%;
     margin-top: -5px;
+}
+
+#playlist {
+    bottom: 0;
+    right: 0;
+    position: fixed;
+    background-color: #B6C9BB;
+    border: 1px black solid;
+    width: 18em;
+    border-radius: 5px;
+}
+
+#playlist-title {
+    text-align: center;
+}
+
+#playlist-content {
+    padding-left: .4em;
 }
