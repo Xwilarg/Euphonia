@@ -8,13 +8,7 @@
     <body>
         <button onclick="toggleSettings()">Show/Hide settings</button><br/>
         <div id="settings" hidden>
-            Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button><br/>
-            <span id="alreadyLogged" hidden>
-            </span>
-            <span id="needLogin">
-                <a id="loginUrl" href="" target="blank">Login</a> (This will use cookies)<br/>
-                Already logged? Refresh the page or click <button onclick="updateCookieSettings()">here</button>
-            </span>
+            Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button>
         </div>
         <div id="fullPlayer">
             <img id="currentImage" src=""/>
