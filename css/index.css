@@ -13,7 +13,7 @@ html {
     z-index: 1;
     text-align: center;
     position: fixed;
-    background-color: #B6C9BB;
+    background-color: #70C1B3;
     font-size: xx-large;
 }
 
@@ -29,13 +29,13 @@ html {
 input {
     padding: .8em;
     border-radius: 5px;
-    background-color: #B6C9BB;
+    background-color: #70C1B3;
 }
 
 button {
     padding: .8em;
     border-radius: 5px;
-    background-color: #B6C9BB;
+    background-color: #70C1B3;
     box-shadow: .15em .15em;
 }
 
@@ -47,7 +47,7 @@ button {
 .song {
     border: 1px solid black;
     width: 250px;
-    background-color: #B6C9BB;
+    background-color: #70C1B3;
 }
 
 .song > img {
@@ -55,7 +55,7 @@ button {
 }
 
 .current {
-    background-color: greenyellow;
+    background-color: #008DD5;
 }
 
 img {
@@ -90,7 +90,7 @@ img {
     bottom: 0;
     right: 0;
     position: fixed;
-    background-color: #B6C9BB;
+    background-color: #70C1B3;
     border: 1px black solid;
     width: 18em;
     border-radius: 5px;
