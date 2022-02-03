@@ -50,6 +50,13 @@ button {
     background-color: #70C1B3;
 }
 
+.song > p {
+    max-width: 250px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .song > img {
     cursor: pointer;
 }

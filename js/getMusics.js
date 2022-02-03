@@ -124,8 +124,10 @@ function displaySongs(filter) {
             html += `
             <div class="song" id="${sanitize(elem.name)}">
                 <img onclick="prepareShuffle(${elem.index})" src="${albumImg}"/><br/>
-                ${sanitize(elem.name)}<br/>
-                ${sanitize(elem.artist)}
+                <p>
+                    ${sanitize(elem.name)}<br/>
+                    ${sanitize(elem.artist)}
+                </p>
             </div>
             `;
         }
