@@ -21,6 +21,9 @@ function togglePlay() {
 
 // Play the next song of the playlist
 function nextSong() {
+    // Displayer player if not here
+    document.getElementById("fullPlayer").hidden = false;
+
     // Update playlist text
     document.getElementById("playlist-title").innerHTML =
     `${playlist.length} song${playlist.length > 1 ? 's' : ''} queued:<br/>`;

@@ -8,7 +8,7 @@
     <body>
         <div id="banner">Euphonia</div>
         <div id="settings-container">
-            <button onclick="toggleSettings()">Show/Hide settings</button><br/>
+            <button onclick="toggleSettings()">Toggle settings</button><br/>
             <div id="settings" hidden>
                 Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button>
             </div>
@@ -18,14 +18,14 @@
             <p id="playlist-content"></p>
         </div>
         <div id="canvas">
-            <div id="fullPlayer">
+            <div id="fullPlayer" hidden>
                 <img id="currentImage" src=""/>
                 <audio id="player" controls src=""></audio>
                 <h3 id="currentSong"></h3>
             </div>
             <div id="actions">
-                <input type="text" id="filter" placeholder="Filter"/>
                 <button id="refresh" onclick="refresh()">Refresh</button>
+                <input type="text" id="filter" placeholder="Filter"/>
             </div>
             <div id="songlist">
             </div>
