@@ -106,18 +106,17 @@ function getAlbumImage(elem) {
     return "/data/icon/" + json.albums[elem.album].path;
 }
 
-function displaySongs(filter) {
+function displaySongs(musics, id, filter) {
     let html = "";
     let index = 0;
-    let musics;
     if (filter === "") {
-        musics = json.musics
+        musics = musics
         .map(value => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
         .map(({ value }) => value)
         .slice(0, 5);
     } else {
-        musics = json.musics
+        musics = musics
         .filter(elem => sanitize(elem.name).toLowerCase().includes(filter) || sanitize(elem.artist).toLowerCase().includes(filter));
     }
     musics.sort((a, b) => a.name.localeCompare(b.name));
@@ -136,7 +135,7 @@ function displaySongs(filter) {
         }
         index++;
     }
-    document.getElementById("songlist").innerHTML = html;
+    document.getElementById(id).innerHTML = html;
 }
 
 async function loadPage() {
@@ -147,7 +146,12 @@ async function loadPage() {
         json.musics[index].index = index;
     }
 
-    displaySongs("");
+    displaySongs(json.musics, "songlist", "");
+
+    if (json.highlight.length > 0) {
+        document.getElementById("highlight").hidden = false;
+        displaySongs(json.musics.filter(x => json.highlight.includes(x.name)), "highlightlist", "");
+    }
 
     // Audio player config
     let player = document.getElementById("player");
@@ -164,7 +168,7 @@ async function loadPage() {
     document.getElementById("filter").addEventListener("input", (e) => {
         let filterValue = e.target.value.toLowerCase();
         document.getElementById("refresh").disabled = filterValue !== "";
-        displaySongs(filterValue);
+        displaySongs(json.musics, "songlist", filterValue);
     });
 }
 // #endregion
@@ -172,7 +176,7 @@ async function loadPage() {
 // #region onclick events
 
 function refresh() {
-    displaySongs("");
+    displaySongs(json.musics, "songlist", "");
 }
 
 // Hide / show settings

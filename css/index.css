@@ -78,7 +78,7 @@ img {
     height: 250px;
 }
 
-#songlist {
+.list {
     display: flex;
     flex-flow: wrap;
     justify-content: center;
