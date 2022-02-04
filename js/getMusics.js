@@ -6,6 +6,7 @@ let url = "";
 
 // Next songs to play
 let playlist = [];
+let playlistIndex;
 
 // #region Music management
 
@@ -25,17 +26,18 @@ function nextSong() {
     document.getElementById("fullPlayer").hidden = false;
 
     // Update playlist text
+    let playlistSize = playlist.length - playlistIndex;
     document.getElementById("playlist-title").innerHTML =
-    `${playlist.length} song${playlist.length > 1 ? 's' : ''} queued:<br/>`;
+    `${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:<br/>`;
     document.getElementById("playlist-content").innerHTML =
         playlist
-            .slice(0, 3)
+            .slice(playlistIndex, playlistIndex + 3)
             .map(x => sanitize(json.musics[x].name))
             .join("<br/>");
 
     // Select current song and move playlist forward
-    let elem = json.musics[playlist[0]];
-    playlist.shift();
+    let elem = json.musics[playlist[playlistIndex]];
+    playlistIndex++;
 
     // Load song and play it
     let player = document.getElementById("player");
@@ -54,19 +56,30 @@ function nextSong() {
             { src: `${url}${getAlbumImage(elem)}` }
         ]
     });
+    navigator.mediaSession.setActionHandler('previoustrack', function() {
+        if (player.currentTime >= 2.0) {
+            player.currentTime = 0.0;
+        } else if (playlistIndex > 1) {
+            playlistIndex -= 2;
+            nextSong();
+        }
+    });
     navigator.mediaSession.setActionHandler('nexttrack', function() { nextSong(); });
 
     // Color the currently played song
-    let current = document.getElementsByClassName("current");
-    if (current.length > 0) {
-        current[0].classList.remove("current");
+    for (let c of document.getElementsByClassName("current")) {
+        c.classList.remove("current");
     }
-    document.getElementById(sanitize(elem.name)).classList.add("current");
+    let current = document.getElementById(sanitize(elem.name));
+    if (current !== null) {
+        current = current.classList.add("current");
+    }
 }
 
 // Create a random playlist with the parameter as the first song
 function prepareShuffle(index) {
     playlist = [];
+    playlistIndex = 0;
     playlist.push(index);
 
     let indexes = [...Array(json.musics.length).keys()];
@@ -108,7 +121,6 @@ function getAlbumImage(elem) {
 
 function displaySongs(musics, id, filter) {
     let html = "";
-    let index = 0;
     if (filter === "") {
         musics = musics
         .map(value => ({ value, sort: Math.random() }))
@@ -123,6 +135,7 @@ function displaySongs(musics, id, filter) {
     for (let elem of musics) {
         let albumImg = url + getAlbumImage(elem);
         if (sanitize(elem.name).toLowerCase().includes(filter) || sanitize(elem.artist).toLowerCase().includes(filter)) {
+            // TODO: may have dupplicate ID
             html += `
             <div class="song" id="${sanitize(elem.name)}">
                 <img onclick="prepareShuffle(${elem.index})" src="${albumImg}"/><br/>
@@ -133,7 +146,6 @@ function displaySongs(musics, id, filter) {
             </div>
             `;
         }
-        index++;
     }
     document.getElementById(id).innerHTML = html;
 }
@@ -159,7 +171,7 @@ async function loadPage() {
     // When song end, we start the next one
     player.addEventListener('ended', function() {
         // Play next song if playlist isn't empty
-        if (playlist.length > 0) {
+        if (playlistIndex < playlist.length) {
             nextSong();
         }
     });
