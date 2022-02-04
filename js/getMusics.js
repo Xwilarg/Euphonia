@@ -182,6 +182,7 @@ async function loadPage() {
         document.getElementById("refresh").disabled = filterValue !== "";
         displaySongs(json.musics, "songlist", filterValue);
     });
+    document.getElementById("filter").value = "";
 }
 // #endregion
 
