@@ -1,3 +1,6 @@
+# Generated
+js/
+
 # Configuration and data
 data/*
 !data/README.md

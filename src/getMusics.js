@@ -132,39 +132,31 @@ function displaySongs(musics, id, filter) {
         .filter(elem => sanitize(elem.name).toLowerCase().includes(filter) || sanitize(elem.artist).toLowerCase().includes(filter));
     }
     musics.sort((a, b) => a.name.localeCompare(b.name));
+
+    let indexs = [];
     for (let elem of musics) {
         let albumImg = url + getAlbumImage(elem);
-        if (sanitize(elem.name).toLowerCase().includes(filter) || sanitize(elem.artist).toLowerCase().includes(filter)) {
-            // TODO: may have dupplicate ID
-            html += `
-            <div class="song" id="${sanitize(elem.name)}">
-                <img onclick="prepareShuffle(${elem.index})" src="${albumImg}"/><br/>
-                <p>
-                    ${sanitize(elem.name)}<br/>
-                    ${sanitize(elem.artist)}
-                </p>
-            </div>
-            `;
-        }
+        // TODO: may have dupplicate ID
+        html += `
+        <div class="song" id="${sanitize(elem.name)}">
+            <img id="img-${id}-${elem.index}" src="${albumImg}"/><br/>
+            <p>
+                ${sanitize(elem.name)}<br/>
+                ${sanitize(elem.artist)}
+            </p>
+        </div>
+        `;
+        indexs.push(elem.index);
     }
     document.getElementById(id).innerHTML = html;
+    for (let i of indexs) {
+        document.getElementById(`img-${id}-${i}`).onclick = () => {
+            prepareShuffle(i);
+        }
+    }
 }
 
 async function loadPage() {
-    const resp = await fetch(url + "php/getInfoJson.php");
-    json = await resp.json();
-
-    for (let index in json.musics) {
-        json.musics[index].index = index;
-    }
-
-    displaySongs(json.musics, "songlist", "");
-
-    if (json.highlight.length > 0) {
-        document.getElementById("highlight").hidden = false;
-        displaySongs(json.musics.filter(x => json.highlight.includes(x.name)), "highlightlist", "");
-    }
-
     // Audio player config
     let player = document.getElementById("player");
     player.volume = 0.1; // Base volume is way too loud
@@ -183,6 +175,26 @@ async function loadPage() {
         displaySongs(json.musics, "songlist", filterValue);
     });
     document.getElementById("filter").value = "";
+
+    // Buttons
+    document.getElementById("remoteUrl").onclick = resetServer;
+    document.getElementById("toggle-settings").onclick = toggleSettings;
+    document.getElementById("refresh").onclick = refresh;
+
+    // Get music infos
+    const resp = await fetch(url + "php/getInfoJson.php");
+    json = await resp.json();
+
+    for (let index in json.musics) {
+        json.musics[index].index = index;
+    }
+
+    displaySongs(json.musics, "songlist", "");
+
+    if (json.highlight.length > 0) {
+        document.getElementById("highlight").hidden = false;
+        displaySongs(json.musics.filter(x => json.highlight.includes(x.name)), "highlightlist", "");
+    }
 }
 // #endregion
 

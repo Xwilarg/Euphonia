@@ -8,9 +8,9 @@
     <body>
         <div id="banner">Euphonia</div>
         <div id="settings-container">
-            <button onclick="toggleSettings()">Toggle settings</button><br/>
+            <button id="toggle-settings">Toggle settings</button><br/>
             <div id="settings" hidden>
-                Remote server: <input type="text" id="remoteUrl"/><button onclick="resetServer()">Reset</button>
+                Remote server: <input type="text" id="remoteUrl"/><button>Reset</button>
             </div>
         </div>
         <div id="playlist">
@@ -24,7 +24,7 @@
                 <h3 id="currentSong"></h3>
             </div>
             <div id="actions">
-                <button id="refresh" onclick="refresh()">Refresh</button>
+                <button id="refresh">Refresh</button>
                 <input type="text" id="filter" placeholder="Filter"/>
             </div>
             <h2>Random</h2>
