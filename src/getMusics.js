@@ -206,6 +206,9 @@ function exportYoutube() {
         json.musics
             .map(x => x.youtube)
             .filter(x => x !== null)
+            .map(value => ({ value, sort: Math.random() }))
+            .sort((a, b) => a.sort - b.sort)
+            .map(({ value }) => value)
             .join('\n');
 }
 
