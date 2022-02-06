@@ -61,6 +61,17 @@ button {
     border: 1px black solid;
 }
 
+button:active {
+    box-shadow: none;
+}
+
+textarea {
+    background-color: #70C1B3;
+    border: 1px black solid;
+    width: 100%;
+    height: 30em;
+}
+
 .song {
     margin-left: .5em;
     margin-right: .5em;

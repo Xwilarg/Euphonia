@@ -177,9 +177,10 @@ async function loadPage() {
     document.getElementById("filter").value = "";
 
     // Buttons
-    document.getElementById("remoteUrl").onclick = resetServer;
-    document.getElementById("toggle-settings").onclick = toggleSettings;
-    document.getElementById("refresh").onclick = refresh;
+    document.getElementById("remoteUrl").addEventListener("click", resetServer);
+    document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
+    document.getElementById("refresh").addEventListener("click", refresh);
+    document.getElementById("export-youtube").addEventListener("click", exportYoutube);
 
     // Get music infos
     const resp = await fetch(url + "php/getInfoJson.php");
@@ -199,6 +200,14 @@ async function loadPage() {
 // #endregion
 
 // #region onclick events
+
+function exportYoutube() {
+    document.getElementById("export-youtube-result").innerHTML =
+        json.musics
+            .map(x => x.youtube)
+            .filter(x => x !== null)
+            .join('\n');
+}
 
 function refresh() {
     displaySongs(json.musics, "songlist", "");
