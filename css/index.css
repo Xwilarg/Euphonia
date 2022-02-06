@@ -11,10 +11,26 @@ html {
     height: 1.5em;
     left: 0;
     z-index: 1;
-    text-align: center;
     position: fixed;
     background-color: #70C1B3;
     font-size: xx-large;
+    text-align: center;
+}
+
+#toggle-settings {
+    position: fixed;
+    top: .2em;
+    left: .5em;
+    z-index: 2;
+}
+
+#settings {
+    position: fixed;
+    top: 3em;
+    left: 0;
+    background-color: #70C1B3;
+    padding: .5em;
+    height: 100%;
 }
 
 h2 {
@@ -34,7 +50,7 @@ input {
     padding: .8em;
     border-radius: 5px;
     background-color: #70C1B3;
-    border: none;
+    border: 1px black solid;
 }
 
 button {
@@ -42,12 +58,7 @@ button {
     border-radius: 5px;
     background-color: #70C1B3;
     box-shadow: .15em .15em;
-    border: none;
-}
-
-#settings-container {
-    margin-top: 3em;
-    position: absolute;
+    border: 1px black solid;
 }
 
 .song {
