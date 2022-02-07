@@ -26,6 +26,8 @@ if any(x["youtube"] == url for x in data["musics"]):
 
 artist = input("Enter the artist name: ")
 album = input("Enter the album name: ")
+if album is "None":
+    album = None
 
 id = str(uuid4())
 
@@ -42,7 +44,7 @@ data["musics"].append({
     "youtube": url
 })
 
-if album not in data["albums"]:
+if album is not None and album not in data["albums"]:
     print("Missing album data, you'll need to add the image manually")
     data["albums"][album] = {
         "path": album + ".jpg"
