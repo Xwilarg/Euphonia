@@ -25,9 +25,12 @@ if any(x["youtube"] == url for x in data["musics"]):
     exit(1)
 
 artist = input("Enter the artist name: ")
-album = input("Enter the album name: ")
+album = input("Enter the album name or None: ")
 if album == "None":
     album = None
+type = input("Enter song type (cover, acoustic...) or None: ")
+if type == "None":
+    type = None
 
 id = str(uuid4())
 
@@ -41,7 +44,8 @@ data["musics"].append({
     "path": path + ".wav",
     "artist": artist,
     "album": album,
-    "youtube": url
+    "youtube": url,
+    "type": type
 })
 
 if album is not None and album not in data["albums"]:
