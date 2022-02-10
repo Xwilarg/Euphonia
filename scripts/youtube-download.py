@@ -26,7 +26,7 @@ if any(x["youtube"] == url for x in data["musics"]):
 
 artist = input("Enter the artist name: ")
 album = input("Enter the album name: ")
-if album is "None":
+if album == "None":
     album = None
 
 id = str(uuid4())
