@@ -14,9 +14,6 @@ with open('../data/info.json', 'r', encoding='utf-8') as fd:
     data = json.load(fd)
 
 name = input("Enter the song name: ")
-if any(x["name"] == name for x in data["musics"]):
-    print("There is always a song with that name")
-    exit(1)
 
 url = input("Enter the YouTube URL: ")
 if any(x["youtube"] == url for x in data["musics"]):
@@ -30,9 +27,12 @@ if album == "None":
 
 path = name
 type = input("Enter song type (cover, acoustic...) or None: ")
-if type == "None":
+if type != "None":
     type = None
     path = name + " " + type + " by " + artist
+
+if any((("type" in x and x["type"] == type) or ("type" not in x and type == None)) and x["name"] == name for x in data["musics"]):
+    print("There is always a song with that name")
 
 id = str(uuid4())
 
