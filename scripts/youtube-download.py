@@ -14,7 +14,6 @@ with open('../data/info.json', 'r', encoding='utf-8') as fd:
     data = json.load(fd)
 
 name = input("Enter the song name: ")
-path = name
 if any(x["name"] == name for x in data["musics"]):
     print("There is always a song with that name")
     exit(1)
@@ -28,9 +27,12 @@ artist = input("Enter the artist name: ")
 album = input("Enter the album name or None: ")
 if album == "None":
     album = None
+
+path = name
 type = input("Enter song type (cover, acoustic...) or None: ")
 if type == "None":
     type = None
+    path = name + " " + type + " by " + artist
 
 id = str(uuid4())
 

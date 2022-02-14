@@ -184,7 +184,11 @@ async function loadPage() {
     json = await resp.json();
 
     for (let index in json.musics) {
-        json.musics[index].index = index;
+        let elem = json.musics[index];
+        if (elem.type !== undefined && elem.type !== null) {
+            elem.name += ` (${elem.type})`;
+        }
+        elem.index = index;
     }
 
     displaySongs(json.musics, "songlist", "");
