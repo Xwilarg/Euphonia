@@ -27,8 +27,9 @@ if album == "None":
 
 path = name
 type = input("Enter song type (cover, acoustic...) or None: ")
-if type != "None":
+if type == "None":
     type = None
+else:
     path = name + " " + type + " by " + artist
 
 if any((("type" in x and x["type"] == type) or ("type" not in x and type == None)) and x["name"] == name for x in data["musics"]):
