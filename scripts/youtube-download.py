@@ -26,13 +26,13 @@ if album == "None":
     album = None
 
 path = name
-type = input("Enter song type (cover, acoustic...) or None: ")
-if type == "None":
-    type = None
+songType = input("Enter song type (cover, acoustic...) or None: ")
+if songType == "None":
+    songType = None
 else:
-    path = name + " " + type + " by " + artist
+    path = name + " " + songType + " by " + artist
 
-if any((("type" in x and x["type"] == type) or ("type" not in x and type == None)) and x["name"] == name for x in data["musics"]):
+if any((("type" in x and x["type"] == songType) or ("type" not in x and songType == None)) and x["name"] == name for x in data["musics"]):
     print("There is always a song with that name")
 
 id = str(uuid4())
@@ -40,7 +40,7 @@ id = str(uuid4())
 if not os.path.isdir("tmp"):
     os.mkdir("tmp")
 
-subprocess.run(["youtube-dl", url, "-o", "../data/" + name + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
+subprocess.run(["youtube-dl", url, "-o", "../data/" + path + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
 
 data["musics"].append({
     "name": name,
@@ -48,7 +48,7 @@ data["musics"].append({
     "artist": artist,
     "album": album,
     "youtube": url,
-    "type": type
+    "type": songType
 })
 
 if album is not None and album not in data["albums"]:
