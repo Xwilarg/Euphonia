@@ -195,7 +195,7 @@ async function loadPage() {
 
     if (json.highlight.length > 0) {
         document.getElementById("highlight").hidden = false;
-        displaySongs(json.musics.filter(x => json.highlight.includes(x.name)), "highlightlist", "");
+        displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "");
     }
 }
 // #endregion
