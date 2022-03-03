@@ -156,7 +156,7 @@ function displaySongs(musics, id, filter) {
 async function loadPage() {
     // Audio player config
     let player = document.getElementById("player");
-    player.volume = 0.1; // Base volume is way too loud
+    player.volume = 0.5; // Base volume is too loud
     // When song end, we start the next one
     player.addEventListener('ended', function() {
         // Play next song if playlist isn't empty
