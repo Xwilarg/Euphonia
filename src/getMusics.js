@@ -41,7 +41,7 @@ function nextSong() {
 
     // Load song and play it
     let player = document.getElementById("player");
-    player.src = `${url}/data/${elem.path}`;
+    player.src = `${url}/data/normalized/${elem.path}`;
     player.play();
 
     // Display song data
@@ -57,6 +57,7 @@ function nextSong() {
         ]
     });
     navigator.mediaSession.setActionHandler('previoustrack', function() {
+        // If we are more than 2 secondes into the song we just restart it
         if (player.currentTime >= 2.0) {
             player.currentTime = 0.0;
         } else if (playlistIndex > 1) {
