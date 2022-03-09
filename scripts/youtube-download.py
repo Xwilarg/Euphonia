@@ -2,11 +2,15 @@ import json
 import os
 import subprocess
 import sys
-import glob
 from uuid import uuid4
 
 def is_audio(name):
     return name.endswith(".wav") or name.endswith(".mp3") or name.endswith("webm") or name.endswith(".mp4") or name.endswith(".mkv")
+
+if not os.path.exists('data'):
+    os.makedirs('data')
+if not os.path.exists('data/raw'):
+    os.makedirs('data/raw')
 
 data = {}
 
@@ -40,7 +44,7 @@ id = str(uuid4())
 if not os.path.isdir("tmp"):
     os.mkdir("tmp")
 
-subprocess.run(["youtube-dl", url, "-o", "../data/" + path + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
+subprocess.run(["youtube-dl", url, "-o", "../data/raw/" + path + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
 
 data["musics"].append({
     "name": name,
