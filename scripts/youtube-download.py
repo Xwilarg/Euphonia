@@ -2,20 +2,25 @@ import json
 import os
 import subprocess
 import sys
+import requests
 from uuid import uuid4
+from PIL import Image
 
 def is_audio(name):
     return name.endswith(".wav") or name.endswith(".mp3") or name.endswith("webm") or name.endswith(".mp4") or name.endswith(".mkv")
 
-if not os.path.exists('data'):
-    os.makedirs('data')
-if not os.path.exists('data/raw'):
-    os.makedirs('data/raw')
+if not os.path.exists('../data'):
+    os.makedirs('../data')
+if not os.path.exists('../data/raw'):
+    os.makedirs('../data/raw')
 
 data = {}
-
-with open('../data/info.json', 'r', encoding='utf-8') as fd:
-    data = json.load(fd)
+if os.path.exists('../data/info.json'):
+    with open('../data/info.json', 'r', encoding='utf-8') as fd:
+        data = json.load(fd)
+else:
+    data["musics"] = []
+    data["albums"] = {}
 
 name = input("Enter the song name: ")
 
@@ -28,6 +33,14 @@ artist = input("Enter the artist name: ")
 album = input("Enter the album name or None: ")
 if album == "None":
     album = None
+
+cover = None
+if album is not None:
+    coverUrl = input("Enter the album cover url: ")
+    cover = requests.get(coverUrl).content
+    img = Image.fromarray(cover)
+    rgbImg = img.convert('RGB')
+    rgbImg.save('../data/icons' + album + '.jpg')
 
 path = name
 songType = input("Enter song type (cover, acoustic...) or None: ")
@@ -56,7 +69,6 @@ data["musics"].append({
 })
 
 if album is not None and album not in data["albums"]:
-    print("Missing album data, you'll need to add the image manually")
     data["albums"][album] = {
         "path": album + ".jpg"
     }
