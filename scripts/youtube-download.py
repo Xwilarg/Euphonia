@@ -5,6 +5,7 @@ import sys
 import requests
 from uuid import uuid4
 from PIL import Image
+from io import BytesIO
 
 def is_audio(name):
     return name.endswith(".wav") or name.endswith(".mp3") or name.endswith("webm") or name.endswith(".mp4") or name.endswith(".mkv")
@@ -13,6 +14,8 @@ if not os.path.exists('../data'):
     os.makedirs('../data')
 if not os.path.exists('../data/raw'):
     os.makedirs('../data/raw')
+if not os.path.exists('../data/icons'):
+    os.makedirs('../data/icons')
 
 data = {}
 if os.path.exists('../data/info.json'):
@@ -37,10 +40,10 @@ if album == "None":
 cover = None
 if album is not None:
     coverUrl = input("Enter the album cover url: ")
-    cover = requests.get(coverUrl).content
-    img = Image.fromarray(cover)
+    cover = requests.get(coverUrl, stream=True).content
+    img = Image.open(BytesIO(cover))
     rgbImg = img.convert('RGB')
-    rgbImg.save('../data/icons' + album + '.jpg')
+    rgbImg.save('../data/icons/' + album + '.jpg')
 
 path = name
 songType = input("Enter song type (cover, acoustic...) or None: ")
