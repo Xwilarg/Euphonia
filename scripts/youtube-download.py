@@ -14,8 +14,8 @@ if not os.path.exists('../data'):
     os.makedirs('../data')
 if not os.path.exists('../data/raw'):
     os.makedirs('../data/raw')
-if not os.path.exists('../data/icons'):
-    os.makedirs('../data/icons')
+if not os.path.exists('../data/icon'):
+    os.makedirs('../data/icon')
 
 data = {}
 if os.path.exists('../data/info.json'):
@@ -43,7 +43,7 @@ if album is not None:
     cover = requests.get(coverUrl, stream=True).content
     img = Image.open(BytesIO(cover))
     rgbImg = img.convert('RGB')
-    rgbImg.save('../data/icons/' + album + '.jpg')
+    rgbImg.save('../data/icon/' + album + '.jpg')
 
 path = name
 songType = input("Enter song type (cover, acoustic...) or None: ")
