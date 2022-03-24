@@ -130,6 +130,8 @@ function displaySongs(musics, id, filter) {
     } else {
         musics = musics
         .filter(elem =>
+            sanitize(elem.name).toLowerCase().includes(filter) ||
+            sanitize(elem.artist).toLowerCase().includes(filter) ||
             sanitize(wanakana.toRomaji(elem.name)).toLowerCase().includes(filter) ||
             sanitize(wanakana.toRomaji(elem.artist)).toLowerCase().includes(filter)
         );
