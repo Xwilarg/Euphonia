@@ -1,3 +1,5 @@
+import * as wanakana from 'wanakana';
+
 let json;
 
 // URL of the remote server
@@ -127,7 +129,10 @@ function displaySongs(musics, id, filter) {
         .slice(0, 5);
     } else {
         musics = musics
-        .filter(elem => sanitize(elem.name).toLowerCase().includes(filter) || sanitize(elem.artist).toLowerCase().includes(filter));
+        .filter(elem =>
+            sanitize(wanakana.toRomaji(elem.name)).toLowerCase().includes(filter) ||
+            sanitize(wanakana.toRomaji(elem.artist)).toLowerCase().includes(filter)
+        );
     }
     musics.sort((a, b) => a.name.localeCompare(b.name));
 
