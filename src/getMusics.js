@@ -205,6 +205,8 @@ async function loadPage() {
         document.getElementById("highlight").hidden = false;
         displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "");
     }
+
+    displaySongs(json.musics.slice(-5), "latestlist", "");
 }
 // #endregion
 
