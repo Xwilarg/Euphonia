@@ -4,6 +4,7 @@
         <title>Euphonia</title>
         <script src="js/getMusics.js"></script>
         <link rel="stylesheet" href="css/index.css"/>
+        <link rel="stylesheet" href="css/player.css"/>
     </head>
     <body>
         <div id="banner">Euphonia</div>
@@ -19,10 +20,20 @@
             <p id="playlist-content"></p>
         </div>
         <div id="canvas">
-            <div id="fullPlayer" hidden>
+            <div id="fullPlayer">
+                <audio id="player"></audio>
                 <img id="currentImage" src=""/>
-                <audio id="player" controls src=""></audio>
+                <div>
+                    <button id="togglePlay">▶</button>
+                    <button id="previous">|◀◀</button>
+                    <button id="skip">▶▶|</button>
+                    <input type="range" max="100" id="volume">
+                    <br/>
+                    <span id="currDuration"></span> / <span id="maxDuration"></span>
+                    <input type="range" id="durationSlider">
+                </div>
                 <h3 id="currentSong"></h3>
+                <hr/>
             </div>
             <div id="actions">
                 <button id="refresh">Refresh</button>

@@ -22,6 +22,16 @@ function togglePlay() {
     }
 }
 
+function previousSong() {
+    // If we are more than 2 secondes into the song we just restart it
+    if (player.currentTime >= 2.0) {
+        player.currentTime = 0.0;
+    } else if (playlistIndex > 1) {
+        playlistIndex -= 2;
+        nextSong();
+    }
+}
+
 // Play the next song of the playlist
 function nextSong() {
     // Displayer player if not here
@@ -58,16 +68,6 @@ function nextSong() {
             { src: `${url}${getAlbumImage(elem)}` }
         ]
     });
-    navigator.mediaSession.setActionHandler('previoustrack', function() {
-        // If we are more than 2 secondes into the song we just restart it
-        if (player.currentTime >= 2.0) {
-            player.currentTime = 0.0;
-        } else if (playlistIndex > 1) {
-            playlistIndex -= 2;
-            nextSong();
-        }
-    });
-    navigator.mediaSession.setActionHandler('nexttrack', function() { nextSong(); });
 
     // Color the currently played song
     for (let c of document.getElementsByClassName("current")) {
@@ -161,9 +161,51 @@ function displaySongs(musics, id, filter) {
     }
 }
 
+function addZero(nb) {
+    if (nb <= 9) {
+        return "0" + nb;
+    }
+    return nb;
+}
+
 async function loadPage() {
-    // Audio player config
+    // Set media session
+    navigator.mediaSession.setActionHandler('previoustrack', previousSong);
+    navigator.mediaSession.setActionHandler('nexttrack', nextSong);
+
     let player = document.getElementById("player");
+
+    // Set player buttons
+    document.getElementById("previous").addEventListener("click", previousSong);
+    document.getElementById("skip").addEventListener("click", nextSong);
+    document.getElementById("togglePlay").addEventListener("click", togglePlay);
+    document.getElementById("volume").addEventListener("change", (_) => {
+        player.volume = document.getElementById("volume").value / 100;
+    });
+    document.getElementById("durationSlider").addEventListener("change", (_) => {
+        player.currentTime = document.getElementById("durationSlider").value;
+    });
+
+    // Player callbacks
+    player.addEventListener('volumechange', (_) => {
+        document.getElementById("volume").value = player.volume * 100;
+    });
+    player.addEventListener('play', (_) => {
+        document.getElementById("togglePlay").innerHTML = "||";
+    });
+    player.addEventListener('pause', (_) => {
+        document.getElementById("togglePlay").innerHTML = "▶";
+    });
+    player.addEventListener('loadedmetadata', (_) => {
+        document.getElementById("maxDuration").innerHTML = Math.trunc(player.duration / 100) + ":" + addZero(Math.trunc(player.duration % 100));
+        document.getElementById("durationSlider").max = player.duration;
+    });
+    player.addEventListener('timeupdate', (_) => {
+        document.getElementById("currDuration").innerHTML = Math.trunc(player.currentTime / 100) + ":" + addZero(Math.trunc(player.currentTime % 100));
+        document.getElementById("durationSlider").value = player.currentTime;
+    });
+
+    // Audio player config
     player.volume = 0.5; // Base volume is too loud
     // When song end, we start the next one
     player.addEventListener('ended', function() {
@@ -191,6 +233,7 @@ async function loadPage() {
     const resp = await fetch(url + "php/getInfoJson.php");
     json = await resp.json();
 
+    // Update JSON names
     for (let index in json.musics) {
         let elem = json.musics[index];
         if (elem.type !== undefined && elem.type !== null) {
@@ -199,13 +242,12 @@ async function loadPage() {
         elem.index = index;
     }
 
+    // Display songs
     displaySongs(json.musics, "songlist", "");
-
     if (json.highlight.length > 0) {
         document.getElementById("highlight").hidden = false;
         displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "");
     }
-
     displaySongs(json.musics.slice(-5), "latestlist", "");
 }
 // #endregion
@@ -215,7 +257,7 @@ async function loadPage() {
 function exportYoutube() {
     document.getElementById("export-youtube-result").innerHTML =
         json.musics
-            .map(x => x.youtube)
+            .map(x => x.source)
             .filter(x => x !== null)
             .map(value => ({ value, sort: Math.random() }))
             .sort((a, b) => a.sort - b.sort)

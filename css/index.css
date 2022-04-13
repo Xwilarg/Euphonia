@@ -107,22 +107,6 @@ img {
     text-align: center;
 }
 
-#fullPlayer {
-    margin: auto;
-    width: 20em;
-    text-align: center;
-}
-
-#fullPlayer > img {
-    width: 100%;
-    height: 20em;
-}
-
-#fullPlayer > audio {
-    width: 100%;
-    margin-top: -5px;
-}
-
 #playlist {
     bottom: 0;
     right: 0;
