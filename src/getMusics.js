@@ -213,9 +213,9 @@ async function loadPage() {
         {
             oldRanges = html;
             document.getElementById("progressRanges").innerHTML = html;
-            document.getElementById("currDuration").innerHTML = Math.trunc(player.currentTime / 100) + ":" + addZero(Math.trunc(player.currentTime % 100));
-            document.getElementById("durationSlider").value = player.currentTime;
         }
+        document.getElementById("currDuration").innerHTML = Math.trunc(player.currentTime / 100) + ":" + addZero(Math.trunc(player.currentTime % 100));
+        document.getElementById("durationSlider").value = player.currentTime;
     });
 
     // Audio player config
