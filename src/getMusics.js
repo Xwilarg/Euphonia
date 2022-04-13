@@ -201,6 +201,13 @@ async function loadPage() {
         document.getElementById("durationSlider").max = player.duration;
     });
     player.addEventListener('timeupdate', (_) => {
+        let html = "";
+        for (let i = 0; i < player.buffered.length; i++) {
+            const start = player.buffered.start(i) / player.duration * 100;
+            const width = (player.buffered.end(i) / player.duration * 100) - start;
+            html += `<div style="margin-left:${start}%;width:${width}%;"></div>`;
+        }
+        document.getElementById("progressRanges").innerHTML = html;
         document.getElementById("currDuration").innerHTML = Math.trunc(player.currentTime / 100) + ":" + addZero(Math.trunc(player.currentTime % 100));
         document.getElementById("durationSlider").value = player.currentTime;
     });

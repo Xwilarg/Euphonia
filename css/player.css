@@ -17,3 +17,39 @@
 input[type=range] {
     vertical-align: middle;
 }
+
+#progresses {
+    position: relative;
+}
+
+#progresses > * {
+    position: absolute;
+    background-color: transparent;
+    top: 0;
+    left: 0;
+    width: 100%;
+}
+
+#progresses > input[type=range] {
+    padding: 0;
+    margin: 0;
+}
+
+#progressRanges {
+    position: relative;
+    width: 100%;
+    vertical-align: middle;
+}
+
+#progressRanges > * {
+    position: absolute;
+    height: 10px;
+    z-index: -1;
+    background-color: red;
+    top: 0;
+    width: 100%;
+}
+
+#currentSong {
+    margin-top: 20px;
+}

@@ -20,7 +20,7 @@
             <p id="playlist-content"></p>
         </div>
         <div id="canvas">
-            <div id="fullPlayer">
+            <div id="fullPlayer" hidden>
                 <audio id="player"></audio>
                 <img id="currentImage" src=""/>
                 <div>
@@ -30,7 +30,10 @@
                     <input type="range" max="100" id="volume">
                     <br/>
                     <span id="currDuration"></span> / <span id="maxDuration"></span>
-                    <input type="range" id="durationSlider">
+                    <div id="progresses">
+                        <input type="range" id="durationSlider">
+                        <div id="progressRanges"></div>
+                    </div>
                 </div>
                 <h3 id="currentSong"></h3>
                 <hr/>
