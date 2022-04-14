@@ -12,8 +12,7 @@
         <div id="settings" hidden>
             Remote server: <input type="text"/><button id="remoteUrl">Reset</button>
             <hr/>
-            <button id="export-youtube">Export YouTube URLs</button><br/>
-            <textarea id="export-youtube-result" readonly></textarea>
+            <button id="minimalistMode">Toggle minimalist mode</button>
         </div>
         <div id="playlist">
             <p id="playlist-title"></p>
@@ -36,22 +35,24 @@
                     </div>
                 </div>
                 <h3 id="currentSong"></h3>
+            </div>
+            <div id="playlists">
                 <hr/>
-            </div>
-            <div id="actions">
-                <button id="refresh">Refresh</button>
-                <input type="text" id="filter" placeholder="Filter"/>
-            </div>
-            <h2>Random</h2>
-            <div id="songlist" class="list">
-            </div>
-            <div id="highlight" hidden>
-                <h2>Highlight</h2>
-                <div id="highlightlist" class="list">
+                <div id="actions">
+                    <button id="refresh">Refresh</button>
+                    <input type="text" id="filter" placeholder="Filter"/>
                 </div>
-            </div>
-            <h2>Latest</h2>
-            <div id="latestlist" class="list">
+                <h2>Random</h2>
+                <div id="songlist" class="list">
+                </div>
+                <div id="highlight" hidden>
+                    <h2>Highlight</h2>
+                    <div id="highlightlist" class="list">
+                    </div>
+                </div>
+                <h2>Latest</h2>
+                <div id="latestlist" class="list">
+                </div>
             </div>
         </div>
     </body>

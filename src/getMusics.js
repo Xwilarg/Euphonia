@@ -240,7 +240,7 @@ async function loadPage() {
     document.getElementById("remoteUrl").addEventListener("click", resetServer);
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
     document.getElementById("refresh").addEventListener("click", refresh);
-    document.getElementById("export-youtube").addEventListener("click", exportYoutube);
+    document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
 
     // Get music infos
     const resp = await fetch(url + "php/getInfoJson.php");
@@ -267,17 +267,6 @@ async function loadPage() {
 
 // #region onclick events
 
-function exportYoutube() {
-    document.getElementById("export-youtube-result").innerHTML =
-        json.musics
-            .map(x => x.source)
-            .filter(x => x !== null)
-            .map(value => ({ value, sort: Math.random() }))
-            .sort((a, b) => a.sort - b.sort)
-            .map(({ value }) => value)
-            .join('\n');
-}
-
 function refresh() {
     displaySongs(json.musics, "songlist", "");
 }
@@ -285,6 +274,19 @@ function refresh() {
 // Hide / show settings
 function toggleSettings() {
     document.getElementById("settings").hidden = !document.getElementById("settings").hidden;
+}
+
+let isMinimalist = false;
+function toggleMinimalistMode() {
+    isMinimalist = !isMinimalist;
+
+    if (isMinimalist) {
+        document.getElementById("currentImage").classList.add("hidden");
+        document.getElementById("playlists").classList.add("hidden");
+    } else {
+        document.getElementById("currentImage").classList.remove("hidden");
+        document.getElementById("playlists").classList.remove("hidden");
+    }
 }
 
 // Called when changing remote server URL

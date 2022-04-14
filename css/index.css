@@ -124,3 +124,7 @@ img {
 #playlist-content {
     padding-left: .4em;
 }
+
+.hidden {
+    display: none;
+}
