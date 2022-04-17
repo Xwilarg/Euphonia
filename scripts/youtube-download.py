@@ -28,7 +28,7 @@ else:
 name = input("Enter the song name: ")
 
 url = input("Enter the YouTube URL: ")
-if any(x["youtube"] == url for x in data["musics"]):
+if any(x["source"] == url for x in data["musics"]):
     print("There is already a song with the same URL")
     exit(1)
 
@@ -67,7 +67,7 @@ data["musics"].append({
     "path": path + ".wav",
     "artist": artist,
     "album": album,
-    "youtube": url,
+    "source": url,
     "type": songType
 })
 
