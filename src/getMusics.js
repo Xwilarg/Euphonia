@@ -32,6 +32,20 @@ function previousSong() {
     }
 }
 
+function updateSongHighlightColor() {
+    if (playlistIndex === undefined) {
+        return;
+    }
+
+    // Color the currently played song
+    for (let c of document.getElementsByClassName("current")) {
+        c.classList.remove("current");
+    }
+    for (let c of document.getElementsByClassName(sanitize(json.musics[playlist[playlistIndex - 1]].name))) {
+        c.classList.add("current");
+    }
+}
+
 // Play the next song of the playlist
 function nextSong() {
     // Displayer player if not here
@@ -69,14 +83,7 @@ function nextSong() {
         ]
     });
 
-    // Color the currently played song
-    for (let c of document.getElementsByClassName("current")) {
-        c.classList.remove("current");
-    }
-    let current = document.getElementById(sanitize(elem.name));
-    if (current !== null) {
-        current = current.classList.add("current");
-    }
+    updateSongHighlightColor();
 }
 
 // Create a random playlist with the parameter as the first song
@@ -153,7 +160,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle) {
         let albumImg = url + getAlbumImage(elem);
         // TODO: may have dupplicate ID
         html += `
-        <div class="song" id="${sanitize(elem.name)}">
+        <div class="song ${sanitize(elem.name)}">
             <img id="img-${id}-${elem.index}" src="${albumImg}"/><br/>
             <p>
                 ${sanitize(elem.name)}<br/>
@@ -169,6 +176,9 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle) {
             prepareShuffle(i);
         }
     }
+
+    // Playlist changed, maybe there is a song we should highlight now
+    updateSongHighlightColor();
 }
 
 function addZero(nb) {
