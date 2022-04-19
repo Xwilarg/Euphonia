@@ -38,7 +38,7 @@ if album == "None":
     album = None
 
 cover = None
-if album is not None:
+if album is not None and album not in data["albums"]:
     coverUrl = input("Enter the album cover url: ")
     cover = requests.get(coverUrl, stream=True).content
     img = Image.open(BytesIO(cover))
