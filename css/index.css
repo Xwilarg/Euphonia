@@ -73,8 +73,7 @@ textarea {
 }
 
 .song {
-    margin-left: .5em;
-    margin-right: .5em;
+    margin: .5em;
     width: 250px;
     background-color: #70C1B3;
     border-radius: 5px;
