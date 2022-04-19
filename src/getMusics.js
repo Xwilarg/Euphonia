@@ -38,8 +38,9 @@ function updateSongHighlightColor() {
     }
 
     // Color the currently played song
-    for (let c of document.getElementsByClassName("current")) {
-        c.classList.remove("current");
+    var elems = document.getElementsByClassName("current");
+    while (elems.length > 0) {
+        elems[0].classList.remove("current");
     }
     for (let c of document.getElementsByClassName(sanitize(json.musics[playlist[playlistIndex - 1]].name))) {
         c.classList.add("current");
