@@ -88,6 +88,8 @@ textarea {
 
 .song > img {
     cursor: pointer;
+    object-fit: cover;
+    object-position: 0 0;
 }
 
 .current {
