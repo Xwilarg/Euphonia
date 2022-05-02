@@ -220,7 +220,7 @@ async function loadPage() {
         document.getElementById("togglePlay").innerHTML = "▶";
     });
     player.addEventListener('loadedmetadata', (_) => {
-        document.getElementById("maxDuration").innerHTML = Math.trunc(player.duration / 100) + ":" + addZero(Math.trunc(player.duration % 100));
+        document.getElementById("maxDuration").innerHTML = Math.trunc(player.duration / 60) + ":" + addZero(Math.trunc(player.duration % 60));
         document.getElementById("durationSlider").max = player.duration;
     });
     player.addEventListener('timeupdate', (_) => {
@@ -235,7 +235,7 @@ async function loadPage() {
             oldRanges = html;
             document.getElementById("progressRanges").innerHTML = html;
         }
-        document.getElementById("currDuration").innerHTML = Math.trunc(player.currentTime / 100) + ":" + addZero(Math.trunc(player.currentTime % 100));
+        document.getElementById("currDuration").innerHTML = Math.trunc(player.currentTime / 60) + ":" + addZero(Math.trunc(player.currentTime % 60));
         document.getElementById("durationSlider").value = player.currentTime;
     });
 
