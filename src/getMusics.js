@@ -324,8 +324,16 @@ window.onload = async function() {
 }
 
 window.onkeydown = function(e){
-    if (e.key == ' ') { // Spacebar switch play/pause
+    if (e.key === ' ') { // Spacebar switch play/pause
         e.preventDefault(); // Prevent page from scrolling down
         togglePlay();
+    }
+    else if (e.key === 'ArrowLeft') {
+        let player = document.getElementById("player");
+        player.currentTime -= 5.0; // TODO: Somehow only move with a step of 1
+    }
+    else if (e.key === 'ArrowRight') {
+        let player = document.getElementById("player");
+        player.currentTime += 5.0;
     }
 }
