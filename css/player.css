@@ -61,7 +61,6 @@ input[type=range] {
 
 #durationSlider::-moz-range-track { /* Firefox */
     background: transparent;
-    z-index: 1;
 }
 
 #progressRanges > * {
