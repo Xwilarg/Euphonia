@@ -1,7 +1,7 @@
 html {
     background-color: #0E1C36;
     font-family: 'Open Sans', sans-serif;
-    color: #eee;
+    color: #ddd;
 }
 
 #banner {
@@ -58,8 +58,9 @@ button {
     padding: .8em;
     border-radius: 5px;
     background-color: #DB504A;
-    box-shadow: .15em .15em;
+    box-shadow: .15em .15em black;
     border: 1px black solid;
+    color: #ddd;
 }
 
 button:active {
@@ -91,6 +92,7 @@ textarea {
     cursor: pointer;
     object-fit: cover;
     object-position: 0 0;
+    border-radius: 5px;
 }
 
 .current {

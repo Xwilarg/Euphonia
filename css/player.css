@@ -41,13 +41,31 @@ input[type=range] {
     vertical-align: middle;
 }
 
-#progressRanges > * {
+#progressRanges > *, #durationSlider, #durationSliderBackground {
     position: absolute;
     height: 10px;
     z-index: -1;
-    background-color: red;
     top: 0;
     width: 100%;
+    border-radius: 10px;
+}
+
+#durationSliderBackground {
+    background-color: #eee;
+}
+
+#durationSlider {
+    z-index: 1;
+    -webkit-appearance: none; /* Chrome */
+}
+
+#durationSlider::-moz-range-track { /* Firefox */
+    background: transparent;
+    z-index: 1;
+}
+
+#progressRanges > * {
+    background-color: gray;
 }
 
 #currentSong {
