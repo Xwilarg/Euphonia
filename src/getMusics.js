@@ -56,11 +56,13 @@ function nextSong() {
     let playlistSize = playlist.length - playlistIndex;
     document.getElementById("playlist-title").innerHTML =
     `${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:<br/>`;
-    document.getElementById("playlist-content").innerHTML =
-        playlist
-            .slice(playlistIndex, playlistIndex + 3)
-            .map(x => sanitize(json.musics[x].name))
-            .join("<br/>");
+    let playlistElems = document.getElementsByClassName("next-song");
+    for (let i = 0; i < playlistElems.length; i++) {
+        if (playlistIndex + i + 1 >= playlist.length) {
+            break;
+        }
+        playlistElems[i].innerHTML = sanitize(json.musics[playlist[playlistIndex + i + 1]].name);
+    }
 
     // Select current song and move playlist forward
     let elem = json.musics[playlist[playlistIndex]];
