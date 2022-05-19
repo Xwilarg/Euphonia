@@ -129,6 +129,29 @@ function getAlbumImage(elem) {
     return "/data/icon/" + json.albums[elem.album].path;
 }
 
+function getPlaylistHtml(id, name) {
+    return `
+    <div class="song" onclick="window.location=window.location.origin + window.location.pathname + '?playlist=${id}';">
+        <img src=""/><br/>
+        <p>
+            ${sanitize(name)}
+        </p>
+    </div>
+    `;
+}
+
+function displayPlaylists(id) {
+    let html = "";
+    for (let elem in json.playlists) {
+        const p = json.playlists[elem];
+        html += getPlaylistHtml(elem, p.name);
+    }
+    if (json.musics.some(x => x.playlist === "default")) {
+        html += getPlaylistHtml("default", "Unnamed");
+    }
+    document.getElementById(id).innerHTML = html;
+}
+
 /// Update displayed songs
 /// @params musics: List of songs to take from
 /// @params id: id of the div to update in the HTML
@@ -161,7 +184,6 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle) {
     let indexs = [];
     for (let elem of musics) {
         let albumImg = url + getAlbumImage(elem);
-        // TODO: may have dupplicate ID
         html += `
         <div class="song ${sanitize(elem.name)}">
             <img id="img-${id}-${elem.index}" src="${albumImg}"/><br/>
@@ -193,7 +215,25 @@ function addZero(nb) {
 
 let oldRanges = "";
 
-async function loadPage() {
+async function loadSongsAsync() {
+    // Get music infos
+    const resp = await fetch(url + "php/getInfoJson.php");
+    json = await resp.json();
+
+    // Update JSON names
+    for (let index in json.musics) {
+        let elem = json.musics[index];
+        if (elem.type !== undefined && elem.type !== null) {
+            elem.name += ` (${elem.type})`;
+        }
+        if (elem.playlist === undefined || elem.playlist === null) {
+            elem.playlist = "default";
+        }
+        elem.index = index;
+    }
+}
+
+function loadPage() {
     // Set media session
     navigator.mediaSession.setActionHandler('previoustrack', previousSong);
     navigator.mediaSession.setActionHandler('nexttrack', nextSong);
@@ -265,19 +305,6 @@ async function loadPage() {
     document.getElementById("refresh").addEventListener("click", refresh);
     document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
 
-    // Get music infos
-    const resp = await fetch(url + "php/getInfoJson.php");
-    json = await resp.json();
-
-    // Update JSON names
-    for (let index in json.musics) {
-        let elem = json.musics[index];
-        if (elem.type !== undefined && elem.type !== null) {
-            elem.name += ` (${elem.type})`;
-        }
-        elem.index = index;
-    }
-
     // Display songs
     displaySongs(json.musics, "songlist", "", false, true);
     if (json.highlight.length > 0) {
@@ -312,17 +339,45 @@ function toggleMinimalistMode() {
     }
 }
 
+function chooseDisplay() {
+    // Get ?playlist parameter
+    const url = new URL(window.location.href);
+    let playlist = url.searchParams.get("playlist");
+
+    // If parameter is not set or set to a wrong value
+    if (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined) {
+        // If there is no playlist we just display the default one
+        if (!json.musics.some(x => x.playlist !== "default")) {
+            playlist = "default";
+        } else {
+            playlist = null;
+        }
+    }
+    if (playlist === null) { // Display playlist
+        document.getElementById("pageStateReady").hidden = true;
+        document.getElementById("pageStatePlaylist").hidden = false;
+        displayPlaylists("playlistlist");
+    } else { // Display songs of corresponding playlist
+        document.getElementById("pageStateReady").hidden = false;
+        document.getElementById("pageStatePlaylist").hidden = true;
+        json.musics = json.musics.filter(x => x.playlist === playlist);
+        loadPage();
+    }
+}
+
 // Called when changing remote server URL
 async function resetServer() {
     url = document.getElementById("remoteUrl").value
     if (!url.endsWith("/")) {
         url += "/";
     }
-    await loadPage();
+    await loadSongsAsync();
+    chooseDisplay();
 }
 
 window.onload = async function() {
-    await loadPage();
+    await loadSongsAsync();
+    chooseDisplay();
 }
 
 window.onkeydown = function(e){
