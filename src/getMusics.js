@@ -6,6 +6,9 @@ let json;
 // Left empty if stored at the same place as the webpage
 let url = "";
 
+// ID of the current playlist
+let currentPlaylist = null;
+
 // Next songs to play
 let playlist = [];
 let playlistIndex;
@@ -140,13 +143,15 @@ function getPlaylistHtml(id, name) {
     `;
 }
 
-function displayPlaylists(id) {
+function displayPlaylists(playlists, id, filter) {
     let html = "";
     for (let elem in json.playlists) {
         const p = json.playlists[elem];
-        html += getPlaylistHtml(elem, p.name);
+        if (filter === "" || sanitize(p.name).toLowerCase().includes(filter)) {
+            html += getPlaylistHtml(elem, p.name);
+        }
     }
-    if (json.musics.some(x => x.playlist === "default")) {
+    if (json.musics.some(x => x.playlist === "default") && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
         html += getPlaylistHtml("default", "Unnamed");
     }
     document.getElementById(id).innerHTML = html;
@@ -291,14 +296,6 @@ function loadPage() {
         }
     });
 
-    // Filter text bar
-    document.getElementById("filter").addEventListener("input", (e) => {
-        let filterValue = e.target.value.toLowerCase();
-        document.getElementById("refresh").disabled = filterValue !== "";
-        displaySongs(json.musics, "songlist", filterValue, true, true);
-    });
-    document.getElementById("filter").value = "";
-
     // Buttons
     document.getElementById("remoteUrl").addEventListener("click", resetServer);
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
@@ -353,10 +350,11 @@ function chooseDisplay() {
             playlist = null;
         }
     }
+    currentPlaylist = playlist;
     if (playlist === null) { // Display playlist
         document.getElementById("pageStateReady").hidden = true;
         document.getElementById("pageStatePlaylist").hidden = false;
-        displayPlaylists("playlistlist");
+        displayPlaylists(json.playlists, "playlistlist", "");
     } else { // Display songs of corresponding playlist
         document.getElementById("pageStateReady").hidden = false;
         document.getElementById("pageStatePlaylist").hidden = true;
@@ -377,6 +375,19 @@ async function resetServer() {
 
 window.onload = async function() {
     await loadSongsAsync();
+
+    // Filter text bar
+    document.getElementById("filter").addEventListener("input", (e) => {
+        let filterValue = e.target.value.toLowerCase();
+        document.getElementById("refresh").disabled = filterValue !== "";
+        if (currentPlaylist === null) {
+            displayPlaylists(json.playlists, "playlistlist", filterValue);
+        } else {
+            displaySongs(json.musics, "songlist", filterValue, true, true);
+        }
+    });
+    document.getElementById("filter").value = "";
+
     chooseDisplay();
 }
 
