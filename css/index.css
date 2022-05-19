@@ -105,6 +105,11 @@ img {
     height: 250px;
 }
 
+.playlist-display-container img {
+    width: 125px;
+    height: 125px;
+}
+
 .list {
     display: flex;
     flex-flow: wrap;

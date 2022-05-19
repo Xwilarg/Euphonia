@@ -133,9 +133,38 @@ function getAlbumImage(elem) {
 }
 
 function getPlaylistHtml(id, name) {
+    let mostPresents = {};
+    for (let elem of json.musics) {
+        if (elem.album === null) {
+            continue;
+        }
+        let img = url + getAlbumImage(elem);
+        if (mostPresents[img] === undefined) {
+            mostPresents[img] = 1;
+        } else {
+            mostPresents[img]++;
+        }
+    }
+    let imgs = Object.keys(mostPresents).map(function(key) {
+        return [key, mostPresents[key]];
+    }).sort(function(a, b) {
+        return b[1] - a[1];
+    }).slice(0, 4);
+
+    let htmlImgs = "";
+    if (imgs.length === 0) {
+        htmlImgs = `<img src="/img/CD.png"/>`;
+    } else {
+        for (let img of imgs) {
+            htmlImgs += `<img src="${img[0]}"/>`;
+        }
+    }
+
     return `
-    <div class="song" onclick="window.location=window.location.origin + window.location.pathname + '?playlist=${id}';">
-        <img src=""/><br/>
+    <div class="song playlist-display-container" onclick="window.location=window.location.origin + window.location.pathname + '?playlist=${id}';">
+        <div class="list">
+        ${htmlImgs}
+        </div>
         <p>
             ${sanitize(name)}
         </p>
@@ -145,8 +174,8 @@ function getPlaylistHtml(id, name) {
 
 function displayPlaylists(playlists, id, filter) {
     let html = "";
-    for (let elem in json.playlists) {
-        const p = json.playlists[elem];
+    for (let elem in playlists) {
+        const p = playlists[elem];
         if (filter === "" || sanitize(p.name).toLowerCase().includes(filter)) {
             html += getPlaylistHtml(elem, p.name);
         }
