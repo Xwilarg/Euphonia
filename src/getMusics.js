@@ -134,8 +134,13 @@ function getAlbumImage(elem) {
 
 function getPlaylistHtml(id, name) {
     let mostPresents = {};
+    let count = 0;
     for (let elem of json.musics) {
-        if (elem.album === null || elem.playlist !== id) {
+        if (elem.playlist !== id) {
+            continue;
+        }
+        count++;
+        if (elem.album === null) {
             continue;
         }
         let img = url + getAlbumImage(elem);
@@ -166,7 +171,8 @@ function getPlaylistHtml(id, name) {
         ${htmlImgs}
         </div>
         <p>
-            ${sanitize(name)}
+            ${sanitize(name)}<br/>
+            ${count} songs
         </p>
     </div>
     `;
