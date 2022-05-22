@@ -329,12 +329,6 @@ function loadPage() {
         }
     });
 
-    // Buttons
-    document.getElementById("remoteUrl").addEventListener("click", resetServer);
-    document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
-    document.getElementById("refresh").addEventListener("click", refresh);
-    document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
-
     // Display songs
     displaySongs(json.musics, "songlist", "", false, true);
     if (json.highlight.length > 0) {
@@ -414,6 +408,12 @@ async function resetServer() {
 }
 
 window.onload = async function() {
+    // Buttons
+    document.getElementById("remoteUrl").addEventListener("click", resetServer);
+    document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
+    document.getElementById("refresh").addEventListener("click", refresh);
+    document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
+
     await loadSongsAsync();
 
     // Filter text bar
