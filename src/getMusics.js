@@ -135,7 +135,7 @@ function getAlbumImage(elem) {
 function getPlaylistHtml(id, name) {
     let mostPresents = {};
     for (let elem of json.musics) {
-        if (elem.album === null) {
+        if (elem.album === null || elem.playlist !== id) {
             continue;
         }
         let img = url + getAlbumImage(elem);
@@ -220,14 +220,14 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle) {
         let albumImg = url + getAlbumImage(elem);
         html += `
         <div class="song ${sanitize(elem.name)}">
-            <img id="img-${id}-${elem.index}" src="${albumImg}"/><br/>
+            <img id="img-${id}-${elem.id}" src="${albumImg}"/><br/>
             <p>
                 ${sanitize(elem.name)}<br/>
                 ${sanitize(elem.artist)}
             </p>
         </div>
         `;
-        indexs.push(elem.index);
+        indexs.push(elem.id);
     }
     document.getElementById(id).innerHTML = html;
     for (let i of indexs) {
@@ -255,15 +255,13 @@ async function loadSongsAsync() {
     json = await resp.json();
 
     // Update JSON names
-    for (let index in json.musics) {
-        let elem = json.musics[index];
+    for (let elem of json.musics) {
         if (elem.type !== undefined && elem.type !== null) {
             elem.name += ` (${elem.type})`;
         }
         if (elem.playlist === undefined || elem.playlist === null) {
             elem.playlist = "default";
         }
-        elem.index = index;
     }
 }
 
@@ -373,10 +371,14 @@ function chooseDisplay() {
     // If parameter is not set or set to a wrong value
     if (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined) {
         // If there is no playlist we just display the default one
-        if (!json.musics.some(x => x.playlist !== "default")) {
-            playlist = "default";
+        if (json.musics.some(x => x.playlist !== "default")) {
+            if (playlist === "default") {
+                playlist = "default";
+            } else {
+                playlist = null;
+            }
         } else {
-            playlist = null;
+            playlist = "default";
         }
     }
     currentPlaylist = playlist;
@@ -388,6 +390,9 @@ function chooseDisplay() {
         document.getElementById("pageStateReady").hidden = false;
         document.getElementById("pageStatePlaylist").hidden = true;
         json.musics = json.musics.filter(x => x.playlist === playlist);
+        for (let id in json.musics) {
+            json.musics[id].id = id;
+        }
         loadPage();
     }
 }
