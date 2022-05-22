@@ -45,6 +45,19 @@ if album is not None and album not in data["albums"]:
     rgbImg = img.convert('RGB')
     rgbImg.save('../data/icon/' + album + '.jpg')
 
+playlist = "default"
+if "playlists" in data:
+    print("Choose a playlist or None:")
+    i = 0
+    for value in data["playlists"].values():
+        print(str(i) + ": " + value["name"])
+        i += 1
+    playlist = input()
+    if playlist == "None":
+        playlist = "default"
+    else:
+        playlist = list(data["playlists"].keys())[int(playlist)]
+
 path = name
 songType = input("Enter song type (cover, acoustic...) or None: ")
 if songType == "None":
@@ -67,6 +80,7 @@ data["musics"].append({
     "path": path + ".wav",
     "artist": artist,
     "album": album,
+    "playlist": playlist,
     "source": url,
     "type": songType
 })
