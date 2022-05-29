@@ -272,6 +272,10 @@ async function loadSongsAsync() {
 }
 
 function loadPage() {
+    document.getElementById("back").addEventListener("click", () => {
+        window.location=window.location.origin + window.location.pathname;
+    });
+
     // Set media session
     navigator.mediaSession.setActionHandler('previoustrack', previousSong);
     navigator.mediaSession.setActionHandler('nexttrack', nextSong);
@@ -381,14 +385,17 @@ function chooseDisplay() {
             playlist = "default";
         }
     }
+
     currentPlaylist = playlist;
     if (playlist === null) { // Display playlist
         document.getElementById("pageStateReady").hidden = true;
         document.getElementById("pageStatePlaylist").hidden = false;
+        document.getElementById("back").hidden = true;
         displayPlaylists(json.playlists, "playlistlist", "");
     } else { // Display songs of corresponding playlist
         document.getElementById("pageStateReady").hidden = false;
         document.getElementById("pageStatePlaylist").hidden = true;
+        document.getElementById("back").hidden = false;
         json.musics = json.musics.filter(x => x.playlist === playlist);
         for (let id in json.musics) {
             json.musics[id].id = id;
