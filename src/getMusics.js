@@ -367,6 +367,13 @@ function toggleMinimalistMode() {
     }
 }
 
+function exportSources() {
+    document.getElementById("exportSourcesField").value = json.musics
+        .map((value) => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value.source).join('\n');
+}
+
 function chooseDisplay() {
     // Get ?playlist parameter
     const url = new URL(window.location.href);
@@ -420,6 +427,7 @@ window.onload = async function() {
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
     document.getElementById("refresh").addEventListener("click", refresh);
     document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
+    document.getElementById("exportSources").addEventListener("click", exportSources);
 
     await loadSongsAsync();
 
