@@ -110,6 +110,22 @@ img {
     height: 125px;
 }
 
+@media (max-width: 600px) {
+    .song {
+        width: 150px;
+    }
+
+    img {
+        width: 150px;
+        height: 150px;
+    }
+
+    .playlist-display-container img {
+        width: 75px;
+        height: 75px;
+    }
+}
+
 .list {
     display: flex;
     flex-flow: wrap;
