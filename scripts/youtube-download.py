@@ -73,7 +73,7 @@ id = str(uuid4())
 if not os.path.isdir("tmp"):
     os.mkdir("tmp")
 
-subprocess.run(["youtube-dl", url, "-o", "../data/raw/" + path + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
+subprocess.run(["yt-dlp", url, "-o", "../data/raw/" + path + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
 
 data["musics"].append({
     "name": name,
