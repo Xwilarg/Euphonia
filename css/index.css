@@ -126,7 +126,7 @@ img {
     }
 }
 
-.list-wrapper, .list{
+.list-wrapper, .list {
     display: flex;
     flex-flow: wrap;
     justify-content: center;
