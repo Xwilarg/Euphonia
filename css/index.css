@@ -126,11 +126,15 @@ img {
     }
 }
 
-.list {
+.list-wrapper, .list{
     display: flex;
     flex-flow: wrap;
     justify-content: center;
     text-align: center;
+}
+
+.list {
+    max-width: calc(300px * 5);
 }
 
 #playlist {

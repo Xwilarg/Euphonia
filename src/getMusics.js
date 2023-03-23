@@ -197,8 +197,8 @@ function displayPlaylists(playlists, id, filter) {
 /// @params id: id of the div to update in the HTML
 /// @params filter: text to filter on
 /// @params doesSort: do we sort the songs by character order
-/// @params doesShuffle: do we randomize the position of the songs BEFORE slicing them (meaning the 5 songs taken are random)
-function displaySongs(musics, id, filter, doesSort, doesShuffle) {
+/// @params doesShuffle: do we randomize the position of the songs BEFORE slicing them (meaning the n songs taken are random)
+function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     let html = "";
     if (filter === "") {
         if (doesShuffle) {
@@ -207,7 +207,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle) {
             .sort((a, b) => a.sort - b.sort)
             .map(({ value }) => value);
         }
-        musics = musics.slice(0, 5);
+        musics = musics.slice(0, count);
     } else {
         musics = musics
         .filter(elem =>
@@ -334,19 +334,19 @@ function loadPage() {
     });
 
     // Display songs
-    displaySongs(json.musics, "songlist", "", false, true);
+    displaySongs(json.musics, "songlist", "", false, true, 5);
     if (json.highlight.length > 0) {
         document.getElementById("highlight").hidden = false;
-        displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "", false, false);
+        displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "", false, false, 5);
     }
-    displaySongs(json.musics.slice(-5).reverse(), "latestlist", "", false, false);
+    displaySongs(json.musics.reverse(), "latestlist", "", false, false, 15);
 }
 // #endregion
 
 // #region onclick events
 
 function refresh() {
-    displaySongs(json.musics, "songlist", "", false, true);
+    displaySongs(json.musics, "songlist", "", false, true, 5);
 }
 
 // Hide / show settings
