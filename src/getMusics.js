@@ -339,7 +339,7 @@ function loadPage() {
         document.getElementById("highlight").hidden = false;
         displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "", false, false, 5);
     }
-    displaySongs(json.musics.reverse(), "latestlist", "", false, false, 15);
+    displaySongs(json.musics.slice(-15).reverse(), "latestlist", "", false, false, 15);
 }
 // #endregion
 
