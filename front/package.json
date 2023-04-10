@@ -19,7 +19,6 @@
   "homepage": "https://github.com/Xwilarg/Euphonia#readme",
   "devDependencies": {
     "@types/wanakana": "^4.0.3",
-    "electron": "^16.0.2",
     "esbuild": "^0.14.18"
   },
   "dependencies": {
