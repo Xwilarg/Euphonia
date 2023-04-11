@@ -2,33 +2,21 @@ package com.example.euphonia
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.ComponentName
-import android.content.Intent
-import android.media.MediaMetadata
-import android.media.MediaPlayer
-import android.media.session.MediaSession
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ListView
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
-import androidx.media3.common.MediaItem
-import androidx.media3.session.MediaController
-import androidx.media3.session.MediaSessionService
-import androidx.media3.session.SessionToken
-import androidx.media3.ui.PlayerControlView
-import androidx.media3.ui.PlayerView
 import com.example.euphonia.data.MusicData
-import com.google.common.util.concurrent.MoreExecutors
+import com.google.android.exoplayer2.ExoPlayer
+import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.MediaMetadata
+import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
@@ -38,21 +26,15 @@ import java.util.concurrent.Executors
 
 
 class MainActivity : AppCompatActivity() {
-    lateinit var controller: MediaController
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        findViewById<StyledPlayerView>(R.id.musicPlayer).player = ExoPlayer.Builder(this).build()
+    }
 
-        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
-        var controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture.addListener(
-            {
-                controller = controllerFuture.get()
-                findViewById<PlayerView>(R.id.musicPlayer).player = controller
-            },
-            MoreExecutors.directExecutor()
-        )
+    override fun onDestroy() {
+        super.onDestroy()
+        findViewById<StyledPlayerView>(R.id.musicPlayer).player!!.release()
     }
 
     fun updateData(view: View) {
@@ -98,19 +80,20 @@ class MainActivity : AppCompatActivity() {
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
                 val song = data.musics[position]
 
+                var controller = findViewById<StyledPlayerView>(R.id.musicPlayer)
                 val item = MediaItem.Builder()
                     .setUri((File(filesDir, song.path).toUri()))
                     .setMediaMetadata(
-                        androidx.media3.common.MediaMetadata.Builder()
+                        MediaMetadata.Builder()
                             .setTitle(song.name)
                             .setAlbumTitle(song.album)
                             .setArtist(song.artist)
                             .build()
                     )
                     .build()
-                controller.setMediaItem(item)
-                controller.prepare()
-                controller.play()
+                controller.player!!.setMediaItem(item)
+                controller.player!!.prepare()
+                controller.player!!.play()
             }
 
             // Download missing songs
