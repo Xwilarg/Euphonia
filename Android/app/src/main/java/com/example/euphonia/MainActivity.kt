@@ -2,6 +2,7 @@ package com.example.euphonia
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -56,6 +57,7 @@ class MainActivity : AppCompatActivity() {
 
     fun updateData(view: View) {
         var url = findViewById<EditText>(R.id.inputURL).text.toString()
+
         if (!url.endsWith("/")) {
             url += "/";
         }
@@ -89,6 +91,11 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val mDir = File(filesDir, "${url}music")
+        if (!mDir.exists()) mDir.mkdirs()
+        val lDir = File(filesDir, "${url}logo")
+        if (!lDir.exists()) lDir.mkdirs()
+
         executor.execute {
             // Download JSON data
             val data = Gson().fromJson(URL("https://${url}php/getInfoJson.php").readText(), MusicData::class.java)
@@ -97,9 +104,9 @@ class MainActivity : AppCompatActivity() {
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
                 val song = data.musics[position]
 
-                var controller = findViewById<StyledPlayerView>(R.id.musicPlayer)
+                val controller = findViewById<StyledPlayerView>(R.id.musicPlayer)
                 val item = MediaItem.Builder()
-                    .setUri((File(filesDir, song.path).toUri()))
+                    .setUri((File(filesDir, "${url}music/${song.path}").toUri()))
                     .setMediaMetadata(
                         MediaMetadata.Builder()
                             .setTitle(song.name)
@@ -116,12 +123,23 @@ class MainActivity : AppCompatActivity() {
             // Download missing songs
             val files = this.fileList()
             data.musics.forEachIndexed{ index, song ->
-                if (!files.contains(song.path)) {
+                if (!files.contains("${url}music/${song.path}")) {
                     updateList()
                     builder.setContentText("$index / ${data.musics.size}")
                     notificationManager.notify(1, builder.build())
                     URL("https://${url}data/normalized/${song.path}").openStream().use { stream ->
-                        FileOutputStream(File(filesDir, song.path)).use { output ->
+                        FileOutputStream(File(filesDir, "${url}music/${song.path}")).use { output ->
+                            stream.copyTo(output)
+                        }
+                    }
+                    updateList()
+                }
+                val albumPath = data.albums[song.album]
+                if (albumPath != null && !files.contains("${url}icon/${albumPath}")) {
+                    updateList()
+                    notificationManager.notify(1, builder.build())
+                    URL("https://${url}data/icon/${albumPath}").openStream().use { stream ->
+                        FileOutputStream(File(filesDir, "${url}icon/${albumPath}")).use { output ->
                             stream.copyTo(output)
                         }
                     }
