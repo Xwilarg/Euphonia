@@ -5,7 +5,9 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.EditText
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import com.example.euphonia.data.MusicData
 import com.google.gson.Gson
@@ -29,10 +31,15 @@ class MainActivity : AppCompatActivity() {
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
         val handler = Handler(Looper.getMainLooper())
 
+        val list = findViewById<ListView>(R.id.musicData)
+
         executor.execute {
             val data = Gson().fromJson(URL(url).readText(), MusicData::class.java)
-            Log.i("JSON", "")
-            handler.post {}
+            val musics = data.musics.map { it.name }
+            val adapter = ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, musics)
+            handler.post {
+                list.adapter = adapter
+            }
         }
     }
 }
