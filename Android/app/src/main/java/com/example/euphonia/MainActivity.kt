@@ -1,10 +1,7 @@
 package com.example.euphonia
 
-import android.app.Notification
 import android.app.NotificationChannel
-import android.app.NotificationChannel.DEFAULT_CHANNEL_ID
 import android.app.NotificationManager
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -16,14 +13,14 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import com.example.euphonia.data.MusicData
 import com.google.gson.Gson
+import java.io.File
+import java.io.FileOutputStream
 import java.net.URL
-import java.nio.file.Files
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -76,17 +73,20 @@ class MainActivity : AppCompatActivity() {
 
             data.musics.forEachIndexed{ index, song ->
                 if (!files.contains(song.path)) {
-                    this.openFileOutput(song.path, Context.MODE_PRIVATE).use {
-                        builder.setContentText("$index / ${musics.size}")
-                        notificationManager.notify(1, builder.build())
-                        URL("https://${url}data/normalized/${song.path}").openStream().use { stream ->
-                            val bytes = stream.readBytes()
-                            storageManager.allocateBytes(uuid, bytes.size.toLong())
-                            it.write(bytes)
+                    builder.setContentText("$index / ${musics.size}")
+                    notificationManager.notify(1, builder.build())
+                    URL("https://${url}data/normalized/${song.path}").openStream().use { stream ->
+                        FileOutputStream(File(filesDir, song.path)).use { output ->
+                            stream.copyTo(output)
                         }
                     }
                 }
             }
+
+            builder
+                .setContentText("${musics.size} / ${musics.size}")
+                .setOngoing(false)
+            notificationManager.notify(1, builder.build())
 
             handler.post {
                 list.adapter = adapter
