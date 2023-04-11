@@ -26,6 +26,7 @@ import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
 import androidx.media3.ui.PlayerControlView
+import androidx.media3.ui.PlayerView
 import com.example.euphonia.data.MusicData
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
@@ -48,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         controllerFuture.addListener(
             {
                 controller = controllerFuture.get()
-                findViewById<PlayerControlView>(R.id.musicPlayer).player = controller
+                findViewById<PlayerView>(R.id.musicPlayer).player = controller
             },
             MoreExecutors.directExecutor()
         )
