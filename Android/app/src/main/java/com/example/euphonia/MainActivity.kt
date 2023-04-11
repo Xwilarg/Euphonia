@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
         val mDir = File(filesDir, "${url}music")
         if (!mDir.exists()) mDir.mkdirs()
-        val lDir = File(filesDir, "${url}logo")
+        val lDir = File(filesDir, "${url}icon")
         if (!lDir.exists()) lDir.mkdirs()
 
         executor.execute {
@@ -134,7 +134,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     updateList()
                 }
-                val albumPath = data.albums[song.album]
+                val albumPath = data.albums[song.album]!!.path
                 if (albumPath != null && !files.contains("${url}icon/${albumPath}")) {
                     updateList()
                     notificationManager.notify(1, builder.build())
