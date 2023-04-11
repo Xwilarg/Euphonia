@@ -14,6 +14,7 @@ import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import com.example.euphonia.data.MusicData
+import com.example.euphonia.data.Song
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
@@ -96,6 +97,21 @@ class MainActivity : AppCompatActivity() {
         val lDir = File(filesDir, "${url}icon")
         if (!lDir.exists()) lDir.mkdirs()
 
+        val songToItem = fun(data: MusicData, song: Song):MediaItem {
+            val albumPath = data.albums[song.album]?.path
+            return MediaItem.Builder()
+            .setUri(File(filesDir, "${url}music/${song.path}").toUri())
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(song.name)
+                    .setAlbumTitle(song.album)
+                    .setArtist(song.artist)
+                    .setArtworkUri(if (albumPath == null) null else File(filesDir, "${url}icon/${albumPath}").toUri())
+                    .build()
+            )
+            .build()
+        }
+
         executor.execute {
             // Download JSON data
             val data = Gson().fromJson(URL("https://${url}php/getInfoJson.php").readText(), MusicData::class.java)
@@ -103,29 +119,19 @@ class MainActivity : AppCompatActivity() {
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
                 val song = data.musics[position]
-                val albumPath = data.albums[song.album]?.path
 
                 val controller = findViewById<StyledPlayerView>(R.id.musicPlayer)
-                val item = MediaItem.Builder()
-                    .setUri(File(filesDir, "${url}music/${song.path}").toUri())
-                    .setMediaMetadata(
-                        MediaMetadata.Builder()
-                            .setTitle(song.name)
-                            .setAlbumTitle(song.album)
-                            .setArtist(song.artist)
-                            .setArtworkUri(if (albumPath == null) null else File(filesDir, "${url}icon/${albumPath}").toUri())
-                            .build()
-                    )
-                    .build()
-                controller.player!!.setMediaItem(item)
+                controller.player!!.setMediaItem(songToItem(data, song))
+                val selectedMusics = data.musics.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }
+                controller.player!!.setMediaItems(selectedMusics)
+
                 controller.player!!.prepare()
                 controller.player!!.play()
             }
 
             // Download missing songs
-            val files = this.fileList()
             data.musics.forEachIndexed{ index, song ->
-                if (!files.contains("${url}music/${song.path}")) {
+                if (!File(filesDir, "${url}music/${song.path}").exists()) {
                     updateList()
                     builder.setContentText("$index / ${data.musics.size}")
                     notificationManager.notify(1, builder.build())
@@ -137,7 +143,7 @@ class MainActivity : AppCompatActivity() {
                     updateList()
                 }
                 val albumPath = data.albums[song.album]?.path
-                if (albumPath != null && !files.contains("${url}icon/${albumPath}")) {
+                if (albumPath != null && !File(filesDir, "${url}icon/${albumPath}").exists()) {
                     updateList()
                     notificationManager.notify(1, builder.build())
                     URL("https://${url}data/icon/${albumPath}").openStream().use { stream ->
