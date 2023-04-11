@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.storage.StorageManager
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
@@ -12,9 +13,12 @@ import android.widget.EditText
 import android.widget.ListView
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.getSystemService
 import com.example.euphonia.data.MusicData
 import com.google.gson.Gson
 import java.net.URL
+import java.nio.file.Files
+import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -36,6 +40,12 @@ class MainActivity : AppCompatActivity() {
         val list = findViewById<ListView>(R.id.musicData)
 
         var dial: AlertDialog? = null
+        val storageManager = this.getSystemService<StorageManager>()!!
+        val uuid: UUID = storageManager.getUuidForPath(filesDir)
+        
+        list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
+            Log.i("TEST", position.toString())
+        }
 
         executor.execute {
             val data = Gson().fromJson(URL("https://${url}php/getInfoJson.php").readText(), MusicData::class.java)
@@ -55,8 +65,12 @@ class MainActivity : AppCompatActivity() {
             data.musics.forEachIndexed{ index, song ->
                 if (!files.contains(song.path)) {
                     this.openFileOutput(song.path, Context.MODE_PRIVATE).use {
-                        dial!!.setMessage("Updating data... ${index} / ${musics.size}")
-                        it.write(URL("https://${url}data/normalized/${song.path}").readBytes())
+                        dial!!.setMessage("Updating data... $index / ${musics.size}")
+                        URL("https://${url}data/normalized/${song.path}").openStream().use { stream ->
+                            val bytes = stream.readBytes()
+                            storageManager.allocateBytes(uuid, bytes.size.toLong())
+                            it.write(bytes)
+                        }
                     }
                 }
             }
@@ -65,10 +79,6 @@ class MainActivity : AppCompatActivity() {
                 dial!!.dismiss()
                 list.adapter = adapter
             }
-        }
-
-        list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
-            Log.i("TEST", position.toString())
         }
     }
 }
