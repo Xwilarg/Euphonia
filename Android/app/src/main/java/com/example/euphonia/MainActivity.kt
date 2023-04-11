@@ -2,11 +2,10 @@ package com.example.euphonia
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.media.MediaPlayer
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.os.storage.StorageManager
-import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -16,12 +15,12 @@ import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
+import androidx.core.net.toUri
 import com.example.euphonia.data.MusicData
 import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
-import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
@@ -48,10 +47,6 @@ class MainActivity : AppCompatActivity() {
         updateButton.isClickable = false
         updateButton.alpha = .5f
 
-        list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
-            Log.i("TEST", position.toString())
-        }
-
         val builder = NotificationCompat.Builder(this, "download_channel")
             .setContentTitle("Updating data...")
             .setSmallIcon(R.drawable.icon)
@@ -72,10 +67,18 @@ class MainActivity : AppCompatActivity() {
         }
 
         executor.execute {
+            // Download JSON data
             val data = Gson().fromJson(URL("https://${url}php/getInfoJson.php").readText(), MusicData::class.java)
 
-            val files = this.fileList()
+            // Callback when we click on a song
+            list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
+                val song = data.musics[position]
+                val media = MediaPlayer.create(this, File(filesDir, song.path).toUri())
+                media.start()
+            }
 
+            // Download missing songs
+            val files = this.fileList()
             data.musics.forEachIndexed{ index, song ->
                 if (!files.contains(song.path)) {
                     updateList()
