@@ -2,10 +2,8 @@
   "name": "euphonia",
   "version": "1.0.0",
   "description": "An easy way to store and listen to your music",
-  "main": "index.js",
   "scripts": {
-    "build": "esbuild src/getMusics.js --bundle --minify --sourcemap --outfile=js/getMusics.js",
-    "start": "npm run build && electron ."
+    "build": "esbuild src/getMusics.js --bundle --minify --sourcemap --outfile=js/getMusics.js"
   },
   "repository": {
     "type": "git",

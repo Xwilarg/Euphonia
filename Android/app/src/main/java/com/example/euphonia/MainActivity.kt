@@ -37,9 +37,21 @@ import java.util.concurrent.Executors
 
 
 class MainActivity : AppCompatActivity() {
+    lateinit var controller: MediaController
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
+        var controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        controllerFuture.addListener(
+            {
+                controller = controllerFuture.get()
+                findViewById<PlayerControlView>(R.id.musicPlayer).player = controller
+            },
+            MoreExecutors.directExecutor()
+        )
     }
 
     fun updateData(view: View) {
@@ -77,13 +89,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
-        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture.addListener(
-            { findViewById<PlayerControlView>(R.id.musicPlayer).player = controllerFuture.get() },
-            MoreExecutors.directExecutor()
-        )
-
         executor.execute {
             // Download JSON data
             val data = Gson().fromJson(URL("https://${url}php/getInfoJson.php").readText(), MusicData::class.java)
@@ -102,10 +107,9 @@ class MainActivity : AppCompatActivity() {
                             .build()
                     )
                     .build()
-                controllerFuture.get().setMediaItem(item)
-                controllerFuture.get().play()
-
-                Log.i("test", "TEST")
+                controller.setMediaItem(item)
+                controller.prepare()
+                controller.play()
             }
 
             // Download missing songs
