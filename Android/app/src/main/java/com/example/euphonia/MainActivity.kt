@@ -19,6 +19,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
 import java.io.File
@@ -40,25 +41,11 @@ class MainActivity : AppCompatActivity() {
         mediaSession = MediaSessionCompat(this, "music")
         mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setPlayer(musicPlayer.player)
-
-        val notificationManager = NotificationManagerCompat.from(this)
-
-        val notificationBuilder = NotificationCompat.Builder(this, "music_channel")
-            .setSmallIcon(R.drawable.icon)
-            .setStyle(
-                androidx.media.app.NotificationCompat.MediaStyle()
-                .setMediaSession(mediaSession.sessionToken)
-            )
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
-
-        musicPlayer.player!!.addListener(object : Player.Listener {
-            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
-                super.onMediaMetadataChanged(mediaMetadata)
-                notificationBuilder.setContentTitle(mediaMetadata.title)
-                    .setContentText("${mediaMetadata.artist} - ${mediaMetadata.albumTitle}")
-                notificationManager.notify(2, notificationBuilder.build())
-            }
-        })
+        val notificationManager = PlayerNotificationManager.Builder(this, 2, "music_channel")
+            .setSmallIconResourceId(R.drawable.icon)
+            .build()
+        notificationManager.setMediaSessionToken(mediaSession.sessionToken)
+        notificationManager.setPlayer(musicPlayer.player)
     }
 
     override fun onDestroy() {
