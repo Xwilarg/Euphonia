@@ -25,6 +25,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.session.MediaController
 import androidx.media3.session.MediaSessionService
 import androidx.media3.session.SessionToken
+import androidx.media3.ui.PlayerControlView
 import com.example.euphonia.data.MusicData
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
@@ -79,10 +80,7 @@ class MainActivity : AppCompatActivity() {
         val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
         controllerFuture.addListener(
-            {
-                Log.i("DEBUG", controllerFuture.get().mediaMetadata.title.toString())
-            /*playerView.player = controllerFuture.get()*/
-            },
+            { findViewById<PlayerControlView>(R.id.musicPlayer).player = controllerFuture.get() },
             MoreExecutors.directExecutor()
         )
 
