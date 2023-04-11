@@ -129,7 +129,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Download missing songs
-            data.musics.forEachIndexed{ index, song ->
+            data.musics.reversed().forEachIndexed{ index, song ->
                 if (!File(filesDir, "${url}music/${song.path}").exists()) {
                     updateList()
                     builder.setContentText("$index / ${data.musics.size}")
