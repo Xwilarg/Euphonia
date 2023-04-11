@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -121,8 +120,8 @@ class MainActivity : AppCompatActivity() {
                 val song = data.musics[position]
 
                 val controller = findViewById<StyledPlayerView>(R.id.musicPlayer)
-                controller.player!!.setMediaItem(songToItem(data, song))
-                val selectedMusics = data.musics.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }
+                val selectedMusics = data.musics.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
+                selectedMusics.add(0, songToItem(data, song))
                 controller.player!!.setMediaItems(selectedMusics)
 
                 controller.player!!.prepare()
