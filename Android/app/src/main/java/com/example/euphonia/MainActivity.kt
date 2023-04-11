@@ -5,6 +5,8 @@ import android.app.NotificationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.support.v4.media.MediaDescriptionCompat
+import android.support.v4.media.session.MediaSessionCompat
 import android.util.Log
 import android.view.View
 import android.widget.*
@@ -16,6 +18,9 @@ import com.example.euphonia.data.MusicData
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
+import com.google.android.exoplayer2.Player
+import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
+import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
 import java.io.File
@@ -26,15 +31,24 @@ import java.util.concurrent.Executors
 
 
 class MainActivity : AppCompatActivity() {
+    lateinit var mediaSession: MediaSessionCompat
+    lateinit var mediaSessionConnector: MediaSessionConnector
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        findViewById<StyledPlayerView>(R.id.musicPlayer).player = ExoPlayer.Builder(this).build()
+        val musicPlayer = findViewById<StyledPlayerView>(R.id.musicPlayer)
+        musicPlayer.player = ExoPlayer.Builder(this).build()
+        mediaSession = MediaSessionCompat(this, "music")
+        mediaSessionConnector = MediaSessionConnector(mediaSession)
+        mediaSessionConnector.setPlayer(musicPlayer.player)
+        mediaSession.isActive = true
     }
 
     override fun onDestroy() {
         super.onDestroy()
         findViewById<StyledPlayerView>(R.id.musicPlayer).player!!.release()
+        mediaSession.release()
     }
 
     fun updateData(view: View) {
