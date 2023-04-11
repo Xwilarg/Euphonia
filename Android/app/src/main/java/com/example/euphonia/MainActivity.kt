@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             .setSmallIcon(R.drawable.icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setOngoing(true)
-        val channel = NotificationChannel("download_channel", "Data Download Progress", NotificationManager.IMPORTANCE_DEFAULT)
+        val channel = NotificationChannel("download_channel", "Data Download Progress", NotificationManager.IMPORTANCE_LOW)
         notificationManager.createNotificationChannel(channel)
         builder.setChannelId("download_channel")
         notificationManager.notify(1, builder.build())
