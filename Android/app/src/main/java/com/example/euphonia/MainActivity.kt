@@ -10,14 +10,12 @@ import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import com.example.euphonia.data.MusicData
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.ui.StyledPlayerView
@@ -41,6 +39,8 @@ class MainActivity : AppCompatActivity() {
         mediaSession = MediaSessionCompat(this, "music")
         mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setPlayer(musicPlayer.player)
+        val channel = NotificationChannel("music_channel", "Current Song", NotificationManager.IMPORTANCE_HIGH)
+        this.getSystemService<NotificationManager>()!!.createNotificationChannel(channel)
         val notificationManager = PlayerNotificationManager.Builder(this, 2, "music_channel")
             .setSmallIconResourceId(R.drawable.icon)
             .build()
@@ -75,7 +75,7 @@ class MainActivity : AppCompatActivity() {
             .setSmallIcon(R.drawable.icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setOngoing(true)
-        val channel = NotificationChannel("download_channel", "Download Channel", NotificationManager.IMPORTANCE_DEFAULT)
+        val channel = NotificationChannel("download_channel", "Data Download Progress", NotificationManager.IMPORTANCE_DEFAULT)
         notificationManager.createNotificationChannel(channel)
         builder.setChannelId("download_channel")
         notificationManager.notify(1, builder.build())
