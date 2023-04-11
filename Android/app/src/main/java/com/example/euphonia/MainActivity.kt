@@ -2,10 +2,15 @@ package com.example.euphonia
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.ComponentName
+import android.content.Intent
+import android.media.MediaMetadata
 import android.media.MediaPlayer
+import android.media.session.MediaSession
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
@@ -16,7 +21,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
+import androidx.media3.common.MediaItem
+import androidx.media3.session.MediaController
+import androidx.media3.session.MediaSessionService
+import androidx.media3.session.SessionToken
 import com.example.euphonia.data.MusicData
+import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
@@ -66,6 +76,16 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
+        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
+        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        controllerFuture.addListener(
+            {
+                Log.i("DEBUG", controllerFuture.get().mediaMetadata.title.toString())
+            /*playerView.player = controllerFuture.get()*/
+            },
+            MoreExecutors.directExecutor()
+        )
+
         executor.execute {
             // Download JSON data
             val data = Gson().fromJson(URL("https://${url}php/getInfoJson.php").readText(), MusicData::class.java)
@@ -73,8 +93,21 @@ class MainActivity : AppCompatActivity() {
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
                 val song = data.musics[position]
-                val media = MediaPlayer.create(this, File(filesDir, song.path).toUri())
-                media.start()
+
+                val item = MediaItem.Builder()
+                    .setUri((File(filesDir, song.path).toUri()))
+                    .setMediaMetadata(
+                        androidx.media3.common.MediaMetadata.Builder()
+                            .setTitle(song.name)
+                            .setAlbumTitle(song.album)
+                            .setArtist(song.artist)
+                            .build()
+                    )
+                    .build()
+                controllerFuture.get().setMediaItem(item)
+                controllerFuture.get().play()
+
+                Log.i("test", "TEST")
             }
 
             // Download missing songs
