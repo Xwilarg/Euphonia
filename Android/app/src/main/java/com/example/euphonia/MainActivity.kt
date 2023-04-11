@@ -5,13 +5,12 @@ import android.app.NotificationManager
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import com.example.euphonia.data.MusicData
@@ -20,7 +19,6 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
 import java.io.File
@@ -42,7 +40,25 @@ class MainActivity : AppCompatActivity() {
         mediaSession = MediaSessionCompat(this, "music")
         mediaSessionConnector = MediaSessionConnector(mediaSession)
         mediaSessionConnector.setPlayer(musicPlayer.player)
-        mediaSession.isActive = true
+
+        val notificationManager = NotificationManagerCompat.from(this)
+
+        val notificationBuilder = NotificationCompat.Builder(this, "music_channel")
+            .setSmallIcon(R.drawable.icon)
+            .setStyle(
+                androidx.media.app.NotificationCompat.MediaStyle()
+                .setMediaSession(mediaSession.sessionToken)
+            )
+            .setPriority(NotificationCompat.PRIORITY_HIGH)
+
+        musicPlayer.player!!.addListener(object : Player.Listener {
+            override fun onMediaMetadataChanged(mediaMetadata: MediaMetadata) {
+                super.onMediaMetadataChanged(mediaMetadata)
+                notificationBuilder.setContentTitle(mediaMetadata.title)
+                    .setContentText("${mediaMetadata.artist} - ${mediaMetadata.albumTitle}")
+                notificationManager.notify(2, notificationBuilder.build())
+            }
+        })
     }
 
     override fun onDestroy() {
