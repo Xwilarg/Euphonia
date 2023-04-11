@@ -1,6 +1,8 @@
 package com.example.euphonia
 
 import android.app.Notification
+import android.app.NotificationChannel
+import android.app.NotificationChannel.DEFAULT_CHANNEL_ID
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Bundle
@@ -55,11 +57,14 @@ class MainActivity : AppCompatActivity() {
             Log.i("TEST", position.toString())
         }
 
-        val builder = NotificationCompat.Builder(this, "notify_download")
+        val builder = NotificationCompat.Builder(this, "download_channel")
             .setContentTitle("Updating data...")
             .setSmallIcon(R.drawable.icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setOngoing(true)
+        val channel = NotificationChannel("download_channel", "Download Channel", NotificationManager.IMPORTANCE_DEFAULT)
+        notificationManager.createNotificationChannel(channel)
+        builder.setChannelId("download_channel")
         notificationManager.notify(1, builder.build())
 
         executor.execute {
@@ -72,7 +77,7 @@ class MainActivity : AppCompatActivity() {
             data.musics.forEachIndexed{ index, song ->
                 if (!files.contains(song.path)) {
                     this.openFileOutput(song.path, Context.MODE_PRIVATE).use {
-                        builder.setContentText("Updating data... $index / ${musics.size}")
+                        builder.setContentText("$index / ${musics.size}")
                         notificationManager.notify(1, builder.build())
                         URL("https://${url}data/normalized/${song.path}").openStream().use { stream ->
                             val bytes = stream.readBytes()
