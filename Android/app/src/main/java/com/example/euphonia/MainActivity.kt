@@ -2,11 +2,11 @@ package com.example.euphonia
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
@@ -103,15 +103,17 @@ class MainActivity : AppCompatActivity() {
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
                 val song = data.musics[position]
+                val albumPath = data.albums[song.album]?.path
 
                 val controller = findViewById<StyledPlayerView>(R.id.musicPlayer)
                 val item = MediaItem.Builder()
-                    .setUri((File(filesDir, "${url}music/${song.path}").toUri()))
+                    .setUri(File(filesDir, "${url}music/${song.path}").toUri())
                     .setMediaMetadata(
                         MediaMetadata.Builder()
                             .setTitle(song.name)
                             .setAlbumTitle(song.album)
                             .setArtist(song.artist)
+                            .setArtworkUri(if (albumPath == null) null else File(filesDir, "${url}icon/${albumPath}").toUri())
                             .build()
                     )
                     .build()
@@ -134,7 +136,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     updateList()
                 }
-                val albumPath = data.albums[song.album]!!.path
+                val albumPath = data.albums[song.album]?.path
                 if (albumPath != null && !files.contains("${url}icon/${albumPath}")) {
                     updateList()
                     notificationManager.notify(1, builder.build())
