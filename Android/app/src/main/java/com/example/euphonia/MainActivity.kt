@@ -42,9 +42,7 @@ class MainActivity : AppCompatActivity() {
 
         val list = findViewById<ListView>(R.id.musicData)
 
-        val storageManager = this.getSystemService<StorageManager>()!!
         val notificationManager = this.getSystemService<NotificationManager>()!!
-        val uuid: UUID = storageManager.getUuidForPath(filesDir)
 
         val updateButton = findViewById<Button>(R.id.refreshData)
         updateButton.isClickable = false
@@ -64,32 +62,42 @@ class MainActivity : AppCompatActivity() {
         builder.setChannelId("download_channel")
         notificationManager.notify(1, builder.build())
 
+        val downloaded = mutableListOf<String>()
+
+        val updateList = {
+            handler.post {
+                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, downloaded)
+                list.adapter = adapter
+            }
+        }
+
         executor.execute {
             val data = Gson().fromJson(URL("https://${url}php/getInfoJson.php").readText(), MusicData::class.java)
-            val musics = data.musics.map { it.name }
-            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, musics)
 
             val files = this.fileList()
 
             data.musics.forEachIndexed{ index, song ->
                 if (!files.contains(song.path)) {
-                    builder.setContentText("$index / ${musics.size}")
+                    updateList()
+                    builder.setContentText("$index / ${data.musics.size}")
                     notificationManager.notify(1, builder.build())
                     URL("https://${url}data/normalized/${song.path}").openStream().use { stream ->
                         FileOutputStream(File(filesDir, song.path)).use { output ->
                             stream.copyTo(output)
                         }
                     }
+                    updateList()
                 }
+                downloaded.add(song.name)
             }
 
             builder
-                .setContentText("${musics.size} / ${musics.size}")
+                .setContentText("${data.musics.size} / ${data.musics.size}")
                 .setOngoing(false)
             notificationManager.notify(1, builder.build())
+            updateList()
 
             handler.post {
-                list.adapter = adapter
                 updateButton.isClickable = true
                 updateButton.alpha = 1f
             }
