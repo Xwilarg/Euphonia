@@ -98,6 +98,10 @@ class MainActivity : AppCompatActivity() {
 
         val songToItem = fun(data: MusicData, song: Song):MediaItem {
             val albumPath = data.albums[song.album]?.path
+            val uri = if (song.album == null)
+                null
+            else
+                File(filesDir, "${url}icon/${albumPath}").toUri()
             return MediaItem.Builder()
             .setUri(File(filesDir, "${url}music/${song.path}").toUri())
             .setMediaMetadata(
@@ -105,7 +109,7 @@ class MainActivity : AppCompatActivity() {
                     .setTitle(song.name)
                     .setAlbumTitle(song.album)
                     .setArtist(song.artist)
-                    .setArtworkUri(if (albumPath == null) null else File(filesDir, "${url}icon/${albumPath}").toUri())
+                    .setArtworkUri(uri)
                     .build()
             )
             .build()
@@ -117,7 +121,7 @@ class MainActivity : AppCompatActivity() {
 
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
-                val song = data.musics[position]
+                val song = data.musics[data.musics.size - position - 1]
 
                 val controller = findViewById<PlayerView>(R.id.musicPlayer)
                 val selectedMusics = data.musics.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
@@ -142,7 +146,7 @@ class MainActivity : AppCompatActivity() {
                     updateList()
                 }
                 val albumPath = data.albums[song.album]?.path
-                if (albumPath != null && !File(filesDir, "${url}icon/${albumPath}").exists()) {
+                if (song.album != null && !File(filesDir, "${url}icon/${albumPath}").exists()) {
                     updateList()
                     notificationManager.notify(1, builder.build())
                     URL("https://${url}data/icon/${albumPath}").openStream().use { stream ->

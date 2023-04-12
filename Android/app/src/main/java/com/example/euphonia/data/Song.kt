@@ -5,6 +5,7 @@ data class Song(
     val path: String,
     val artist: String,
     val playlist: String,
-    val album: String,
-    val source: String
+    val album: String?,
+    val source: String?,
+    val type: String?
 )
