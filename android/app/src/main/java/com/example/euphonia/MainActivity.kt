@@ -1,6 +1,5 @@
 package com.example.euphonia
 
-import PlaybackService
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ComponentName
@@ -17,7 +16,6 @@ import androidx.core.content.getSystemService
 import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
-import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
 import com.example.euphonia.data.MusicData
