@@ -63,7 +63,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline" />
 
-    <com.google.android.exoplayer2.ui.StyledPlayerView
+    <com.google.android.exoplayer2.ui.PlayerView
         android:id="@+id/musicPlayer"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -71,6 +71,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="@+id/guideline2">
-    </com.google.android.exoplayer2.ui.StyledPlayerView>
+    </com.google.android.exoplayer2.ui.PlayerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

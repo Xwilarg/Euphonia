@@ -19,6 +19,7 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
+import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
 import java.io.File
@@ -35,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val musicPlayer = findViewById<StyledPlayerView>(R.id.musicPlayer)
+        val musicPlayer = findViewById<PlayerView>(R.id.musicPlayer)
         musicPlayer.player = ExoPlayer.Builder(this).build()
         mediaSession = MediaSessionCompat(this, "music")
         mediaSessionConnector = MediaSessionConnector(mediaSession)
@@ -119,7 +120,7 @@ class MainActivity : AppCompatActivity() {
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
                 val song = data.musics[position]
 
-                val controller = findViewById<StyledPlayerView>(R.id.musicPlayer)
+                val controller = findViewById<PlayerView>(R.id.musicPlayer)
                 val selectedMusics = data.musics.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
                 selectedMusics.add(0, songToItem(data, song))
                 controller.player!!.setMediaItems(selectedMusics)
