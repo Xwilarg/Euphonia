@@ -91,11 +91,6 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        val mDir = File(filesDir, "${url}music")
-        if (!mDir.exists()) mDir.mkdirs()
-        val lDir = File(filesDir, "${url}icon")
-        if (!lDir.exists()) lDir.mkdirs()
-
         val songToItem = fun(data: MusicData, song: Song):MediaItem {
             val albumPath = data.albums[song.album]?.path
             val uri = if (song.album == null)
@@ -117,7 +112,20 @@ class MainActivity : AppCompatActivity() {
 
         executor.execute {
             // Download JSON data
-            val data = Gson().fromJson(URL("https://${url}php/getInfoJson.php").readText(), MusicData::class.java)
+            val text: String
+            try {
+                text = URL("https://${url}php/getInfoJson.php").readText()
+            } catch (_: Exception) {
+                updateButton.isClickable = true
+                updateButton.alpha = 1f
+                return@execute
+            }
+            val data = Gson().fromJson(text, MusicData::class.java)
+
+            val mDir = File(filesDir, "${url}music")
+            if (!mDir.exists()) mDir.mkdirs()
+            val lDir = File(filesDir, "${url}icon")
+            if (!lDir.exists()) lDir.mkdirs()
 
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
