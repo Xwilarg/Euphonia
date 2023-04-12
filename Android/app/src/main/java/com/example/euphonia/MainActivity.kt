@@ -2,6 +2,7 @@ package com.example.euphonia
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -126,6 +127,12 @@ class MainActivity : AppCompatActivity() {
             if (!mDir.exists()) mDir.mkdirs()
             val lDir = File(filesDir, "${url}icon")
             if (!lDir.exists()) lDir.mkdirs()
+
+            val sharedPref = getPreferences(Context.MODE_PRIVATE)
+            with (sharedPref.edit()) {
+                putString("remoteServer", url)
+                apply()
+            }
 
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
