@@ -10,11 +10,14 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
+        android:icon="@drawable/icon"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/Theme.Euphonia"
-        tools:targetApi="31"
-        android:icon="@drawable/icon">
+        tools:targetApi="31">
+        <activity
+            android:name=".SetupActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
