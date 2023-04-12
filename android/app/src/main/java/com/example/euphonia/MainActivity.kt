@@ -1,13 +1,13 @@
 package com.example.euphonia
 
+import PlaybackService
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.content.Context
+import android.content.ComponentName
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.support.v4.media.session.MediaSessionCompat
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -15,14 +15,14 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
 import androidx.core.net.toUri
+import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
+import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
-import com.google.android.exoplayer2.ExoPlayer
-import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.MediaMetadata
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
-import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import com.google.android.exoplayer2.ui.PlayerView
+import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
@@ -32,9 +32,6 @@ import java.util.concurrent.Executors
 
 
 class MainActivity : AppCompatActivity() {
-    lateinit var mediaSession: MediaSessionCompat
-    lateinit var mediaSessionConnector: MediaSessionConnector
-
     // Current playlist that need to be displayed
     var currentPlaylist: String? = null
 
@@ -76,7 +73,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         // Ensure remote server is init
-        val sharedPref = this.getSharedPreferences("settings", Context.MODE_PRIVATE)
+        val sharedPref = this.getSharedPreferences("settings", MODE_PRIVATE)
         val url = sharedPref.getString("remoteServer", null)
         if (url == null) {
             val intent = Intent(applicationContext, SetupActivity::class.java)
@@ -84,18 +81,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         //  Init media session
-        val musicPlayer = findViewById<PlayerView>(R.id.musicPlayer)
-        musicPlayer.player = ExoPlayer.Builder(this).build()
-        mediaSession = MediaSessionCompat(this, "music")
-        mediaSessionConnector = MediaSessionConnector(mediaSession)
-        mediaSessionConnector.setPlayer(musicPlayer.player)
-        val currSongNotifChannel = NotificationChannel("music_channel", "Current Song", NotificationManager.IMPORTANCE_HIGH)
-        this.getSystemService<NotificationManager>()!!.createNotificationChannel(currSongNotifChannel)
-        val pNotifManager = PlayerNotificationManager.Builder(this, 2, "music_channel")
-            .setSmallIconResourceId(R.drawable.icon)
-            .build()
-        pNotifManager.setMediaSessionToken(mediaSession.sessionToken)
-        pNotifManager.setPlayer(musicPlayer.player)
+        val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
+        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        controllerFuture.addListener(
+            {
+                //player = controllerFuture.get().
+                //playerView.player = controllerFuture.get()
+            },
+            MoreExecutors.directExecutor()
+        )
 
         // Update JSON info
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
@@ -120,6 +114,7 @@ class MainActivity : AppCompatActivity() {
             // Somehow the target file is missing? We need the user to go by the setup phase again
             val intent = Intent(applicationContext, SetupActivity::class.java)
             startActivity(intent)
+            return
         }
         data = Gson().fromJson(File(filesDir, "${url}info.json").readText(), MusicData::class.java)
 
@@ -157,13 +152,13 @@ class MainActivity : AppCompatActivity() {
                     val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
                     val song = filteredData[position]
 
-                    val controller = findViewById<PlayerView>(R.id.musicPlayer)
+                    //val controller = findViewById<PlayerView>(R.id.musicPlayer)
                     val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
                     selectedMusics.add(0, songToItem(data, song))
-                    controller.player!!.setMediaItems(selectedMusics)
+                    controllerFuture.get().setMediaItems(selectedMusics)
 
-                    controller.player!!.prepare()
-                    controller.player!!.play()
+                    controllerFuture.get().prepare()
+                    controllerFuture.get().play()
                 }
             }
 
@@ -204,7 +199,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        findViewById<PlayerView>(R.id.musicPlayer).player!!.release()
-        mediaSession.release()
+        //findViewById<PlayerView>(R.id.musicPlayer).player!!.release()
     }
 }

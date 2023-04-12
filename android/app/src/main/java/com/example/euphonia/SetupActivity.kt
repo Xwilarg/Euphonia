@@ -3,11 +3,10 @@ package com.example.euphonia
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import com.example.euphonia.data.MusicData
-import com.google.gson.Gson
 import java.io.File
 import java.net.URL
 import java.util.concurrent.ExecutorService
@@ -32,7 +31,8 @@ class SetupActivity : AppCompatActivity() {
             val text: String
             try {
                 text = URL("https://${url}php/getInfoJson.php").readText()
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                Log.e("Network Error", e.message.toString())
                 return@execute
             }
 
