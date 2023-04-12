@@ -100,7 +100,7 @@ class MainActivity : AppCompatActivity() {
         // Update JSON info
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
-        list = findViewById<ListView>(R.id.musicData)
+        list = findViewById(R.id.musicData)
 
         val notificationManager = this.getSystemService<NotificationManager>()!!
 
@@ -155,10 +155,10 @@ class MainActivity : AppCompatActivity() {
                 } else {
                     // Clicked on a song
                     val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
-                    val song = downloaded[downloaded.size - position - 1]
+                    val song = filteredData[position]
 
                     val controller = findViewById<PlayerView>(R.id.musicPlayer)
-                    val selectedMusics = downloaded.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
+                    val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
                     selectedMusics.add(0, songToItem(data, song))
                     controller.player!!.setMediaItems(selectedMusics)
 
@@ -168,7 +168,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             // Download missing songs
-            data.musics.reversed().forEachIndexed{ index, song ->
+            data.musics.forEachIndexed{ index, song ->
                 if (!File(filesDir, "${url}music/${song.path}").exists()) {
                     updateList()
                     builder.setContentText("$index / ${data.musics.size}")
@@ -191,7 +191,7 @@ class MainActivity : AppCompatActivity() {
                     }
                     updateList()
                 }
-                downloaded.add(song)
+                downloaded.add(0, song)
             }
 
             builder
