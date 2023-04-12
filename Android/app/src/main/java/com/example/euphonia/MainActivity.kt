@@ -20,7 +20,6 @@ import com.google.android.exoplayer2.MediaMetadata
 import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import com.google.android.exoplayer2.ui.PlayerView
-import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
@@ -52,7 +51,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        findViewById<StyledPlayerView>(R.id.musicPlayer).player!!.release()
+        findViewById<PlayerView>(R.id.musicPlayer).player!!.release()
         mediaSession.release()
     }
 
