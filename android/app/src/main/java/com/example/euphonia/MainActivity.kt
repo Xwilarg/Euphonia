@@ -35,6 +35,8 @@ class MainActivity : AppCompatActivity() {
     lateinit var mediaSession: MediaSessionCompat
     lateinit var mediaSessionConnector: MediaSessionConnector
 
+    var currentPlaylist: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -81,10 +83,21 @@ class MainActivity : AppCompatActivity() {
 
         val downloaded = mutableListOf<String>()
 
+        val data = Gson().fromJson(File(filesDir, "${url}info.json").readText(), MusicData::class.java)
+
+        var shouldDisplaySongs = data.playlists == null || data.playlists.isEmpty() || currentPlaylist != null
+
+        if (!shouldDisplaySongs) {
+            val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, data.playlists!!.map { it.value.name })
+            list.adapter = adapter
+        }
+
         val updateList = {
             handler.post {
-                val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, downloaded)
-                list.adapter = adapter
+                if (shouldDisplaySongs) {
+                    val adapter = ArrayAdapter(this, android.R.layout.simple_list_item_1, downloaded)
+                    list.adapter = adapter
+                }
             }
         }
 
@@ -107,21 +120,27 @@ class MainActivity : AppCompatActivity() {
                 .build()
         }
 
-        val data = Gson().fromJson(File(filesDir, "${url}info.json").readText(), MusicData::class.java)
-
         executor.execute {
 
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
-                val song = data.musics[data.musics.size - position - 1]
+                if (!shouldDisplaySongs) {
+                    // Clicked on a playlist element
+                    currentPlaylist = data.playlists!!.keys.elementAt(position)
+                    shouldDisplaySongs = true
+                    updateList()
+                } else {
+                    // Clicked on a song
+                    val song = data.musics[data.musics.size - position - 1]
 
-                val controller = findViewById<PlayerView>(R.id.musicPlayer)
-                val selectedMusics = data.musics.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
-                selectedMusics.add(0, songToItem(data, song))
-                controller.player!!.setMediaItems(selectedMusics)
+                    val controller = findViewById<PlayerView>(R.id.musicPlayer)
+                    val selectedMusics = data.musics.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
+                    selectedMusics.add(0, songToItem(data, song))
+                    controller.player!!.setMediaItems(selectedMusics)
 
-                controller.player!!.prepare()
-                controller.player!!.play()
+                    controller.player!!.prepare()
+                    controller.player!!.play()
+                }
             }
 
             // Download missing songs
