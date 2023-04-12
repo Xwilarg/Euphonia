@@ -18,6 +18,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.media3.ui.PlayerView
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
 import com.google.common.util.concurrent.MoreExecutors
@@ -79,12 +80,12 @@ class MainActivity : AppCompatActivity() {
         }
 
         //  Init media session
+        val videoView = findViewById<PlayerView>(R.id.player)
         val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
         controllerFuture.addListener(
             {
-                //player = controllerFuture.get().
-                //playerView.player = controllerFuture.get()
+                videoView.player = controllerFuture.get()
             },
             MoreExecutors.directExecutor()
         )
@@ -150,7 +151,6 @@ class MainActivity : AppCompatActivity() {
                     val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
                     val song = filteredData[position]
 
-                    //val controller = findViewById<PlayerView>(R.id.musicPlayer)
                     val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
                     selectedMusics.add(0, songToItem(data, song))
                     controllerFuture.get().setMediaItems(selectedMusics)
@@ -197,6 +197,5 @@ class MainActivity : AppCompatActivity() {
 
     override fun onDestroy() {
         super.onDestroy()
-        //findViewById<PlayerView>(R.id.musicPlayer).player!!.release()
     }
 }
