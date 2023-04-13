@@ -13,7 +13,6 @@ import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
-import androidx.core.net.toUri
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
@@ -121,10 +120,10 @@ class MainActivity : AppCompatActivity() {
 
         val songToItem = fun(data: MusicData, song: Song): MediaItem {
             val albumPath = data.albums[song.album]?.path
-            val uri = if (song.album == null)
+            val file = if (song.album == null)
                 null
             else
-                File(filesDir, "${url}icon/${albumPath}").toUri()
+                File(filesDir, "${url}icon/${albumPath}")
             return MediaItem.Builder()
                 .setMediaId(File(filesDir, "${url}music/${song.path}").path)
                 .setMediaMetadata(
@@ -132,7 +131,7 @@ class MainActivity : AppCompatActivity() {
                         .setTitle(song.name)
                         .setAlbumTitle(song.album)
                         .setArtist(song.artist)
-                        .setArtworkUri(uri)
+                        .setArtworkData(file?.readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
                         .build()
                 )
                 .build()
