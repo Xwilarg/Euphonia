@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
             else
                 File(filesDir, "${url}icon/${albumPath}").toUri()
             return MediaItem.Builder()
-                .setUri(File(filesDir, "${url}music/${song.path}").toUri())
+                .setMediaId(File(filesDir, "${url}music/${song.path}").path)
                 .setMediaMetadata(
                     MediaMetadata.Builder()
                         .setTitle(song.name)
