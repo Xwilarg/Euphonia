@@ -4,6 +4,8 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -13,6 +15,7 @@ import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
+import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
@@ -22,6 +25,7 @@ import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -56,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     fun updateList() {
         val handler = Handler(Looper.getMainLooper())
         handler.post {
-            var adapter =
+            val adapter =
                 if (shouldDisplaySongs()) {
                     ArrayAdapter(this, android.R.layout.simple_list_item_1, downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }.map { it.name })
                 } else {
@@ -120,10 +124,13 @@ class MainActivity : AppCompatActivity() {
 
         val songToItem = fun(data: MusicData, song: Song): MediaItem {
             val albumPath = data.albums[song.album]?.path
-            val file = if (song.album == null)
-                null
-            else
-                File(filesDir, "${url}icon/${albumPath}")
+            val file = if (song.album == null) {
+                val bmp = resources.getDrawable(R.drawable.cd).toBitmap(100, 100)
+                val stream = ByteArrayOutputStream()
+                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                stream.toByteArray()
+            } else
+                File(filesDir, "${url}icon/${albumPath}").readBytes()
             return MediaItem.Builder()
                 .setMediaId(File(filesDir, "${url}music/${song.path}").path)
                 .setMediaMetadata(
@@ -131,7 +138,7 @@ class MainActivity : AppCompatActivity() {
                         .setTitle(song.name)
                         .setAlbumTitle(song.album)
                         .setArtist(song.artist)
-                        .setArtworkData(file?.readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                        .setArtworkData(file, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
                         .build()
                 )
                 .build()
