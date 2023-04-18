@@ -125,7 +125,7 @@ class MainActivity : AppCompatActivity() {
         val songToItem = fun(data: MusicData, song: Song): MediaItem {
             val albumPath = data.albums[song.album]?.path
             val file = if (song.album == null) {
-                val bmp = resources.getDrawable(R.drawable.cd).toBitmap(100, 100)
+                val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
                 val stream = ByteArrayOutputStream()
                 bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
                 stream.toByteArray()
