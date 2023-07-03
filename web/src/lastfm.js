@@ -32,7 +32,7 @@ async function makeAuthCallAsync(method, params)
 
     const data = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
-        data.append(key, encodeURI(value));
+        data.append(key, value);
     }
     data.append("method", method);
     data.append("api_key", apiKey);
