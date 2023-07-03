@@ -4,6 +4,7 @@ let json;
 
 // ID of the current playlist
 let currentPlaylist = null;
+let currSong = null;
 
 // Next songs to play
 let playlist = [];
@@ -65,6 +66,7 @@ function nextSong() {
 
     // Select current song and move playlist forward
     let elem = json.musics[playlist[playlistIndex]];
+    currSong = elem;
     playlistIndex++;
 
     // Load song and play it
@@ -305,6 +307,9 @@ function loadPage() {
     player.addEventListener('loadedmetadata', (_) => {
         document.getElementById("maxDuration").innerHTML = Math.trunc(player.duration / 60) + ":" + addZero(Math.trunc(player.duration % 60));
         document.getElementById("durationSlider").max = player.duration;
+
+        // A song was played
+        window.lastfm_registerScrobbleAsync(currSong.name, currSong.artist, currSong.album, player.duration);
     });
     player.addEventListener('timeupdate', (_) => {
         let html = "";
