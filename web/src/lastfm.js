@@ -5,7 +5,7 @@ function getCookie(name) {
 }
 
 async function getApiKeyAsync() {
-    const resp = await fetch(url + "php/getLastfmApiKey.php");
+    const resp = await fetch(window.config_remoteUrl + "php/getLastfmApiKey.php");
     return await resp.text();
 }
 
@@ -13,7 +13,7 @@ window.lastfm_initAsync = lastfm_initAsync;
 async function lastfm_initAsync()
 {
     document.getElementById("lastfmLogin").addEventListener("click", async () => {
-        window.location.href = `http://www.last.fm/api/auth/?api_key=${getApiKeyAsync()}&cb=${window.location.origin}`
+        window.location.href = `http://www.last.fm/api/auth/?api_key=${await getApiKeyAsync()}&cb=${window.location.origin}`;
     });
 
     const url = new URL(window.location.href);
@@ -21,7 +21,7 @@ async function lastfm_initAsync()
 
     if (token !== undefined && token !== null) // We were redirected here from last.fm
     {
-        const apiKey = getApiKeyAsync();
+        const apiKey = await getApiKeyAsync();
         const signature = md5(`api_key${apiKey}methodauth.getSessiontoken${token}`)
 
         const data = new URLSearchParams();
@@ -44,5 +44,5 @@ async function lastfm_initAsync()
         //document.cookie = `lastfm_token=${json.token}; max-age=86400; path=/; SameSite=Strict`;
     }
 
-    lastfmStatus = getCookie("lastfm_token") == undefined ? "Unactive" : "Active";
+    document.getElementById("lastfmStatus").innerHTML = getCookie("lastfm_token") == undefined ? "Unactive" : "Active";
 }

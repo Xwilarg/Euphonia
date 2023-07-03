@@ -2,10 +2,6 @@ import * as wanakana from 'wanakana';
 
 let json;
 
-// URL of the remote server
-// Left empty if stored at the same place as the webpage
-let url = "";
-
 // ID of the current playlist
 let currentPlaylist = null;
 
@@ -73,11 +69,11 @@ function nextSong() {
 
     // Load song and play it
     let player = document.getElementById("player");
-    player.src = `${url}/data/normalized/${elem.path}`;
+    player.src = `${window.config_remoteUrl}/data/normalized/${elem.path}`;
     player.play();
 
     // Display song data
-    document.getElementById("currentImage").src = `${url}${getAlbumImage(elem)}`;
+    document.getElementById("currentImage").src = `${window.config_remoteUrl}${getAlbumImage(elem)}`;
     document.getElementById("currentSong").innerHTML = `${elem.name}<br/>by ${elem.artist}`;
 
     // Set media session
@@ -85,7 +81,7 @@ function nextSong() {
         title: elem.name,
         artist: elem.artist,
         artwork: [
-            { src: `${url}${getAlbumImage(elem)}` }
+            { src: `${window.config_remoteUrl}${getAlbumImage(elem)}` }
         ]
     });
 
@@ -143,7 +139,7 @@ function getPlaylistHtml(id, name) {
         if (elem.album === null) {
             continue;
         }
-        let img = url + getAlbumImage(elem);
+        let img = window.config_remoteUrl + getAlbumImage(elem);
         if (mostPresents[img] === undefined) {
             mostPresents[img] = 1;
         } else {
@@ -223,7 +219,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
 
     let indexs = [];
     for (let elem of musics) {
-        let albumImg = url + getAlbumImage(elem);
+        let albumImg = window.config_remoteUrl + getAlbumImage(elem);
         html += `
         <div class="song ${sanitize(elem.name)}">
             <img id="img-${id}-${elem.id}" src="${albumImg}"/><br/>
@@ -257,7 +253,7 @@ let oldRanges = "";
 
 async function loadSongsAsync() {
     // Get music infos
-    const resp = await fetch(url + "php/getInfoJson.php");
+    const resp = await fetch(window.config_remoteUrl + "php/getInfoJson.php");
     json = await resp.json();
 
     // Update JSON names
@@ -422,9 +418,9 @@ function chooseDisplay() {
 
 // Called when changing remote server URL
 async function resetServer() {
-    url = document.getElementById("remoteUrl").value
-    if (!url.endsWith("/")) {
-        url += "/";
+    window.config_remoteUrl = document.getElementById("remoteUrl").value
+    if (!window.config_remoteUrl.endsWith("/")) {
+        window.config_remoteUrl += "/";
     }
     await loadSongsAsync();
     chooseDisplay();
@@ -432,6 +428,8 @@ async function resetServer() {
 
 window.musics_initAsync = musics_initAsync;
 async function musics_initAsync() {
+    window.config_remoteUrl = "";
+
     // Buttons
     document.getElementById("remoteUrl").addEventListener("click", resetServer);
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
