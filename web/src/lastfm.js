@@ -25,14 +25,14 @@ async function makeAuthCallAsync(method, params)
 
     let tokenUrl = window.config_remoteUrl + `php/getAuthUrl.php?sk=${sk}&method=${method}`;
     for (const [key, value] of Object.entries(params)) {
-        tokenUrl += `&${key}=${value}`;
+        tokenUrl += `&${key}=${encodeURI(value)}`;
     }
     const signResp = await fetch(tokenUrl);
     const signature = await signResp.text();
 
     const data = new URLSearchParams();
     for (const [key, value] of Object.entries(params)) {
-        data.append(key, value);
+        data.append(key, encodeURI(value));
     }
     data.append("method", method);
     data.append("api_key", apiKey);
@@ -53,7 +53,7 @@ window.lastfm_registerNowPlayingAsync = lastfm_registerNowPlayingAsync;
 async function lastfm_registerNowPlayingAsync(song, artist, album, length)
 {
     const json = await makeAuthCallAsync("track.updateNowPlaying", {
-        artist : artist,
+        artist: artist,
         track: song,
         album: album,
         duration: Math.ceil(length)
@@ -65,7 +65,7 @@ window.lastfm_registerScrobbleAsync = lastfm_registerScrobbleAsync;
 async function lastfm_registerScrobbleAsync(song, artist, album, length)
 {
     const json = await makeAuthCallAsync("track.scrobble", {
-        artist : artist,
+        artist: artist,
         track: song,
         album: album,
         duration: Math.ceil(length)
