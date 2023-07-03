@@ -5,19 +5,32 @@ if (!isset($_GET["method"]))
     return;
 }
 
+$token = "";
+$sk = "";
 if (isset($_GET["token"]))
 {
-    $url = "token" . $_GET["token"]; 
+    $token = "token" . $_GET["token"];
 }
 else if (isset($_GET["sk"]))
 {
-    $url = "sk" . $_GET["sk"]; 
+    $sk = "sk" . $_GET["sk"];
 }
 else
 {
     header("Status: 400 Bad Request");
     return;
 }
+
 $credentials = json_decode(file_get_contents("../data/credentials.json"), true);
-$url = "api_key" . $credentials['apiKey'] . "method" . $_GET["method"] . $url . $credentials['secret'];
+
+// TODO: last.fm auth is such a massive pain and I don't want to spent 4 hours doing parsing for it
+$url = "api_key" . $credentials['apiKey'];
+if (isset($_GET["album"])) $url .= "album" . $_GET["album"];
+if (isset($_GET["artist"])) $url .= "artist" . $_GET["artist"];
+if (isset($_GET["duration"])) $url .= "duration" . $_GET["duration"];
+$url .= "method" . $_GET["method"];
+$url .= $sk;
+$url .= $token;
+if (isset($_GET["track"])) $url .= "track" . $_GET["track"];
+$url .= $credentials['secret'];
 echo(md5($url));

@@ -18,7 +18,11 @@ async function makeAuthCallAsync(method, params)
     }
 
     const sk = getCookie("lastfm_key");
-    const signResp = await fetch(window.config_remoteUrl + `php/getAuthUrl.php?sk=${sk}&method=${method}`);
+    let tokenUrl = window.config_remoteUrl + `php/getAuthUrl.php?sk=${sk}&method=${method}`;
+    for (const [key, value] of Object.entries(params)) {
+        tokenUrl += `&${key}=${value}`;
+    }
+    const signResp = await fetch(tokenUrl);
     const signature = await signResp.text();
 
     const data = new URLSearchParams();
@@ -47,7 +51,7 @@ async function lastfm_registerScrobbleAsync(song, artist, album, length)
         artist : artist,
         track: song,
         album: album,
-        duration: length
+        duration: Math.ceil(length)
     });
     console.log(json);
 }
