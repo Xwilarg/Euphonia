@@ -261,12 +261,15 @@ async function loadSongsAsync() {
     json = await resp.json();
 
     // Update JSON names
-    for (let elem of json.musics) {
-        if (elem.type !== undefined && elem.type !== null) {
-            elem.name += ` (${elem.type})`;
-        }
-        if (elem.playlist === undefined || elem.playlist === null) {
-            elem.playlist = "default";
+    if (json.musics !== undefined)
+    {
+        for (let elem of json.musics) {
+            if (elem.type !== undefined && elem.type !== null) {
+                elem.name += ` (${elem.type})`;
+            }
+            if (elem.playlist === undefined || elem.playlist === null) {
+                elem.playlist = "default";
+            }
         }
     }
 }
@@ -382,7 +385,7 @@ function chooseDisplay() {
     // If parameter is not set or set to a wrong value
     if (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined) {
         // If there is no playlist we just display the default one
-        if (json.musics.some(x => x.playlist !== "default")) {
+        if (json.musics !== undefined && json.musics.some(x => x.playlist !== "default")) {
             if (playlist === "default") {
                 playlist = "default";
             } else {
