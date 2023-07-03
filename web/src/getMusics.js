@@ -4,7 +4,14 @@ let json;
 
 // ID of the current playlist
 let currentPlaylist = null;
+// JSON data of the song being played
 let currSong = null;
+// Current time we listened to the song
+let timeListened = 0;
+// Every update of timeListened we store the last index in song duration
+let lastTimeUpdate = 0;
+// Actual song duration, updated when metadata are loaded
+let trackDuration = 0;
 
 // Next songs to play
 let playlist = [];
@@ -49,6 +56,8 @@ function updateSongHighlightColor() {
 
 // Play the next song of the playlist
 function nextSong() {
+    updateScrobblerAsync();
+
     // Displayer player if not here
     document.getElementById("fullPlayer").hidden = false;
 
@@ -66,7 +75,11 @@ function nextSong() {
 
     // Select current song and move playlist forward
     let elem = json.musics[playlist[playlistIndex]];
+    console.log(`[Song] Playing ${elem.name} by ${elem.artist} from ${elem.album}`);
     currSong = elem;
+    timeListened = 0;
+    lastTimeUpdate = 0;
+    trackDuration = 0;
     playlistIndex++;
 
     // Load song and play it
@@ -272,6 +285,15 @@ async function loadSongsAsync() {
     }
 }
 
+async function updateScrobblerAsync() {
+    // last.fm documentation says a song can be srobbled if we listended for more than its halve, or more than 4 minutes
+    console.log(`[Song] Last song was listened for a duration of ${timeListened} out of ${trackDuration} seconds`);
+    if (currSong !== null && trackDuration != 0 && (timeListened > trackDuration / 2 || timeListened > 240))
+    {
+        window.lastfm_registerScrobbleAsync(currSong.name, currSong.artist, currSong.album, trackDuration);
+    }
+}
+
 function loadPage() {
     document.getElementById("back").addEventListener("click", () => {
         window.location=window.location.origin + window.location.pathname;
@@ -309,7 +331,8 @@ function loadPage() {
         document.getElementById("durationSlider").max = player.duration;
 
         // A song was played
-        window.lastfm_registerScrobbleAsync(currSong.name, currSong.artist, currSong.album, player.duration);
+        window.lastfm_registerNowPlayingAsync(currSong.name, currSong.artist, currSong.album, player.duration);
+        trackDuration = player.duration;
     });
     player.addEventListener('timeupdate', (_) => {
         let html = "";
@@ -325,6 +348,11 @@ function loadPage() {
         }
         document.getElementById("currDuration").innerHTML = Math.trunc(player.currentTime / 60) + ":" + addZero(Math.trunc(player.currentTime % 60));
         document.getElementById("durationSlider").value = player.currentTime;
+        if (player.currentTime - lastTimeUpdate < 1) // If it's more than 1s, we can assume the user moved the cursor elsewhere in the song
+        {
+            timeListened += player.currentTime - lastTimeUpdate;
+        }
+        lastTimeUpdate = player.currentTime;
     });
 
     // Audio player config
@@ -473,3 +501,10 @@ window.onkeydown = function(e){
         player.currentTime += 5.0;
     }
 }
+
+/*
+window.onbeforeunload = async function() {
+    //TODO
+    //await updateScrobblerAsync();
+}
+*/
