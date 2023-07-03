@@ -4,6 +4,7 @@ js/
 # Configuration and data
 data/*
 !data/README.md
+!data/credentials.json
 config.json
 tmp/
 

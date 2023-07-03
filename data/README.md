@@ -1,1 +1,1 @@
-Place your musics here
+Place your musics here using the script in scripts/

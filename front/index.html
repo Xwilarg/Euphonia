@@ -3,7 +3,9 @@
     <head>
         <title>Euphonia</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="js/lastfm.js"></script>
         <script src="js/getMusics.js"></script>
+        <script src="js/init.js"></script>
         <link rel="stylesheet" href="css/index.css"/>
         <link rel="stylesheet" href="css/player.css"/>
     </head>
@@ -17,6 +19,9 @@
             Remote server: <input type="text"/><button id="remoteUrl">Reset</button>
             <hr/>
             <button id="minimalistMode">Toggle minimalist mode</button><br/>
+            <button id="lastfmLogin">Login with last.fm</button><br/>
+            <small>This will use cookies to store your token</small><br/>
+            last.fm status: <span id="lastfmStatus"></span><br/>
             <button id="exportSources">Export source links</button>
             <textarea readonly id="exportSourcesField" rows="30"></textarea>
         </div>

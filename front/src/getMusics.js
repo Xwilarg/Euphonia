@@ -421,7 +421,7 @@ async function resetServer() {
     chooseDisplay();
 }
 
-window.onload = async function() {
+export async function musics_initAsync() {
     // Buttons
     document.getElementById("remoteUrl").addEventListener("click", resetServer);
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
