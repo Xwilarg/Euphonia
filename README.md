@@ -2,7 +2,7 @@
 An easy way to store and listen to your music
 
 ## How to host the project?
-Clone the repository, put the content of the front and back server on your web server
+Clone the repository, run `npm i` and `npm run build` in the web folder then move its content on your web server
 
 ## How to add songs
 First you will need to download the following:

@@ -9,7 +9,8 @@ async function getApiKeyAsync() {
     return await resp.text();
 }
 
-export async function lastfm_initAsync()
+window.lastfm_initAsync = lastfm_initAsync;
+async function lastfm_initAsync()
 {
     document.getElementById("lastfmLogin").addEventListener("click", async () => {
         window.location.href = `http://www.last.fm/api/auth/?api_key=${getApiKeyAsync()}&cb=${window.location.origin}`
@@ -18,18 +19,29 @@ export async function lastfm_initAsync()
     const url = new URL(window.location.href);
     let token = url.searchParams.get("token");
 
-    if (token !== undefined && token !== null)
+    if (token !== undefined && token !== null) // We were redirected here from last.fm
     {
         const apiKey = getApiKeyAsync();
         const signature = md5(`api_key${apiKey}methodauth.getSessiontoken${token}`)
-        const url = `http://ws.audioscrobbler.com/2.0/?format=json&api_key=${apiKey}&token=${token}&api_sig=${signature}`;
 
-        const resp = await fetch(url);
+        const data = new URLSearchParams();
+        data.append("method", "auth.getSession");
+        data.append("api_key", apiKey);
+        data.append("token", token);
+        data.append("api_sig", signature);
+
+        const url = `http://ws.audioscrobbler.com/2.0/?format=json`;
+
+        const resp = await fetch(url, {
+            method: "POST",
+            body: data
+        });
+
         const json = await resp.json();
 
-        console.log(json); // TODO: Debug what is inside and store it in cookie
-        // We were redirected here from last.fm
-        //document.cookie = `lastfm_token=${signature}; max-age=86400; path=/; SameSite=Strict`;
+        console.log(json); // TODO: Debug what is inside and store it in cookie: https://www.last.fm/api/show/auth.getSession
+
+        //document.cookie = `lastfm_token=${json.token}; max-age=86400; path=/; SameSite=Strict`;
     }
 
     lastfmStatus = getCookie("lastfm_token") == undefined ? "Unactive" : "Active";

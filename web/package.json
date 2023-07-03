@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "An easy way to store and listen to your music",
   "scripts": {
-    "build": "esbuild src/getMusics.js --bundle --minify --sourcemap --outfile=js/getMusics.js"
+    "build": "esbuild src/init.js --bundle --minify --sourcemap --outfile=js/init.js && esbuild src/lastfm.js --bundle --minify --sourcemap --outfile=js/lastfm.js && esbuild src/getMusics.js --bundle --minify --sourcemap --outfile=js/getMusics.js"
   },
   "repository": {
     "type": "git",
