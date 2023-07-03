@@ -10,16 +10,16 @@ from io import BytesIO
 def is_audio(name):
     return name.endswith(".wav") or name.endswith(".mp3") or name.endswith("webm") or name.endswith(".mp4") or name.endswith(".mkv")
 
-if not os.path.exists('../data'):
-    os.makedirs('../data')
-if not os.path.exists('../data/raw'):
-    os.makedirs('../data/raw')
-if not os.path.exists('../data/icon'):
-    os.makedirs('../data/icon')
+if not os.path.exists('../web/data'):
+    os.makedirs('../web/data')
+if not os.path.exists('../web/data/raw'):
+    os.makedirs('../web/data/raw')
+if not os.path.exists('../web/data/icon'):
+    os.makedirs('../web/data/icon')
 
 data = {}
-if os.path.exists('../data/info.json'):
-    with open('../data/info.json', 'r', encoding='utf-8') as fd:
+if os.path.exists('../web/data/info.json'):
+    with open('../web/data/info.json', 'r', encoding='utf-8') as fd:
         data = json.load(fd)
 else:
     data["musics"] = []
@@ -43,7 +43,7 @@ if album is not None and album not in data["albums"]:
     cover = requests.get(coverUrl, stream=True).content
     img = Image.open(BytesIO(cover))
     rgbImg = img.convert('RGB')
-    rgbImg.save('../data/icon/' + album + '.jpg')
+    rgbImg.save('../web/data/icon/' + album + '.jpg')
 
 playlist = "default"
 if "playlists" in data:
@@ -73,7 +73,7 @@ id = str(uuid4())
 if not os.path.isdir("tmp"):
     os.mkdir("tmp")
 
-subprocess.run(["yt-dlp", url, "-o", "../data/raw/" + path + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
+subprocess.run(["yt-dlp", url, "-o", "../web/data/raw/" + path + ".%(ext)s", "-x", "--audio-format", "wav"], stderr=sys.stderr, stdout=sys.stdout)
 
 data["musics"].append({
     "name": name,
@@ -90,7 +90,7 @@ if album is not None and album not in data["albums"]:
         "path": album + ".jpg"
     }
 
-with open('../data/info.json', 'w', encoding='utf-8') as fd:
+with open('../web/data/info.json', 'w', encoding='utf-8') as fd:
     json.dump(data, fd, ensure_ascii=False)
 
 print("Done!")

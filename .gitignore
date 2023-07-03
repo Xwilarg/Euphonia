@@ -2,9 +2,9 @@
 js/
 
 # Configuration and data
-data/*
-!data/README.md
-!data/credentials.json
+web/data/*
+!web/data/README.md
+!web/data/credentials.json
 config.json
 tmp/
 
