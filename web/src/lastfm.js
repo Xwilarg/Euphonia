@@ -11,6 +11,12 @@ async function getApiKeyAsync() {
 
 async function makeAuthCallAsync(method, params)
 {
+    const apiKey = await getApiKeyAsync();
+    if (apiKey === "")
+    {
+        return;
+    }
+
     const sk = getCookie("lastfm_key");
     const signResp = await fetch(window.config_remoteUrl + `php/getAuthUrl.php?sk=${sk}&method=${method}`);
     const signature = await signResp.text();
@@ -19,7 +25,7 @@ async function makeAuthCallAsync(method, params)
     for (const [key, value] of Object.entries(params)) {
         data.append(key, value);
     }
-    data.append("method", "auth.getSession");
+    data.append("method", method);
     data.append("api_key", apiKey);
     data.append("sk", sk);
     data.append("api_sig", signature);
