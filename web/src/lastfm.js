@@ -62,12 +62,13 @@ async function lastfm_registerNowPlayingAsync(song, artist, album, length)
 }
 
 window.lastfm_registerScrobbleAsync = lastfm_registerScrobbleAsync;
-async function lastfm_registerScrobbleAsync(song, artist, album, length)
+async function lastfm_registerScrobbleAsync(song, artist, album, length, timestamp)
 {
     const json = await makeAuthCallAsync("track.scrobble", {
         artist: artist,
         track: song,
         album: album,
+        timestamp: timestamp,
         duration: Math.ceil(length)
     });
     console.log(`[last.fm] Updated track scrobbled: ${JSON.stringify(json)}`);

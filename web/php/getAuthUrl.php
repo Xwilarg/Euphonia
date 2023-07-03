@@ -31,6 +31,7 @@ if (isset($_GET["artist"])) $url .= "artist" . $_GET["artist"];
 if (isset($_GET["duration"])) $url .= "duration" . $_GET["duration"];
 $url .= "method" . $_GET["method"];
 $url .= $sk;
+if (isset($_GET["timestamp"])) $url .= "timestamp" . $_GET["timestamp"];
 $url .= $token;
 if (isset($_GET["track"])) $url .= "track" . $_GET["track"];
 $url .= $credentials['secret'];

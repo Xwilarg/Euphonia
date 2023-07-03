@@ -12,6 +12,7 @@ let timeListened = 0;
 let lastTimeUpdate = 0;
 // Actual song duration, updated when metadata are loaded
 let trackDuration = 0;
+let timeStarted;
 
 // Next songs to play
 let playlist = [];
@@ -80,6 +81,7 @@ function nextSong() {
     timeListened = 0;
     lastTimeUpdate = 0;
     trackDuration = 0;
+    timeStarted = new Date().valueOf();
     playlistIndex++;
 
     // Load song and play it
@@ -290,7 +292,7 @@ async function updateScrobblerAsync() {
     console.log(`[Song] Last song was listened for a duration of ${timeListened} out of ${trackDuration} seconds`);
     if (currSong !== null && trackDuration != 0 && (timeListened > trackDuration / 2 || timeListened > 240))
     {
-        window.lastfm_registerScrobbleAsync(currSong.name, currSong.artist, currSong.album, trackDuration);
+        window.lastfm_registerScrobbleAsync(currSong.name, currSong.artist, currSong.album, trackDuration, timeStarted);
     }
 }
 
