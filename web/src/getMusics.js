@@ -81,7 +81,7 @@ function nextSong() {
     timeListened = 0;
     lastTimeUpdate = 0;
     trackDuration = 0;
-    timeStarted = new Date().valueOf();
+    timeStarted = Math.floor(Date.now() / 1000);
     playlistIndex++;
 
     // Load song and play it
