@@ -9,6 +9,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -118,33 +119,42 @@ class MainActivity : AppCompatActivity() {
             startActivity(intent)
             return
         }
-        data = Gson().fromJson(File(filesDir, "${url}info.json").readText(), MusicData::class.java)
-
-        updateList()
-
-        val songToItem = fun(data: MusicData, song: Song): MediaItem {
-            val albumPath = data.albums[song.album]?.path
-            val file = if (song.album == null) {
-                val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
-                val stream = ByteArrayOutputStream()
-                bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                stream.toByteArray()
-            } else
-                File(filesDir, "${url}icon/${albumPath}").readBytes()
-            return MediaItem.Builder()
-                .setMediaId(File(filesDir, "${url}music/${song.path}").path)
-                .setMediaMetadata(
-                    MediaMetadata.Builder()
-                        .setTitle(song.name)
-                        .setAlbumTitle(song.album)
-                        .setArtist(song.artist)
-                        .setArtworkData(file, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-                        .build()
-                )
-                .build()
-        }
 
         executor.execute {
+            // Update data from remove server
+            val text: String
+            try {
+                text = URL("https://${url}php/getInfoJson.php").readText()
+                File(filesDir, "${url}info.json").writeText(text)
+            } catch (e: Exception) {
+                Log.e("Network Error", e.message.toString())
+            }
+
+            data = Gson().fromJson(File(filesDir, "${url}info.json").readText(), MusicData::class.java)
+
+            updateList()
+
+            val songToItem = fun(data: MusicData, song: Song): MediaItem {
+                val albumPath = data.albums[song.album]?.path
+                val file = if (song.album == null) {
+                    val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
+                    val stream = ByteArrayOutputStream()
+                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+                    stream.toByteArray()
+                } else
+                    File(filesDir, "${url}icon/${albumPath}").readBytes()
+                return MediaItem.Builder()
+                    .setMediaId(File(filesDir, "${url}music/${song.path}").path)
+                    .setMediaMetadata(
+                        MediaMetadata.Builder()
+                            .setTitle(song.name)
+                            .setAlbumTitle(song.album)
+                            .setArtist(song.artist)
+                            .setArtworkData(file, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                            .build()
+                    )
+                    .build()
+            }
 
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
