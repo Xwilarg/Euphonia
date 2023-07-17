@@ -167,7 +167,8 @@ class MainActivity : AppCompatActivity() {
                     val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
                     val song = filteredData[position]
 
-                    val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
+                    // TODO: Making a list too big crash the app
+                    val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.take(20).toMutableList()
                     selectedMusics.add(0, songToItem(data, song))
                     controllerFuture.get().setMediaItems(selectedMusics)
 
