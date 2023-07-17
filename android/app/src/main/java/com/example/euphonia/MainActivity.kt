@@ -5,11 +5,11 @@ import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Bitmap
-import android.graphics.Color
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
@@ -24,6 +24,7 @@ import androidx.media3.session.SessionToken
 import androidx.media3.ui.PlayerView
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
+import com.google.common.util.concurrent.ListenableFuture
 import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
@@ -41,7 +42,10 @@ class MainActivity : AppCompatActivity() {
     // List of songs that were downloaded
     var downloaded: MutableList<Song> = mutableListOf()
 
+    var currUrl: String? = null
     lateinit var list: ListView
+
+    lateinit var controllerFuture: ListenableFuture<MediaController>
 
     lateinit var data: MusicData
 
@@ -71,14 +75,46 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun onRandom(v: View) {
+        val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
+        val selectedMusics = filteredData.shuffled().map { songToItem(data, it) }.take(20).toMutableList()
+
+        controllerFuture.get().setMediaItems(selectedMusics)
+
+        controllerFuture.get().prepare()
+        controllerFuture.get().play()
+    }
+
+    fun songToItem(data: MusicData, song: Song): MediaItem {
+        val albumPath = data.albums[song.album]?.path
+        val file = if (song.album == null) {
+            val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
+            val stream = ByteArrayOutputStream()
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+            stream.toByteArray()
+        } else
+            File(filesDir, "${currUrl}icon/${albumPath}").readBytes()
+        return MediaItem.Builder()
+            .setMediaId(File(filesDir, "${currUrl}music/${song.path}").path)
+            .setMediaMetadata(
+                MediaMetadata.Builder()
+                    .setTitle(song.name)
+                    .setAlbumTitle(song.album)
+                    .setArtist(song.artist)
+                    .setArtworkData(file, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                    .build()
+            )
+            .build()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         // Ensure remote server is init
         val sharedPref = this.getSharedPreferences("settings", MODE_PRIVATE)
-        val url = sharedPref.getString("remoteServer", null)
-        if (url == null) {
+        currUrl = sharedPref.getString("remoteServer", null)
+        if (currUrl == null) {
             val intent = Intent(applicationContext, SetupActivity::class.java)
             startActivity(intent)
         }
@@ -86,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         //  Init media session
         val videoView = findViewById<PlayerView>(R.id.player)
         val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
-        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+        controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
         controllerFuture.addListener(
             {
                 videoView.player = controllerFuture.get()
@@ -113,7 +149,7 @@ class MainActivity : AppCompatActivity() {
 
         downloaded = mutableListOf()
 
-        if (!File(filesDir, "${url}info.json").exists()) {
+        if (!File(filesDir, "${currUrl}info.json").exists()) {
             // Somehow the target file is missing? We need the user to go by the setup phase again
             val intent = Intent(applicationContext, SetupActivity::class.java)
             startActivity(intent)
@@ -124,37 +160,15 @@ class MainActivity : AppCompatActivity() {
             // Update data from remove server
             val text: String
             try {
-                text = URL("https://${url}php/getInfoJson.php").readText()
-                File(filesDir, "${url}info.json").writeText(text)
+                text = URL("https://${currUrl}php/getInfoJson.php").readText()
+                File(filesDir, "${currUrl}info.json").writeText(text)
             } catch (e: Exception) {
                 Log.e("Network Error", e.message.toString())
             }
 
-            data = Gson().fromJson(File(filesDir, "${url}info.json").readText(), MusicData::class.java)
+            data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
 
             updateList()
-
-            val songToItem = fun(data: MusicData, song: Song): MediaItem {
-                val albumPath = data.albums[song.album]?.path
-                val file = if (song.album == null) {
-                    val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
-                    val stream = ByteArrayOutputStream()
-                    bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-                    stream.toByteArray()
-                } else
-                    File(filesDir, "${url}icon/${albumPath}").readBytes()
-                return MediaItem.Builder()
-                    .setMediaId(File(filesDir, "${url}music/${song.path}").path)
-                    .setMediaMetadata(
-                        MediaMetadata.Builder()
-                            .setTitle(song.name)
-                            .setAlbumTitle(song.album)
-                            .setArtist(song.artist)
-                            .setArtworkData(file, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-                            .build()
-                    )
-                    .build()
-            }
 
             // Callback when we click on a song
             list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
@@ -170,6 +184,7 @@ class MainActivity : AppCompatActivity() {
                     // TODO: Making a list too big crash the app
                     val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.take(20).toMutableList()
                     selectedMusics.add(0, songToItem(data, song))
+
                     controllerFuture.get().setMediaItems(selectedMusics)
 
                     controllerFuture.get().prepare()
@@ -179,23 +194,23 @@ class MainActivity : AppCompatActivity() {
 
             // Download missing songs
             data.musics.forEachIndexed{ index, song ->
-                if (!File(filesDir, "${url}music/${song.path}").exists()) {
+                if (!File(filesDir, "${currUrl}music/${song.path}").exists()) {
                     updateList()
                     builder.setContentText("$index / ${data.musics.size}")
                     notificationManager.notify(1, builder.build())
-                    URL("https://${url}data/normalized/${song.path}").openStream().use { stream ->
-                        FileOutputStream(File(filesDir, "${url}music/${song.path}")).use { output ->
+                    URL("https://${currUrl}data/normalized/${song.path}").openStream().use { stream ->
+                        FileOutputStream(File(filesDir, "${currUrl}music/${song.path}")).use { output ->
                             stream.copyTo(output)
                         }
                     }
                     updateList()
                 }
                 val albumPath = data.albums[song.album]?.path
-                if (song.album != null && !File(filesDir, "${url}icon/${albumPath}").exists()) {
+                if (song.album != null && !File(filesDir, "${currUrl}icon/${albumPath}").exists()) {
                     updateList()
                     notificationManager.notify(1, builder.build())
-                    URL("https://${url}data/icon/${albumPath}").openStream().use { stream ->
-                        FileOutputStream(File(filesDir, "${url}icon/${albumPath}")).use { output ->
+                    URL("https://${currUrl}data/icon/${albumPath}").openStream().use { stream ->
+                        FileOutputStream(File(filesDir, "${currUrl}icon/${albumPath}")).use { output ->
                             stream.copyTo(output)
                         }
                     }
