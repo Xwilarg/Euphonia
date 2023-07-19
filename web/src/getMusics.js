@@ -371,7 +371,7 @@ function loadPage() {
     if (json.musics !== undefined)
     {
         displaySongs(json.musics, "songlist", "", false, true, 5);
-        if (json.highlight.length > 0) {
+        if (json.highlight !== undefined && json.highlight.length > 0) {
             document.getElementById("highlight").hidden = false;
             displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "", false, false, 5);
         }
