@@ -34,6 +34,11 @@ html {
     height: 100%;
 }
 
+fieldset {
+    border-color: white;
+    margin-top: 1em;
+}
+
 h2 {
     text-align: center;
 }
@@ -54,7 +59,7 @@ input {
     border: 1px black solid;
 }
 
-button {
+button, .button {
     padding: .8em;
     border-radius: 5px;
     background-color: #DB504A;
