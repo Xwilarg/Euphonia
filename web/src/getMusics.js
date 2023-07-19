@@ -238,8 +238,10 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     for (let elem of musics) {
         let albumImg = window.config_remoteUrl + getAlbumImage(elem);
         html += `
-        <div class="song ${sanitize(elem.name)}">
-            <img id="img-${id}-${elem.id}" src="${albumImg}"/><br/>
+        <div class="song ${sanitize(elem.name)}" id="song-${id}-${elem.id}">
+            <div class="song-img">
+                <img id="img-${id}-${elem.id}" src="${albumImg}"/>
+            </div>
             <p>
                 ${sanitize(elem.name)}<br/>
                 ${sanitize(elem.artist)}
@@ -250,8 +252,18 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     }
     document.getElementById(id).innerHTML = html;
     for (let i of indexs) {
+        // Add listeners
+        // If we are in minimalist mode, we allow click anywhere on the song since only the text part is displayed
+        // If we are not, we only allow click on the image so user can copy text without starting song
         document.getElementById(`img-${id}-${i}`).onclick = () => {
-            prepareShuffle(i);
+            if (!isMinimalist) {
+                prepareShuffle(i);
+            }
+        }
+        document.getElementById(`song-${id}-${i}`).onclick = () => {
+            if (isMinimalist) {
+                prepareShuffle(i);
+            }
         }
     }
 
@@ -284,6 +296,10 @@ async function loadSongsAsync() {
                 elem.playlist = "default";
             }
         }
+    }
+
+    if (json.readme !== undefined) {
+        document.getElementById("readme").innerHTML = json.readme.join("<br/>");
     }
 }
 
@@ -371,7 +387,7 @@ function loadPage() {
     if (json.musics !== undefined)
     {
         displaySongs(json.musics, "songlist", "", false, true, 5);
-        if (json.highlight.length > 0) {
+        if (json.highlight !== undefined && json.highlight.length > 0) {
             document.getElementById("highlight").hidden = false;
             displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "", false, false, 5);
         }
@@ -397,18 +413,17 @@ function toggleMinimalistMode() {
 
     if (isMinimalist) {
         document.getElementById("currentImage").classList.add("hidden");
-        document.getElementById("playlists").classList.add("hidden");
+        for (let e of document.querySelectorAll(".song-img"))
+        {
+            e.classList.add("hidden");
+        }
     } else {
         document.getElementById("currentImage").classList.remove("hidden");
-        document.getElementById("playlists").classList.remove("hidden");
+        for (let e of document.querySelectorAll(".song-img"))
+        {
+            e.classList.remove("hidden");
+        }
     }
-}
-
-function exportSources() {
-    document.getElementById("exportSourcesField").value = json.musics
-        .map((value) => ({ value, sort: Math.random() }))
-        .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value.source).join('\n');
 }
 
 function chooseDisplay() {
@@ -470,7 +485,6 @@ async function musics_initAsync() {
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
     document.getElementById("refresh").addEventListener("click", refresh);
     document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
-    document.getElementById("exportSources").addEventListener("click", exportSources);
 
     await loadSongsAsync();
 

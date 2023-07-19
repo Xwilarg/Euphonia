@@ -4,9 +4,6 @@ js/
 # Configuration and data
 web/data/*
 !web/data/README.md
-!web/data/credentials.json
-config.json
-tmp/
 
 # Javascript
 node_modules/
