@@ -6,6 +6,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./web
 
     steps:
     - uses: actions/checkout@v3
@@ -14,8 +17,6 @@ jobs:
       with:
         node-version: 20.x
         cache: 'npm'
-    - name: Go in front folder
-      run: cd web
     - name: Install dependencies
       run: npm i
     - name: Build scripts
