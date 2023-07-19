@@ -93,7 +93,7 @@ textarea {
     text-overflow: ellipsis;
 }
 
-.song > img {
+.song img {
     cursor: pointer;
     object-fit: cover;
     object-position: 0 0;

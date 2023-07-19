@@ -238,8 +238,10 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     for (let elem of musics) {
         let albumImg = window.config_remoteUrl + getAlbumImage(elem);
         html += `
-        <div class="song ${sanitize(elem.name)}">
-            <img id="img-${id}-${elem.id}" src="${albumImg}"/><br/>
+        <div class="song ${sanitize(elem.name)}" id="song-${id}-${elem.id}">
+            <div class="song-img">
+                <img id="img-${id}-${elem.id}" src="${albumImg}"/>
+            </div>
             <p>
                 ${sanitize(elem.name)}<br/>
                 ${sanitize(elem.artist)}
@@ -250,8 +252,18 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     }
     document.getElementById(id).innerHTML = html;
     for (let i of indexs) {
+        // Add listeners
+        // If we are in minimalist mode, we allow click anywhere on the song since only the text part is displayed
+        // If we are not, we only allow click on the image so user can copy text without starting song
         document.getElementById(`img-${id}-${i}`).onclick = () => {
-            prepareShuffle(i);
+            if (!isMinimalist) {
+                prepareShuffle(i);
+            }
+        }
+        document.getElementById(`song-${id}-${i}`).onclick = () => {
+            if (isMinimalist) {
+                prepareShuffle(i);
+            }
         }
     }
 
@@ -401,10 +413,16 @@ function toggleMinimalistMode() {
 
     if (isMinimalist) {
         document.getElementById("currentImage").classList.add("hidden");
-        document.getElementById("playlists").classList.add("hidden");
+        for (let e of document.querySelectorAll(".song-img"))
+        {
+            e.classList.add("hidden");
+        }
     } else {
         document.getElementById("currentImage").classList.remove("hidden");
-        document.getElementById("playlists").classList.remove("hidden");
+        for (let e of document.querySelectorAll(".song-img"))
+        {
+            e.classList.remove("hidden");
+        }
     }
 }
 
