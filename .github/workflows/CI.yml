@@ -30,3 +30,4 @@ jobs:
         key: ${{ secrets.DEPLOY_SSHKEY }}
         source: "web/css/,web/img/,web/index.html,web/js/,web/node_modules/,web/package-lock.json,web/package.json,web/php/"
         target: ${{ secrets.DEPLOY_TARGET }}
+        strip_components: 1
