@@ -388,6 +388,9 @@ function loadPage() {
     {
         if (json.musics.length > 5) {
             displaySongs(json.musics, "songlist", "", false, true, 5);
+            document.getElementById("random").classList.remove("hidden");
+        } else {
+            document.getElementById("random").classList.add("hidden");
         }
         if (json.highlight !== undefined && json.highlight.length > 0) {
             document.getElementById("highlight").hidden = false;
