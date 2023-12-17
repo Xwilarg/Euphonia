@@ -239,7 +239,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
         let albumImg = window.config_remoteUrl + getAlbumImage(elem);
         html += `
         <div class="song ${sanitize(elem.name)}" id="song-${id}-${elem.id}">
-            <div class="song-img">
+            <div class="song-img${isMinimalist ? " hidden" : ""}">
                 <img id="img-${id}-${elem.id}" src="${albumImg}"/>
             </div>
             <p>
