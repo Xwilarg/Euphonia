@@ -81,7 +81,7 @@ async function lastfm_initAsync()
         const apiKey = await getApiKeyAsync();
         if (apiKey === "")
         {
-            console.error("last.fm API key is not set");
+            alert("last.fm API key is not set");
         }
         else
         {
