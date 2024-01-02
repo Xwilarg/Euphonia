@@ -1,0 +1,79 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:Downloader.ViewModels"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="Downloader.Views.MainView"
+             x:DataType="vm:MainViewModel">
+  <Design.DataContext>
+    <!-- This only sets the DataContext for the previewer in an IDE,
+         to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+    <vm:MainViewModel />
+  </Design.DataContext>
+
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="*"></RowDefinition>
+			<RowDefinition Height="200"></RowDefinition>
+		</Grid.RowDefinitions>
+
+		<Grid Grid.Row="0">
+			<Grid.ColumnDefinitions>
+				<ColumnDefinition Width="200"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+				<ColumnDefinition Width="*"></ColumnDefinition>
+			</Grid.ColumnDefinitions>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+				<RowDefinition Height="*"></RowDefinition>
+			</Grid.RowDefinitions>
+
+			<TextBlock Grid.Row="0" Grid.Column="0"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center">Song Name</TextBlock>
+			<TextBox Grid.Row="0" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+
+			<TextBlock Grid.Row="1" Grid.Column="0"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center">YouTube URL</TextBlock>
+			<TextBox Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+
+			<TextBlock Grid.Row="2" Grid.Column="0"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center">Artist</TextBlock>
+			<TextBox Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+
+			<TextBlock Grid.Row="3" Grid.Column="0"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center">Album Name</TextBlock>
+			<TextBox Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+
+			<TextBlock Grid.Row="4" Grid.Column="0"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center">Album URL</TextBlock>
+			<TextBox Grid.Row="4" Grid.Column="1"></TextBox>
+			<Image Grid.Row="4" Grid.Column="2"></Image>
+
+			<TextBlock Grid.Row="5" Grid.Column="0"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center">Playlist</TextBlock>
+			<DropDownButton Grid.Row="5" Grid.Column="1" Grid.ColumnSpan="2"
+							HorizontalAlignment="Stretch"></DropDownButton>
+
+			<TextBlock Grid.Row="6" Grid.Column="0"
+					   VerticalAlignment="Center"
+					   HorizontalAlignment="Center">Song Type</TextBlock>
+			<TextBox Grid.Row="6" Grid.Column="1" Grid.ColumnSpan="2"></TextBox>
+		</Grid>
+
+		<Button Grid.Row="1"
+				VerticalAlignment="Center"
+				HorizontalAlignment="Center">Download</Button>
+	</Grid>
+</UserControl>
