@@ -68,6 +68,15 @@ button, .button {
     color: #ddd;
 }
 
+button:disabled, .button:disabled {
+    box-shadow: none;
+    background-color: #c95854;
+}
+
+button:hover:not(:disabled), .button:hover:not(:disabled) {
+    box-shadow: .25em .25em black;
+}
+
 button:active {
     box-shadow: none;
 }

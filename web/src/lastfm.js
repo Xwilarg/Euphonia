@@ -1,22 +1,13 @@
+let lastFmApiKey;
+
 // https://stackoverflow.com/a/21125098
 function getCookie(name) {
     var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
     if (match) return match[2];
 }
 
-async function getApiKeyAsync() {
-    const resp = await fetch(window.config_remoteUrl + "php/getLastfmApiKey.php");
-    return await resp.text();
-}
-
 async function makeAuthCallAsync(method, params)
 {
-    const apiKey = await getApiKeyAsync();
-    if (!apiKey)
-    {
-        return;
-    }
-
     const sk = getCookie("lastfm_key");
     if (!sk)
     {
@@ -35,7 +26,7 @@ async function makeAuthCallAsync(method, params)
         data.append(key, value);
     }
     data.append("method", method);
-    data.append("api_key", apiKey);
+    data.append("api_key", lastFmApiKey);
     data.append("sk", sk);
     data.append("api_sig", signature);
 
@@ -77,16 +68,18 @@ async function lastfm_registerScrobbleAsync(song, artist, album, length, timesta
 window.lastfm_initAsync = lastfm_initAsync;
 async function lastfm_initAsync()
 {
+    const resp = await fetch(window.config_remoteUrl + "php/getLastfmApiKey.php");
+    lastFmApiKey = await resp.text();
+
+    if (!lastFmApiKey)
+    {
+        document.getElementById("lastfmLogin").disabled = true;
+        document.getElementById("lastfmStatus").innerHTML = "Unavailable";
+        return;
+    }
+
     document.getElementById("lastfmLogin").addEventListener("click", async () => {
-        const apiKey = await getApiKeyAsync();
-        if (apiKey === "")
-        {
-            alert("last.fm API key is not set");
-        }
-        else
-        {
-            window.location.href = `https://www.last.fm/api/auth/?api_key=${apiKey}&cb=${window.location.origin}`;
-        }
+        window.location.href = `https://www.last.fm/api/auth/?api_key=${lastFmApiKey}&cb=${window.location.origin}`;
     });
 
     const url = new URL(window.location.href);
@@ -94,7 +87,7 @@ async function lastfm_initAsync()
 
     if (token !== undefined && token !== null) // We were redirected here from last.fm
     {
-        const apiKey = await getApiKeyAsync();
+        const apiKey = lastFmApiKey;
         if (apiKey === "")
         {
             console.error("last.fm API key is not set");
