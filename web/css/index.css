@@ -9,15 +9,18 @@ html {
     padding: 0;
     top: 0;
     width: 100%;
-    height: calc(40px + .25em * 2);
+    height: calc(40px + .25em * 2 + 5px);
     left: 0;
     z-index: 2;
     position: fixed;
     background-color: #DB504A;
-    font-size: xx-large;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+
+#banner h1 {
+    font-size: xx-large;
 }
 
 #banner-buttons {
@@ -39,6 +42,7 @@ html {
 fieldset {
     border-color: white;
     margin-top: 1em;
+    padding: 1em;
 }
 
 h2 {
@@ -110,7 +114,7 @@ textarea {
 .song img {
     cursor: pointer;
     object-fit: cover;
-    object-position: 0 0;
+    object-position: 50% 0;
     border-radius: 5px;
 }
 
