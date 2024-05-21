@@ -471,22 +471,11 @@ function chooseDisplay() {
     }
 }
 
-// Called when changing remote server URL
-async function resetServer() {
-    window.config_remoteUrl = document.getElementById("remoteUrl").value
-    if (!window.config_remoteUrl.endsWith("/")) {
-        window.config_remoteUrl += "/";
-    }
-    await loadSongsAsync();
-    chooseDisplay();
-}
-
 window.musics_initAsync = musics_initAsync;
 async function musics_initAsync() {
     window.config_remoteUrl = "";
 
     // Buttons
-    document.getElementById("remoteUrl").addEventListener("click", resetServer);
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
     document.getElementById("refresh").addEventListener("click", refresh);
     document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
