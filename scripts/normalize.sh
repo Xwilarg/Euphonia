@@ -2,4 +2,4 @@
 
 source ~/.profile
 set -e
-ffmpeg-normalize ../data/raw/*.wav -pr -ext wav -of ../data/normalized
+ffmpeg-normalize ../data/raw/*.mp3 -pr -ext mp3 -of ../data/normalized -c:a libmp3lame
