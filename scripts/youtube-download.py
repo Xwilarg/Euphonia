@@ -10,6 +10,9 @@ from io import BytesIO
 def is_audio(name):
     return name.endswith(".wav") or name.endswith(".mp3") or name.endswith("webm") or name.endswith(".mp4") or name.endswith(".mkv")
 
+def clean(text):
+    return text.replace("<", "").replace(">", "").replace(":", "").replace("\"", "").replace("/", "").replace("\\", "").replace("|", "").replace("?", "").replace("*", "").strip()
+
 if not os.path.exists('../web/data'):
     os.makedirs('../web/data')
 if not os.path.exists('../web/data/raw'):
@@ -26,6 +29,7 @@ else:
     data["albums"] = {}
 
 name = input("Enter the song name: ")
+name = name
 
 url = input("Enter the YouTube URL: ")
 if any(x["source"] == url for x in data["musics"]):
@@ -43,6 +47,7 @@ if album is not None and album not in data["albums"]:
     cover = requests.get(coverUrl, stream=True).content
     img = Image.open(BytesIO(cover))
     rgbImg = img.convert('RGB')
+    album = clean(album)
     rgbImg.save('../web/data/icon/' + album + '.jpg')
 
 playlist = "default"
@@ -59,6 +64,7 @@ if "playlists" in data:
         playlist = list(data["playlists"].keys())[int(playlist)]
 
 path = name
+path = clean(path)
 songType = input("Enter song type (cover, acoustic...) or None: ")
 if songType == "None":
     songType = None
