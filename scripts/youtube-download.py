@@ -58,7 +58,7 @@ if "playlists" in data:
         print(str(i) + ": " + value["name"])
         i += 1
     playlist = input()
-    if playlist == "None":
+    if playlist.lower() == "none":
         playlist = "default"
     else:
         playlist = list(data["playlists"].keys())[int(playlist)]
@@ -66,7 +66,7 @@ if "playlists" in data:
 path = name
 path = clean(path)
 songType = input("Enter song type (cover, acoustic...) or None: ")
-if songType == "None":
+if songType.lower() == "none":
     songType = None
 else:
     path = name + " " + songType + " by " + artist
