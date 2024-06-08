@@ -17,6 +17,7 @@ jobs:
       with:
         node-version: 20.x
         cache: 'npm'
+        cache-dependency-path: 'web/package-lock.json'
     - name: Install dependencies
       run: npm i
     - name: Build scripts
