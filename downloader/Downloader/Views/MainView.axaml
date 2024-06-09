@@ -10,10 +10,19 @@
     x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
     <Design.DataContext>
-        <!--
-            This only sets the DataContext for the previewer in an IDE,
-            to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs)
-        -->
         <vm:MainViewModel />
     </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="100" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <TextBox Text="{Binding SongName}" Watermark="Name" />
+            <TextBox Text="{Binding Artist}" Watermark="Artist" />
+            <TextBox Text="{Binding Url}" Watermark="YouTube URL" />
+            <TextBox Text="{Binding AlbumName}" Watermark="Album Name" />
+            <TextBox Text="{Binding AlbumUrl}" Watermark="Album URL" />
+        </StackPanel>
+    </Grid>
 </UserControl>
