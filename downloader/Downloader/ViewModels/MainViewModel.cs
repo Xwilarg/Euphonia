@@ -1,6 +1,7 @@
 ﻿using Downloader.Models;
 using ReactiveUI;
 using System.IO;
+using System.Linq;
 using System.Text.Json;
 
 namespace Downloader.ViewModels;
@@ -23,13 +24,19 @@ public class MainViewModel : ViewModelBase
         {
             if (File.Exists("data/info.json"))
             {
-                _data = JsonSerializer.Deserialize<JsonExportData>(File.ReadAllText("data/info.json"), _jsonOptions);
+                _data = JsonSerializer.Deserialize<JsonExportData>(File.ReadAllText("data/info.json"), _jsonOptions) ?? new();
             }
             else
             {
                 _data = new();
             }
         }
+        PlaylistChoices = [
+            "None",
+            .. _data.Playlists.Keys
+        ];
+
+        SongCount = $"{_data.Musics.Count} music found";
     }
 
     private JsonExportData _data;
@@ -49,11 +56,11 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _artist, value);
     }
 
-    private string _url;
-    public string Url
+    private string _musicUrl;
+    public string MusicUrl
     {
-        get => _url;
-        set => this.RaiseAndSetIfChanged(ref _url, value);
+        get => _musicUrl;
+        set => this.RaiseAndSetIfChanged(ref _musicUrl, value);
     }
 
     private string _albumName;
@@ -84,4 +91,11 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _playlist, value);
     }
     public string[] PlaylistChoices { private set; get; }
+
+    private string _songCount;
+    public string SongCount
+    {
+        get => _songCount;
+        set => this.RaiseAndSetIfChanged(ref _songCount, value);
+    }
 }

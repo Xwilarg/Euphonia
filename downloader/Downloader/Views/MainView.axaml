@@ -14,15 +14,34 @@
     </Design.DataContext>
     <Grid>
         <Grid.RowDefinitions>
+            <RowDefinition Height="50" />
             <RowDefinition Height="*" />
             <RowDefinition Height="100" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
+        <TextBlock
+            Grid.Row="0"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            FontSize="20"
+            FontWeight="Bold">
+            Euphonia Downloader
+        </TextBlock>
+        <TextBlock
+            Grid.Row="0"
+            HorizontalAlignment="Right"
+            VerticalAlignment="Top"
+            Text="{Binding SongCount}" />
+        <StackPanel Grid.Row="1">
             <TextBox Text="{Binding SongName}" Watermark="Name" />
             <TextBox Text="{Binding Artist}" Watermark="Artist" />
-            <TextBox Text="{Binding Url}" Watermark="YouTube URL" />
+            <TextBox Text="{Binding MusicUrl}" Watermark="YouTube URL" />
             <TextBox Text="{Binding AlbumName}" Watermark="Album Name" />
-            <TextBox Text="{Binding AlbumUrl}" Watermark="Album URL" />
+            <TextBox
+                IsEnabled="{Binding AlbumName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                Text="{Binding AlbumUrl}"
+                Watermark="Album URL" />
+            <TextBox Text="{Binding SongType}" Watermark="Song Type" />
+            <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding PlaylistChoices}" />
         </StackPanel>
     </Grid>
 </UserControl>
