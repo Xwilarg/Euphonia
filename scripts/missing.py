@@ -20,7 +20,7 @@ _ = input("Press enter to continue")
 
 for m in data["musics"]:
     if not os.path.exists(f'../web/data/raw/{m["path"]}'):
-        if m["source"] is None or (not m["source"].startswith("https://youtu.be/") and not m["source"].startswith("https://youtube.com/")):
+        if m["source"] is None or (not m["source"].startswith("https://youtu.be/") and not m["source"].startswith("https://youtube.com/") and not m["source"].startswith("https://www.youtube.com/")):
             print(f"Skipping {m["name"]}: no valid source")
             continue
         print(f"Downloading {m["name"]}")
