@@ -24,7 +24,7 @@ for m in data["musics"]:
             print(f"Skipping {m["name"]}: no valid source")
             continue
         print(f"Downloading {m["name"]}")
-        result = subprocess.run(["yt-dlp", m["source"], "-o", "../web/data/raw/" + m["name"] + ".%(ext)s", "-x", "--audio-format", "mp3"], capture_output = True, text = True)
+        result = subprocess.run(["yt-dlp", m["source"], "-o", f"../web/data/raw/{m["path"]}", "-x", "--audio-format", "mp3"], capture_output = True, text = True)
         if result.returncode != 0:
             print(f"Error:\n{result.stderr}")
             exit(1)
