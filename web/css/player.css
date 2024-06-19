@@ -52,7 +52,7 @@ input[type=range] {
 }
 
 #durationSliderBackground {
-    background-color: #eee;
+    background-color: var(--progress-bar);
 }
 
 #durationSlider {
@@ -65,9 +65,13 @@ input[type=range] {
 }
 
 #progressRanges > * {
-    background-color: gray;
+    background-color: var(--progress-bar-loaded);
 }
 
 #currentSong {
     margin-top: 20px;
+}
+
+#togglePlay {
+    aspect-ratio : 1 / 1;
 }

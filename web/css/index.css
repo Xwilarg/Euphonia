@@ -1,7 +1,7 @@
 html {
-    background-color: #0E1C36;
+    background-color: var(--background);
     font-family: 'Open Sans', sans-serif;
-    color: #ddd;
+    color: var(--text);
 }
 
 #banner {
@@ -13,10 +13,11 @@ html {
     left: 0;
     z-index: 2;
     position: fixed;
-    background-color: #DB504A;
+    background-color: var(--banner);
     display: flex;
     align-items: center;
     justify-content: center;
+    color: var(--banner-text);
 }
 
 #banner h1 {
@@ -34,13 +35,13 @@ html {
     position: fixed;
     top: 3em;
     left: 0;
-    background-color: #DB504A;
+    background-color: var(--settings);
     padding: .5em;
     height: 100%;
 }
 
 fieldset {
-    border-color: white;
+    border-color: var(--fieldset);
     margin-top: 1em;
     padding: 1em;
 }
@@ -61,47 +62,41 @@ h2 {
 input {
     padding: .8em;
     border-radius: 5px;
-    background-color: #DB504A;
-    border: 1px black solid;
+    background-color: var(--search-input);
+    border: 1px var(--search-input-border) solid;
 }
 
 button, .button {
     padding: .8em;
     margin: .25em;
     border-radius: 5px;
-    background-color: #DB504A;
-    box-shadow: .15em .15em black;
-    border: 1px black solid;
-    color: #ddd;
+    background-color: var(--button);
+    box-shadow: .15em .15em var(--button-shadow);
+    border: 1px var(--button-border) solid;
+    color: var(--button-text);
     font-size: .8em;
     height: 40px;
 }
 
 button:disabled, .button:disabled {
     box-shadow: none;
-    background-color: #c95854;
+    background-color: var(--button-disabled);
 }
 
 button:hover:not(:disabled), .button:hover:not(:disabled) {
-    box-shadow: .25em .25em black;
+    box-shadow: .25em .25em var(--button-shadow);
 }
 
 button:active {
     box-shadow: none;
 }
 
-textarea {
-    background-color: #DB504A;
-    border: 1px black solid;
-    width: 100%;
-    height: 30em;
-}
-
 .song {
     margin: .5em;
     width: 250px;
-    background-color: #DB504A;
+    background-color: var(--song);
     border-radius: 5px;
+    color: var(--song-text);
 }
 
 .song > p {
@@ -109,6 +104,7 @@ textarea {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+    padding: 0 5px;
 }
 
 .song img {
@@ -119,8 +115,8 @@ textarea {
 }
 
 .current {
-    background-color: #F6E27F;
-    color: #111;
+    background-color: var(--current);
+    color: var(--current-text);
 }
 
 img {
@@ -164,10 +160,11 @@ img {
     bottom: 0;
     right: 0;
     position: fixed;
-    background-color: #DB504A;
-    border: 1px black solid;
+    background-color: var(--playlist);
+    border: 1px var(--playlist-border) solid;
     width: 18em;
     border-radius: 5px;
+    color: var(--playlist-text);
 }
 
 #playlist-title {

@@ -1,0 +1,92 @@
+:root {
+
+    /*
+     * Main
+     */
+
+    /* Main background color of the website */
+    --background: #0E1C36;
+
+    /* Color of the text */
+    --text: #ddd;
+
+    /* Color of the song search field */
+    --search-input: #DB504A;
+
+    /* Border around the search bar */
+    --search-input-border: black;
+
+    /* Color of the buttons */
+    --button: #DB504A;
+
+    /* Color of a button when disabled */
+    --button-disabled: #c95854;
+
+    /* Shadow color of the buttons */
+    --button-shadow: black;
+
+    /* Border color of the buttons */
+    --button-border: black;
+
+    /* Color of the text of the buttons */
+    --button-text: #ddd;
+
+    /*
+     * Banner
+     */
+
+    /* Color of the banner */
+    --banner: #DB504A;
+
+    /* Color of the text in the banner */
+    --banner-text: inherit;
+
+    /*
+     * Song display
+     */
+
+    /* Color of a song display */
+    --song: #DB504A;
+
+    /* Color of the text inside song display */
+    --song-text: inherit;
+
+    /* Color of the song currently selected */
+    --current: #F6E27F;
+
+    /* Color of the text of the song currently selected */
+    --current-text: #111;
+
+    /*
+     * Settings
+     */
+
+    /* Color of the background of the settings panel */
+    --settings: #DB504A;
+
+    /* Inside of the settings panel, color of the line delimitating options */
+    --fieldset: white;
+
+    /*
+     * Playlist
+     */
+
+    /* Color of the playlist */
+    --playlist: #DB504A;
+
+    /* Border color of the playlist */
+    --playlist-border: black;
+
+    /* Color of the text in the playlist */
+    --playlist-text: inherit;
+
+    /*
+     * Player
+     */
+
+    /* Color of the progress bar */
+    --progress-bar: white;
+
+    /* Color of the progress bar showing data that are already loaded */
+    --progress-bar-loaded: gray;
+}
