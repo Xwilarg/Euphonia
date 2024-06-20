@@ -15,8 +15,9 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
+            <RowDefinition Height="220" />
+            <RowDefinition Height="50" />
             <RowDefinition Height="*" />
-            <RowDefinition Height="100" />
         </Grid.RowDefinitions>
         <TextBlock
             Grid.Row="0"
@@ -31,17 +32,30 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Text="{Binding SongCount}" />
-        <StackPanel Grid.Row="1">
+        <StackPanel Grid.Row="1" IsEnabled="{Binding !IsDownloading}">
             <TextBox Text="{Binding SongName}" Watermark="Name" />
             <TextBox Text="{Binding Artist}" Watermark="Artist" />
             <TextBox Text="{Binding MusicUrl}" Watermark="YouTube URL" />
             <TextBox Text="{Binding AlbumName}" Watermark="Album Name" />
             <TextBox
-                IsEnabled="{Binding AlbumName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"
+                IsEnabled="{Binding CanInputAlbumUrl}"
                 Text="{Binding AlbumUrl}"
                 Watermark="Album URL" />
             <TextBox Text="{Binding SongType}" Watermark="Song Type" />
             <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding PlaylistChoices}" />
+        </StackPanel>
+        <StackPanel
+            Grid.Row="2"
+            HorizontalAlignment="Right"
+            IsEnabled="{Binding !IsDownloading}"
+            Orientation="Horizontal">
+            <Button Command="{Binding DownloadCmd}">Download</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="3">
+            <ProgressBar
+                Height="20"
+                Maximum="1"
+                Value="{Binding DownloadImage}" />
         </StackPanel>
     </Grid>
 </UserControl>
