@@ -64,9 +64,23 @@ public class MainViewModel : ViewModelBase
 
         ClearAll();
 
-        DownloadCmd = ReactiveCommand.CreateFromTask(async () =>
+        DownloadCmd = ReactiveCommand.Create(() =>
         {
             IsDownloading = true;
+
+            AlbumName = AlbumName.Trim();
+            Artist = Artist.Trim();
+            SongName = SongName.Trim();
+            MusicUrl = MusicUrl.Trim();
+            SongType = SongType.Trim();
+
+            if (_data.Musics.Any(x => x.Name == SongName && x.Artist == Artist && x.Type == SongType))
+            {
+                MessageBoxManager.GetMessageBoxStandard("Song already downloaded", $"A song of the same name, same artist and same type was already downloaded", icon: Icon.Info);
+                IsDownloading = false;
+                return;
+            }
+
             string? imagePath = CanInputAlbumUrl ? "tmpLogo.png" : null;
             var musicPath = $"tmpMusicRaw.{AudioFormat}";
             var normMusicPath = $"tmpMusicNorm.{AudioFormat}";
@@ -76,11 +90,6 @@ public class MainViewModel : ViewModelBase
             if (File.Exists(musicPath)) File.Delete(musicPath);
             if (File.Exists(normMusicPath)) File.Delete(normMusicPath);
 
-            AlbumName = AlbumName.Trim();
-            Artist = Artist.Trim();
-            SongName = SongName.Trim();
-            MusicUrl = MusicUrl.Trim();
-            SongType = SongType.Trim();
 
             _ = Task.Run(async () =>
             {
@@ -96,7 +105,7 @@ public class MainViewModel : ViewModelBase
                         }
                         ms.Position = 0;
                         var bmp = new Bitmap(ms);
-                        bmp.Save(imagePath);
+                        bmp.Save(imagePath!);
                     }
                     else
                     {
@@ -121,10 +130,10 @@ public class MainViewModel : ViewModelBase
                         NormalizeMusic = prog;
                     }
 
-                    var outMusicPath = CleanPath(SongName);
+                    var outMusicPath = $"{CleanPath(SongName)}_{CleanPath(Artist)}";
                     if (!string.IsNullOrWhiteSpace(SongType))
                     {
-                        outMusicPath += $" {SongType} by {CleanPath(Artist)}";
+                        outMusicPath += $"_{SongType}";
                     }
                     outMusicPath += $".{AudioFormat}";
                     var m = new Song
