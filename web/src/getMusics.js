@@ -357,7 +357,14 @@ function loadPage() {
     document.getElementById("share").addEventListener("click", (_) => {
         const playlist = url.searchParams.get("playlist");
         const newUrl = window.location.origin + window.location.pathname + `?playlist=${playlist}&song=${encodeURIComponent(`${currSong.name}_${currSong.artist}`)}`;
-        navigator.share({url: newUrl});
+        if (navigator.share)
+        {
+            navigator.share({url: newUrl});
+        }
+        else
+        {
+            window.prompt("Copy to share", newUrl)
+        }
     });
     document.getElementById("volume").addEventListener("change", (_) => {
         player.volume = document.getElementById("volume").value / 100;
