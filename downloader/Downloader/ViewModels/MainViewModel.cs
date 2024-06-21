@@ -1,5 +1,7 @@
 ﻿using Avalonia.Media.Imaging;
 using Downloader.Models;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -148,7 +150,10 @@ public class MainViewModel : ViewModelBase
                 }
                 catch (Exception e)
                 {
-                    throw;
+                    DownloadImage = 0f;
+                    DownloadMusic = 0f;
+                    NormalizeMusic = 0f;
+                    MessageBoxManager.GetMessageBoxStandard("Download failed", $"An error occurred while downloading your music: {e.Message}", icon: Icon.Error);
                 }
                 finally
                 {
