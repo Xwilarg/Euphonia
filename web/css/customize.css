@@ -1,8 +1,10 @@
 :root {
-
     /*
      * Main
      */
+
+     /* Font used in the website */
+     --font: 'Open Sans', sans-serif;
 
     /* Main background color of the website */
     --background: #0E1C36;
@@ -53,6 +55,12 @@
 
     /* Color of the text inside song display */
     --song-text: inherit;
+
+    /* Border around a song */
+    --song-border: inherit;
+
+    /* Size of the border around a song */
+    --song-border-size: 0;
 
     /* Color of the song currently selected */
     --current: #F6E27F;

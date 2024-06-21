@@ -1,6 +1,6 @@
 html {
     background-color: var(--background);
-    font-family: 'Open Sans', sans-serif;
+    font-family: var(--font);
     color: var(--text);
 }
 
@@ -104,6 +104,7 @@ button:active {
     background-color: var(--song);
     border-radius: 5px;
     color: var(--song-text);
+    border: var(--song-border-size) solid var(--song-border);
 }
 
 .song > p {
