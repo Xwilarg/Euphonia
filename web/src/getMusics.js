@@ -357,7 +357,7 @@ function loadPage() {
     document.getElementById("share").addEventListener("click", (_) => {
         const playlist = url.searchParams.get("playlist");
         const newUrl = window.location.origin + window.location.pathname + `?playlist=${playlist}&song=${encodeURIComponent(`${currSong.name}_${currSong.artist}`)}`;
-        window.history.pushState({},"", newUrl);
+        navigator.share({url: newUrl});
     });
     document.getElementById("volume").addEventListener("change", (_) => {
         player.volume = document.getElementById("volume").value / 100;
@@ -454,10 +454,6 @@ function lookForSong(url)
     }
 }
 
-window.addEventListener("popstate", (e) => {
-    const url = new URL(window.location.href);
-    lookForSong(url);
-});
 // #endregion
 
 // #region onclick events
