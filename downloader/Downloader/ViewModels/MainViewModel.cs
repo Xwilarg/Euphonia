@@ -105,7 +105,7 @@ public class MainViewModel : ViewModelBase
                         DownloadMusic = prog;
                     }
 
-                    await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"{musicPath} -pr -ext {AudioFormat} -of {normMusicPath} -c:a libmp3lame"), (_) =>
+                    await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"{musicPath} -pr -ext {AudioFormat} -o {normMusicPath} -c:a libmp3lame"), (_) =>
                     {
                         return 0f;
                     }))
@@ -135,8 +135,8 @@ public class MainViewModel : ViewModelBase
                     {
                         File.Move(imagePath, $"data/icon/{CleanPath(AlbumName)}.png");
                     }
-                    File.Move(musicPath, $"raw/{outMusicPath}");
-                    File.Move(normMusicPath, $"normalized/{outMusicPath}");
+                    File.Move(musicPath, $"data/raw/{outMusicPath}");
+                    File.Move(normMusicPath, $"data/normalized/{outMusicPath}");
 
                     ClearAll();
                 }
