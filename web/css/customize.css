@@ -19,6 +19,9 @@
     /* Color of the buttons */
     --button: #DB504A;
 
+    /* Color of a button when hovered with the mouse */
+    --button-hover: #c95854;
+
     /* Color of a button when disabled */
     --button-disabled: #c95854;
 

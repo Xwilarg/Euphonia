@@ -31,6 +31,11 @@ html {
     z-index: 2;
 }
 
+#banner-buttons .material-symbols-outlined {
+    position: relative;
+    top: -4px;
+}
+
 #settings {
     position: fixed;
     top: 3em;
@@ -76,6 +81,7 @@ button, .button {
     color: var(--button-text);
     font-size: .8em;
     height: 40px;
+    text-decoration: none;
 }
 
 button:disabled, .button:disabled {
@@ -85,6 +91,7 @@ button:disabled, .button:disabled {
 
 button:hover:not(:disabled), .button:hover:not(:disabled) {
     box-shadow: .25em .25em var(--button-shadow);
+    background-color: var(--button-hover);
 }
 
 button:active {
