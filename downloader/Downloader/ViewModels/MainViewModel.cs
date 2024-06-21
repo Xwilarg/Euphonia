@@ -1,4 +1,5 @@
-﻿using Downloader.Models;
+﻿using Avalonia.Media.Imaging;
+using Downloader.Models;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -64,7 +65,7 @@ public class MainViewModel : ViewModelBase
         DownloadCmd = ReactiveCommand.CreateFromTask(async () =>
         {
             IsDownloading = true;
-            var imagePath = CanInputAlbumUrl ? $"tmpLogo{Path.GetExtension(AlbumUrl)}" : null;
+            string? imagePath = CanInputAlbumUrl ? "tmpLogo.png" : null;
             var musicPath = $"tmpMusicRaw.{AudioFormat}";
             var normMusicPath = $"tmpMusicNorm.{AudioFormat}";
 
@@ -78,13 +79,16 @@ public class MainViewModel : ViewModelBase
                 try
                 {
                     // Download all
-                    if (imagePath != null)
+                    if (CanInputAlbumUrl)
                     {
-                        using var file = new FileStream(imagePath, FileMode.Create, FileAccess.Write, FileShare.None);
-                        await foreach (var prog in DownloadAndFollowAsync(AlbumUrl, file, new()))
+                        using var ms = new MemoryStream();
+                        await foreach (var prog in DownloadAndFollowAsync(AlbumUrl, ms, new()))
                         {
                             DownloadImage = prog;
                         }
+                        ms.Position = 0;
+                        var bmp = new Bitmap(ms);
+                        bmp.Save(imagePath);
                     }
                     else
                     {
@@ -129,7 +133,7 @@ public class MainViewModel : ViewModelBase
                     _data.Musics.Add(m);
                     if (imagePath != null)
                     {
-                        File.Move(imagePath, $"data/icon/{CleanPath(AlbumName)}{Path.GetExtension(AlbumUrl)}");
+                        File.Move(imagePath, $"data/icon/{CleanPath(AlbumName)}.png");
                     }
                     File.Move(musicPath, $"raw/{outMusicPath}");
                     File.Move(normMusicPath, $"normalized/{outMusicPath}");
