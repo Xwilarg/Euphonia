@@ -74,6 +74,12 @@ public class MainViewModel : ViewModelBase
             if (File.Exists(musicPath)) File.Delete(musicPath);
             if (File.Exists(normMusicPath)) File.Delete(normMusicPath);
 
+            AlbumName = AlbumName.Trim();
+            Artist = Artist.Trim();
+            SongName = SongName.Trim();
+            MusicUrl = MusicUrl.Trim();
+            SongType = SongType.Trim();
+
             _ = Task.Run(async () =>
             {
                 try
