@@ -105,6 +105,22 @@ function nextSong() {
     updateSongHighlightColor();
 }
 
+// Create a random playlist
+function prepareWholeShuffle() {
+    playlistIndex = Math.floor(Math.random() * json.musics.length);
+
+    let indexes = [...Array(json.musics.length).keys()];
+
+    // https://stackoverflow.com/a/46545530/6663248
+    playlist = playlist.concat(indexes
+        .map((value) => ({ value, sort: Math.random() }))
+        .sort((a, b) => a.sort - b.sort)
+        .map(({ value }) => value)
+    );
+
+    nextSong();
+}
+
 // Create a random playlist with the parameter as the first song
 function prepareShuffle(index) {
     playlist = [];
@@ -321,10 +337,6 @@ async function updateScrobblerAsync() {
     }
 }
 
-function loadSong(name) {
-
-}
-
 function loadPage() {
     const url = new URL(window.location.href);
 
@@ -450,6 +462,10 @@ window.addEventListener("popstate", (e) => {
 
 // #region onclick events
 
+function random() {
+    prepareWholeShuffle();
+}
+
 function refresh() {
     displaySongs(json.musics, "songlist", "", false, true, 5);
 }
@@ -514,8 +530,8 @@ function chooseDisplay() {
                 json.musics[id].id = id;
             }
         }
-        loadPage();
     }
+    loadPage();
 }
 
 window.musics_initAsync = musics_initAsync;
@@ -525,6 +541,7 @@ async function musics_initAsync() {
     // Buttons
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
     document.getElementById("refresh").addEventListener("click", refresh);
+    document.getElementById("random").addEventListener("click", random);
     document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
 
     await loadSongsAsync();

@@ -56,7 +56,10 @@
                         <button id="previous"><span class="material-symbols-outlined">skip_previous</span></button>
                         <button id="skip"><span class="material-symbols-outlined">skip_next</span></button>
                         <button id="share"><span class="material-symbols-outlined">share</span></button>
-                        <input type="range" max="100" id="volume">
+                        <div id="volume-container">
+                            Volume<br>
+                            <input type="range" max="100" id="volume">
+                        </div>
                     </div>
                     <br/>
                     <span id="currDuration"></span> / <span id="maxDuration"></span>
@@ -71,6 +74,7 @@
             <div id="playlists">
                 <hr/>
                 <div id="actions">
+                    <button id="random">Random</button>
                     <button id="refresh">Refresh</button>
                     <input type="text" id="filter" placeholder="Filter"/>
                 </div>
