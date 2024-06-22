@@ -1,4 +1,5 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Controls;
+using Avalonia.Media.Imaging;
 using Downloader.Models;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -28,7 +29,12 @@ public class MainViewModel : ViewModelBase
 
         _client = new();
 
-        if (!Directory.Exists("data"))
+        if (Design.IsDesignMode)
+        {
+            // XAML preview doesn't need to do anything
+            _data = new();
+        }
+        else if (!Directory.Exists("data"))
         {
             Directory.CreateDirectory("data");
             _data = new();
@@ -44,22 +50,25 @@ public class MainViewModel : ViewModelBase
                 _data = new();
             }
         }
-        if (!Directory.Exists("data/icon"))
+        if (!Design.IsDesignMode)
         {
-            Directory.CreateDirectory("data/icon");
-        }
-        if (!Directory.Exists("data/raw"))
-        {
-            Directory.CreateDirectory("data/raw");
-        }
-        if (!Directory.Exists("data/normalized"))
-        {
-            Directory.CreateDirectory("data/normalized");
+            if (!Directory.Exists("data/icon"))
+            {
+                Directory.CreateDirectory("data/icon");
+            }
+            if (!Directory.Exists("data/raw"))
+            {
+                Directory.CreateDirectory("data/raw");
+            }
+            if (!Directory.Exists("data/normalized"))
+            {
+                Directory.CreateDirectory("data/normalized");
+            }
         }
 
         PlaylistChoices = [
             "None",
-            .. _data.Playlists.Keys
+            .. _data.Playlists.Select(x => x.Value.Name)
         ];
 
         ClearAll();
@@ -142,7 +151,7 @@ public class MainViewModel : ViewModelBase
                         Artist = Artist,
                         Name = SongName,
                         Path = outMusicPath,
-                        Playlist = Playlist == "None" ? "default" : Playlist,
+                        Playlist = PlaylistIndex == 0 ? "default" : _data.Playlists.Keys.ElementAt(PlaylistIndex - 1),
                         Source = MusicUrl,
                         Type = SongType
                     };
@@ -251,7 +260,7 @@ public class MainViewModel : ViewModelBase
         AlbumName = string.Empty;
         AlbumUrl = string.Empty;
         SongType = string.Empty;
-        Playlist = "None";
+        PlaylistIndex = 0;
 
         DownloadImage = 0f;
         DownloadMusic = 0f;
@@ -343,14 +352,14 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _songType, value);
     }
 
-    public string _playlist;
+    public int _playlistIndex;
     /// <summary>
     /// What playlist this song belong to
     /// </summary>
-    public string Playlist
+    public int PlaylistIndex
     {
-        get => _playlist;
-        set => this.RaiseAndSetIfChanged(ref _playlist, value);
+        get => _playlistIndex;
+        set => this.RaiseAndSetIfChanged(ref _playlistIndex, value);
     }
     public string[] PlaylistChoices { private set; get; }
 

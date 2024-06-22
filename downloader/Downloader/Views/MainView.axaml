@@ -42,7 +42,10 @@
                 Text="{Binding AlbumUrl}"
                 Watermark="Album URL" />
             <TextBox Text="{Binding SongType}" Watermark="Song Type" />
-            <ComboBox HorizontalAlignment="Stretch" ItemsSource="{Binding PlaylistChoices}" />
+            <ComboBox
+                HorizontalAlignment="Stretch"
+                ItemsSource="{Binding PlaylistChoices}"
+                SelectedIndex="{Binding PlaylistIndex}" />
         </StackPanel>
         <StackPanel
             Grid.Row="2"
