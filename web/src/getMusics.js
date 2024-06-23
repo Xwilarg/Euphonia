@@ -196,10 +196,10 @@ function getPlaylistHtml(id, name) {
 
     let htmlImgs = "";
     if (imgs.length === 0) {
-        htmlImgs = `<img src="/img/CD.png"/>`;
+        htmlImgs = `<img src="/img/CD.png"/ draggable="false">`;
     } else {
         for (let img of imgs) {
-            htmlImgs += `<img src="${img[0]}"/>`;
+            htmlImgs += `<img src="${img[0]}"/ draggable="false">`;
         }
     }
 
