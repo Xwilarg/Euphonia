@@ -22,9 +22,10 @@ You'll need to download the following:
 You can then run the following scripts:
 - import.py: Import all your songs given a path
 - normalize.sh/ps1: Normalize all your audio to make sure they are at the same volume
+- album.py: Automatically download album images from last.fm (requires an API key)
 
-## Some of my songs are missing!
-If you're missing some of your songs, you can run `missing.py` who is located inside the scripts/ folder
+## Some of my songs are missing/are corrupted!
+If you're missing some of your songs, you can run `integrity.py` who is located inside the scripts/ folder
 
 ## Website customization
 You can change the colors of the website in web/css/customize.cs
