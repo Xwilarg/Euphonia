@@ -411,6 +411,9 @@ function loadPage() {
         }
         lastTimeUpdate = player.currentTime;
     });
+    player.addEventListener("error", (_) => {
+        nextSong();
+    });
 
     // Audio player config
     player.volume = 0.5; // Base volume is too loud
