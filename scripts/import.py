@@ -46,7 +46,7 @@ for f in filenames:
 
     curr = {
         "name": name,
-        "path": name + currPath.suffix,
+        "path": currPath.stem + ".mp3",
         "artist": artist,
         "album": None,
         "playlist": "default",

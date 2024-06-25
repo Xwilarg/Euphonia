@@ -86,11 +86,11 @@ function nextSong() {
 
     // Load song and play it
     let player = document.getElementById("player");
-    player.src = `${window.config_remoteUrl}/data/normalized/${elem.path}`;
+    player.src = `./data/normalized/${elem.path}`;
     player.play();
 
     // Display song data
-    document.getElementById("currentImage").src = `${window.config_remoteUrl}${getAlbumImage(elem)}`;
+    document.getElementById("currentImage").src = `${getAlbumImage(elem)}`;
     document.getElementById("currentSong").innerHTML = `${elem.name}<br/>by ${elem.artist}`;
 
     // Set media session
@@ -98,7 +98,7 @@ function nextSong() {
         title: elem.name,
         artist: elem.artist,
         artwork: [
-            { src: `${window.config_remoteUrl}${getAlbumImage(elem)}` }
+            { src: `${getAlbumImage(elem)}` }
         ]
     });
 
@@ -165,9 +165,9 @@ function sanitize(text) {
 
 function getAlbumImage(elem) {
     if (elem.album === null) {
-        return "/img/CD.png";
+        return "./img/CD.png";
     }
-    return "/data/icon/" + json.albums[elem.album].path;
+    return "./data/icon/" + json.albums[elem.album].path;
 }
 
 function getPlaylistHtml(id, name) {
@@ -181,7 +181,7 @@ function getPlaylistHtml(id, name) {
         if (elem.album === null) {
             continue;
         }
-        let img = window.config_remoteUrl + getAlbumImage(elem);
+        let img = getAlbumImage(elem);
         if (mostPresents[img] === undefined) {
             mostPresents[img] = 1;
         } else {
@@ -261,7 +261,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
 
     let indexs = [];
     for (let elem of musics) {
-        let albumImg = window.config_remoteUrl + getAlbumImage(elem);
+        let albumImg = getAlbumImage(elem);
         html += `
         <div class="song ${sanitize(elem.name)}" id="song-${id}-${elem.id}">
             <div class="song-img${isMinimalist ? " hidden" : ""}">
@@ -307,7 +307,7 @@ let oldRanges = "";
 
 async function loadSongsAsync() {
     // Get music infos
-    const resp = await fetch(window.config_remoteUrl + "php/getInfoJson.php");
+    const resp = await fetch("./php/getInfoJson.php");
     json = await resp.json();
 
     // Update JSON names
@@ -411,7 +411,7 @@ function loadPage() {
         }
         lastTimeUpdate = player.currentTime;
     });
-    player.addEventListener("error", (_) => {
+    player.addEventListener("error", (err) => {
         nextSong();
     });
 
@@ -542,8 +542,6 @@ function chooseDisplay() {
 
 window.musics_initAsync = musics_initAsync;
 async function musics_initAsync() {
-    window.config_remoteUrl = "";
-
     // Buttons
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
     document.getElementById("refresh").addEventListener("click", refresh);
