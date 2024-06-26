@@ -7,25 +7,28 @@
     --font: 'Open Sans', sans-serif;
 
     /* Main background color of the website */
-    --background: #0E1C36;
+    --background: #2d5c7a;
+
+    /* Background dark accent */
+    --background-dark: #0c1f38;
 
     /* Color of the text */
     --text: #ddd;
 
     /* Color of the song search field */
-    --search-input: #DB504A;
+    --search-input: #347299;
 
     /* Border around the search bar */
     --search-input-border: black;
 
     /* Color of the buttons */
-    --button: #DB504A;
+    --button: #347299;
 
     /* Color of a button when hovered with the mouse */
-    --button-hover: #c95854;
+    --button-hover: #3b637c;
 
     /* Color of a button when disabled */
-    --button-disabled: #c95854;
+    --button-disabled: #3b637c;
 
     /* Shadow color of the buttons */
     --button-shadow: black;
@@ -41,7 +44,7 @@
      */
 
     /* Color of the banner */
-    --banner: #DB504A;
+    --banner: #347299;
 
     /* Color of the text in the banner */
     --banner-text: inherit;
@@ -51,7 +54,7 @@
      */
 
     /* Color of a song display */
-    --song: #DB504A;
+    --song: #347299;
 
     /* Color of the text inside song display */
     --song-text: inherit;
@@ -73,7 +76,7 @@
      */
 
     /* Color of the background of the settings panel */
-    --settings: #DB504A;
+    --settings: #347299;
 
     /* Inside of the settings panel, color of the line delimitating options */
     --fieldset: white;
@@ -83,7 +86,7 @@
      */
 
     /* Color of the playlist */
-    --playlist: #DB504A;
+    --playlist: #347299;
 
     /* Border color of the playlist */
     --playlist-border: black;

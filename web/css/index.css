@@ -1,7 +1,9 @@
 html {
-    background-color: var(--background);
     font-family: var(--font);
     color: var(--text);
+    background-color: var(--background);
+    background: linear-gradient(var(--background-dark), var(--background));
+    min-height: 100%;
 }
 
 #banner {
