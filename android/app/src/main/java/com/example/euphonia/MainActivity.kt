@@ -154,15 +154,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         //  Init media session
-        val videoView = findViewById<PlayerView>(R.id.player)
+        //val videoView = findViewById<PlayerView>(R.id.player)
         val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        controllerFuture.addListener(
+        /*controllerFuture.addListener(
             {
                 videoView.player = controllerFuture.get()
             },
             MoreExecutors.directExecutor()
-        )
+        )*/
 
         // Update JSON info
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
