@@ -2,7 +2,7 @@ html {
     font-family: var(--font);
     color: var(--text);
     background-color: var(--background);
-    background: linear-gradient(var(--background-dark), var(--background));
+    background: linear-gradient(var(--background), var(--background-dark));
     min-height: 100%;
 }
 

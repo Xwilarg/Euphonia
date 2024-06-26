@@ -44,7 +44,7 @@
      */
 
     /* Color of the banner */
-    --banner: #347299;
+    --banner: #0c1f38;
 
     /* Color of the text in the banner */
     --banner-text: inherit;
@@ -86,7 +86,7 @@
      */
 
     /* Color of the playlist */
-    --playlist: #347299;
+    --playlist: #0c1f38;
 
     /* Border color of the playlist */
     --playlist-border: black;
