@@ -77,7 +77,7 @@ class MainActivity : AppCompatActivity() {
 
     fun onRandom(v: View) {
         val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
-        val selectedMusics = filteredData.shuffled().map { songToItem(data, it) }.take(20).toMutableList()
+        val selectedMusics = filteredData.shuffled().take(20).map { songToItem(data, it) }.toMutableList()
 
         controllerFuture.get().setMediaItems(selectedMusics)
 
@@ -85,15 +85,24 @@ class MainActivity : AppCompatActivity() {
         controllerFuture.get().play()
     }
 
+    fun getDefaultThumbnail(): ByteArray {
+        val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
+        val stream = ByteArrayOutputStream()
+        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
+        return stream.toByteArray()
+    }
+
     fun songToItem(data: MusicData, song: Song): MediaItem {
         val albumPath = data.albums[song.album]?.path
         val file = if (song.album == null) {
-            val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
-            val stream = ByteArrayOutputStream()
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-            stream.toByteArray()
-        } else
-            File(filesDir, "${currUrl}icon/${albumPath}").readBytes()
+            getDefaultThumbnail()
+        } else {
+            try {
+                File(filesDir, "${currUrl}icon/${albumPath}").readBytes()
+            } catch (_: Exception) {
+                getDefaultThumbnail()
+            }
+        }
         return MediaItem.Builder()
             .setMediaId(File(filesDir, "${currUrl}music/${song.path}").path)
             .setMediaMetadata(
@@ -198,22 +207,32 @@ class MainActivity : AppCompatActivity() {
                     updateList()
                     builder.setContentText("$index / ${data.musics.size}")
                     notificationManager.notify(1, builder.build())
-                    URL("https://${currUrl}data/normalized/${song.path}").openStream().use { stream ->
-                        FileOutputStream(File(filesDir, "${currUrl}music/${song.path}")).use { output ->
-                            stream.copyTo(output)
+                    try
+                    {
+                        URL("https://${currUrl}data/normalized/${song.path}").openStream().use { stream ->
+                            FileOutputStream(File(filesDir, "${currUrl}music/${song.path}")).use { output ->
+                                stream.copyTo(output)
+                            }
                         }
                     }
+                    catch (_: Exception)
+                    { }
                     updateList()
                 }
                 val albumPath = data.albums[song.album]?.path
                 if (song.album != null && !File(filesDir, "${currUrl}icon/${albumPath}").exists()) {
                     updateList()
                     notificationManager.notify(1, builder.build())
-                    URL("https://${currUrl}data/icon/${albumPath}").openStream().use { stream ->
-                        FileOutputStream(File(filesDir, "${currUrl}icon/${albumPath}")).use { output ->
-                            stream.copyTo(output)
+                    try
+                    {
+                        URL("https://${currUrl}data/icon/${albumPath}").openStream().use { stream ->
+                            FileOutputStream(File(filesDir, "${currUrl}icon/${albumPath}")).use { output ->
+                                stream.copyTo(output)
+                            }
                         }
                     }
+                    catch (_: Exception)
+                    { }
                     updateList()
                 }
                 downloaded.add(0, song)
