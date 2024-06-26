@@ -93,11 +93,10 @@ class MainActivity : AppCompatActivity() {
         val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
         val song = filteredData[position]
 
-        val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.map { songToItem(data, it) }.toMutableList()
+        val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.toMutableList()
         selectedMusics.add(0, songToItem(data, song))
 
         controllerFuture.get().setMediaItems(selectedMusics)
-        controllerFuture.get().shuffleModeEnabled = true
 
         controllerFuture.get().prepare()
         controllerFuture.get().play()
@@ -116,13 +115,14 @@ class MainActivity : AppCompatActivity() {
         val builder = MediaMetadata.Builder()
         if (song.album == null) {
             builder
-                .setArtworkData(getDefaultThumbnail(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                .setArtworkData(thumbnail, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
         } else {
             try {
-                builder.setArtworkData(File("${filesDir}/${currUrl}icon/${albumPath}").readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
+                //builder.setArtworkData(File("${filesDir}/${currUrl}icon/${albumPath}").readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
             } catch (_: Exception) {
                 builder
-                    .setArtworkData(getDefaultThumbnail(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                    .setArtworkData(thumbnail, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
             }
         }
         return MediaItem.Builder()
@@ -140,6 +140,8 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        thumbnail = getDefaultThumbnail()
 
         // Ensure remote server is init
         val sharedPref = this.getSharedPreferences("settings", MODE_PRIVATE)
@@ -260,4 +262,6 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
     }
+
+    lateinit var thumbnail: ByteArray
 }
