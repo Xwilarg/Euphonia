@@ -5,6 +5,7 @@ import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
 import android.graphics.Bitmap
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -58,6 +59,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    // We display the songs if there is no playlist available or if we chose one already
     fun shouldDisplaySongs(): Boolean {
         return data.playlists == null || data.playlists!!.isEmpty() || currentPlaylist != null;
     }
@@ -77,14 +79,31 @@ class MainActivity : AppCompatActivity() {
 
     fun onRandom(v: View) {
         val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
-        val selectedMusics = filteredData.shuffled().take(20).map { songToItem(data, it) }.toMutableList()
+        val selectedMusics = filteredData.map { songToItem(data, it) }.toMutableList()
 
         controllerFuture.get().setMediaItems(selectedMusics)
+        controllerFuture.get().shuffleModeEnabled = true
 
         controllerFuture.get().prepare()
         controllerFuture.get().play()
     }
 
+    fun onRandomFromSong(position: Int) {
+
+        val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
+        val song = filteredData[position]
+
+        val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.map { songToItem(data, it) }.toMutableList()
+        selectedMusics.add(0, songToItem(data, song))
+
+        controllerFuture.get().setMediaItems(selectedMusics)
+        controllerFuture.get().shuffleModeEnabled = true
+
+        controllerFuture.get().prepare()
+        controllerFuture.get().play()
+    }
+
+    // Get a default thumbnail when none is available
     fun getDefaultThumbnail(): ByteArray {
         val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
         val stream = ByteArrayOutputStream()
@@ -94,23 +113,25 @@ class MainActivity : AppCompatActivity() {
 
     fun songToItem(data: MusicData, song: Song): MediaItem {
         val albumPath = data.albums[song.album]?.path
-        val file = if (song.album == null) {
-            getDefaultThumbnail()
+        val builder = MediaMetadata.Builder()
+        if (song.album == null) {
+            builder
+                .setArtworkData(getDefaultThumbnail(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
         } else {
             try {
-                File(filesDir, "${currUrl}icon/${albumPath}").readBytes()
+                builder.setArtworkData(File("${filesDir}/${currUrl}icon/${albumPath}").readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
             } catch (_: Exception) {
-                getDefaultThumbnail()
+                builder
+                    .setArtworkData(getDefaultThumbnail(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
             }
         }
         return MediaItem.Builder()
-            .setMediaId(File(filesDir, "${currUrl}music/${song.path}").path)
+            .setMediaId("${filesDir}/${currUrl}music/${song.path}")
             .setMediaMetadata(
-                MediaMetadata.Builder()
+                builder
                     .setTitle(song.name)
                     .setAlbumTitle(song.album)
                     .setArtist(song.artist)
-                    .setArtworkData(file, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
                     .build()
             )
             .build()
@@ -187,17 +208,7 @@ class MainActivity : AppCompatActivity() {
                     updateList()
                 } else {
                     // Clicked on a song
-                    val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
-                    val song = filteredData[position]
-
-                    // TODO: Making a list too big crash the app
-                    val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(data, it) }.take(20).toMutableList()
-                    selectedMusics.add(0, songToItem(data, song))
-
-                    controllerFuture.get().setMediaItems(selectedMusics)
-
-                    controllerFuture.get().prepare()
-                    controllerFuture.get().play()
+                    onRandomFromSong(position)
                 }
             }
 
