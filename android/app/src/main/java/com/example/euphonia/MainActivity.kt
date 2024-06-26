@@ -77,6 +77,22 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    fun onPlay(v: View) {
+        if (controllerFuture.get().isPlaying) {
+            controllerFuture.get().pause()
+        } else {
+            controllerFuture.get().play()
+        }
+    }
+
+    fun onPrevious(v: View) {
+        controllerFuture.get().seekToPreviousMediaItem()
+    }
+
+    fun onNext(v: View) {
+        controllerFuture.get().seekToNextMediaItem()
+    }
+
     fun onRandom(v: View) {
         val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
         val selectedMusics = filteredData.map { songToItem(data, it) }.toMutableList()
