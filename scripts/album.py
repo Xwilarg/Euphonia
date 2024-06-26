@@ -39,11 +39,12 @@ for m in data["musics"]:
                 path = f"{clean(m["artist"])}_{clean(album)}"
                 ext = dTarget.split('.')[-1]
                 r = requests.get(dTarget)
-                open(f"../web/data/icon/{path}.{ext}", 'wb+').write(r.content)
+                albumKey = track["album"]["artist"] + "_" + album
+                open(f"../web/data/icon/{clean(albumKey)}.{ext}", 'wb+').write(r.content)
 
-                m["album"] = album
+                m["album"] = albumKey
                 if album not in data["albums"]:
-                    data["albums"][album] = { "path": f"{path}.{ext}" }
+                    data["albums"][albumKey] = { "path": f"{clean(albumKey)}.{ext}", "source": dTarget, "name": album }
                 print(f"{m["name"]}: OK")
             else:
                 print(f"{m["name"]}: no album available")

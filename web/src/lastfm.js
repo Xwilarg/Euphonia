@@ -14,7 +14,7 @@ async function makeAuthCallAsync(method, params)
         return;
     }
 
-    let tokenUrl = window.config_remoteUrl + `php/getAuthUrl.php?sk=${sk}&method=${method}`;
+    let tokenUrl = `/php/getAuthUrl.php?sk=${sk}&method=${method}`;
     for (const [key, value] of Object.entries(params)) {
         tokenUrl += `&${key}=${encodeURI(value)}`;
     }
@@ -68,7 +68,7 @@ async function lastfm_registerScrobbleAsync(song, artist, album, length, timesta
 window.lastfm_initAsync = lastfm_initAsync;
 async function lastfm_initAsync()
 {
-    const resp = await fetch(window.config_remoteUrl + "php/getLastfmApiKey.php");
+    const resp = await fetch("/php/getLastfmApiKey.php");
     lastFmApiKey = await resp.text();
 
     if (!lastFmApiKey)
@@ -94,7 +94,7 @@ async function lastfm_initAsync()
         }
         else
         {
-            const signResp = await fetch(window.config_remoteUrl + `php/getAuthUrl.php?token=${token}&method=auth.getSession`);
+            const signResp = await fetch(`/php/getAuthUrl.php?token=${token}&method=auth.getSession`);
             const signature = await signResp.text();
     
             const data = new URLSearchParams();

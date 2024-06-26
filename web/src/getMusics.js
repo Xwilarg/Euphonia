@@ -50,8 +50,10 @@ function updateSongHighlightColor() {
     while (elems.length > 0) {
         elems[0].classList.remove("current");
     }
-    for (let c of document.getElementsByClassName(sanitize(json.musics[playlist[playlistIndex - 1]].name))) {
-        c.classList.add("current");
+    for (let c of document.getElementsByClassName("song")) {
+        if (c.dataset.name == sanitize(json.musics[playlist[playlistIndex - 1]].name)) {
+            c.classList.add("current");
+        }
     }
 }
 
@@ -107,16 +109,13 @@ function nextSong() {
 
 // Create a random playlist
 function prepareWholeShuffle() {
-    playlistIndex = Math.floor(Math.random() * json.musics.length);
+    playlist = [];
+    playlistIndex = 0;
 
-    let indexes = [...Array(json.musics.length).keys()];
-
-    // https://stackoverflow.com/a/46545530/6663248
-    playlist = playlist.concat(indexes
+    playlist = Array.from(Array(json.musics.length).keys())
         .map((value) => ({ value, sort: Math.random() }))
         .sort((a, b) => a.sort - b.sort)
-        .map(({ value }) => value)
-    );
+        .map(({ value }) => value);
 
     nextSong();
 }
@@ -167,6 +166,7 @@ function getAlbumImage(elem) {
     if (elem.album === null) {
         return "./img/CD.png";
     }
+    console.log(elem.album);
     return "./data/icon/" + json.albums[elem.album].path;
 }
 
@@ -263,7 +263,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     for (let elem of musics) {
         let albumImg = getAlbumImage(elem);
         html += `
-        <div class="song ${sanitize(elem.name)}" id="song-${id}-${elem.id}">
+        <div class="song" data-name="${sanitize(elem.name)}" id="song-${id}-${elem.id}">
             <div class="song-img${isMinimalist ? " hidden" : ""}">
                 <img id="img-${id}-${elem.id}" src="${albumImg}"/>
             </div>
@@ -544,8 +544,8 @@ window.musics_initAsync = musics_initAsync;
 async function musics_initAsync() {
     // Buttons
     document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
-    document.getElementById("refresh").addEventListener("click", refresh);
-    document.getElementById("random").addEventListener("click", random);
+    document.getElementById("refresh-btn").addEventListener("click", refresh);
+    document.getElementById("random-btn").addEventListener("click", random);
     document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
 
     await loadSongsAsync();
@@ -553,7 +553,7 @@ async function musics_initAsync() {
     // Filter text bar
     document.getElementById("filter").addEventListener("input", (e) => {
         let filterValue = e.target.value.toLowerCase();
-        document.getElementById("refresh").disabled = filterValue !== "";
+        document.getElementById("refresh-btn").disabled = filterValue !== "";
         if (currentPlaylist === null) {
             displayPlaylists(json.playlists, "playlistlist", filterValue);
         } else {
