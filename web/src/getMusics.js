@@ -67,13 +67,14 @@ function nextSong() {
     // Update playlist text
     let playlistSize = playlist.length - playlistIndex;
     document.getElementById("playlist-title").innerHTML =
-    `${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:<br/>`;
+    `<h3>${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:</h3>`;
     let playlistElems = document.getElementsByClassName("next-song");
     for (let i = 0; i < playlistElems.length; i++) {
         if (playlistIndex + i + 1 >= playlist.length) {
             break;
         }
-        playlistElems[i].innerHTML = sanitize(json.musics[playlist[playlistIndex + i + 1]].name);
+        const curr = json.musics[playlist[playlistIndex + i + 1]];
+        playlistElems[i].innerHTML = sanitize(curr.name) + " by " + sanitize(curr.artist);
     }
 
     // Select current song and move playlist forward

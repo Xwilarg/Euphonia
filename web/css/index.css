@@ -170,12 +170,12 @@ img {
     position: fixed;
     background-color: var(--playlist);
     border: 1px var(--playlist-border) solid;
-    width: 18em;
+    width: 25em;
     border-radius: 5px;
     color: var(--playlist-text);
 }
 
-@media (max-width: 36em) {
+@media (max-width: 50em) {
     #playlist {
         width: 100%;
     }
@@ -186,7 +186,7 @@ img {
 }
 
 .next-song {
-    padding-left: .4em;
+    padding: .4em 10px;
 }
 
 .hidden {

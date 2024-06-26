@@ -5,7 +5,7 @@ from pathlib import Path
 import urllib.parse
 
 def clean(text):
-    return text.replace("<", "").replace(">", "").replace(":", "").replace("\"", "").replace("/", "").replace("\\", "").replace("|", "").replace("?", "").replace("*", "").strip()
+    return text.replace("<", "").replace(">", "").replace(":", "").replace("\"", "").replace("/", "").replace("\\", "").replace("|", "").replace("?", "").replace("*", "").strip().lower()
 
 if not os.path.exists('../web/data/info.json'):
     print("info JSON not found")
