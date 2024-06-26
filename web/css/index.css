@@ -175,6 +175,12 @@ img {
     color: var(--playlist-text);
 }
 
+@media (max-width: 36em) {
+    #playlist {
+        width: 100%;
+    }
+}
+
 #playlist-title {
     text-align: center;
 }
