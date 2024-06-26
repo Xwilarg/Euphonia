@@ -113,18 +113,20 @@ class MainActivity : AppCompatActivity() {
     fun songToItem(data: MusicData, song: Song): MediaItem {
         val albumPath = data.albums[song.album]?.path
         val builder = MediaMetadata.Builder()
-        if (song.album == null) {
+        if (song.album != null) {
+            builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
+        }
+        /*if (song.album == null) {
             builder
                 .setArtworkData(thumbnail, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
         } else {
             try {
-                builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
-                //builder.setArtworkData(File("${filesDir}/${currUrl}icon/${albumPath}").readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
+                builder.setArtworkData(File("${filesDir}/${currUrl}icon/${albumPath}").readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
             } catch (_: Exception) {
                 builder
                     .setArtworkData(thumbnail, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
             }
-        }
+        }*/
         return MediaItem.Builder()
             .setMediaId("${filesDir}/${currUrl}music/${song.path}")
             .setMediaMetadata(
