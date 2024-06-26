@@ -9,3 +9,8 @@ data class Song(
     val source: String?,
     val type: String?
 )
+
+data class ExtendedSong(
+    val song: Song,
+    val album: Album?
+)

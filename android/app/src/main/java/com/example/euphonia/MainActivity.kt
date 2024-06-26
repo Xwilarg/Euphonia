@@ -22,11 +22,10 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
-import androidx.media3.ui.PlayerView
+import com.example.euphonia.data.ExtendedSong
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
 import com.google.common.util.concurrent.ListenableFuture
-import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -50,6 +49,8 @@ class MainActivity : AppCompatActivity() {
 
     lateinit var data: MusicData
 
+    lateinit var thumbnail: ByteArray
+
     override fun onBackPressed() {
         if (currentPlaylist != null) {
             currentPlaylist = null
@@ -69,7 +70,7 @@ class MainActivity : AppCompatActivity() {
         handler.post {
             val adapter =
                 if (shouldDisplaySongs()) {
-                    ArrayAdapter(this, android.R.layout.simple_list_item_1, downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }.map { it.name })
+                    SongAdapter(this, downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }.map { ExtendedSong(it, data.albums[it.album]) }, currUrl!!)
                 } else {
                     ArrayAdapter(this, android.R.layout.simple_list_item_1, data.playlists!!.map { it.value.name })
                 }
@@ -130,7 +131,8 @@ class MainActivity : AppCompatActivity() {
         val albumPath = data.albums[song.album]?.path
         val builder = MediaMetadata.Builder()
         if (song.album != null) {
-            builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
+            val artworkUri =
+                builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
         }
         /*if (song.album == null) {
             builder
@@ -280,6 +282,4 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
     }
-
-    lateinit var thumbnail: ByteArray
 }
