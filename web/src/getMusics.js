@@ -248,13 +248,19 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
         }
         musics = musics.slice(0, count);
     } else {
-        musics = musics
-        .filter(elem =>
-            sanitize(elem.name).toLowerCase().includes(filter) ||
+        res = []
+        for (const elem of musics)
+        {
+            if (sanitize(elem.name).toLowerCase().includes(filter) ||
             sanitize(elem.artist).toLowerCase().includes(filter) ||
             sanitize(wanakana.toRomaji(elem.name)).toLowerCase().includes(filter) ||
-            sanitize(wanakana.toRomaji(elem.artist)).toLowerCase().includes(filter)
-        );
+            sanitize(wanakana.toRomaji(elem.artist)).toLowerCase().includes(filter))
+            {
+                res.push(elem);
+                if (res.length == count) break;
+            }
+        }
+        musics = res;
     }
     if (doesSort) {
         musics.sort((a, b) => a.name.localeCompare(b.name));
@@ -558,7 +564,7 @@ async function musics_initAsync() {
         if (currentPlaylist === null) {
             displayPlaylists(json.playlists, "playlistlist", filterValue);
         } else {
-            displaySongs(json.musics, "songlist", filterValue, true, true);
+            displaySongs(json.musics, "songlist", filterValue, true, true, 15);
         }
     });
     document.getElementById("filter").value = "";
