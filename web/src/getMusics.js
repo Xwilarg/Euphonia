@@ -167,7 +167,6 @@ function getAlbumImage(elem) {
     if (elem.album === null) {
         return "./img/CD.png";
     }
-    console.log(elem.album);
     return "./data/icon/" + json.albums[elem.album].path;
 }
 
