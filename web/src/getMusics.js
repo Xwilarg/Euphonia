@@ -418,6 +418,7 @@ function loadPage() {
         lastTimeUpdate = player.currentTime;
     });
     player.addEventListener("error", (err) => {
+        console.error(err);
         nextSong();
     });
 
