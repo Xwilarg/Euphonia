@@ -43,6 +43,7 @@ async function makeAuthCallAsync(method, params)
 window.lastfm_registerNowPlayingAsync = lastfm_registerNowPlayingAsync;
 async function lastfm_registerNowPlayingAsync(song, artist, album, length)
 {
+    if (!lastFmApiKey) return;
     const json = await makeAuthCallAsync("track.updateNowPlaying", {
         artist: artist,
         track: song,
@@ -55,6 +56,7 @@ async function lastfm_registerNowPlayingAsync(song, artist, album, length)
 window.lastfm_registerScrobbleAsync = lastfm_registerScrobbleAsync;
 async function lastfm_registerScrobbleAsync(song, artist, album, length, timestamp)
 {
+    if (!lastFmApiKey) return;
     const json = await makeAuthCallAsync("track.scrobble", {
         artist: artist,
         track: song,
