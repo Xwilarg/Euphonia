@@ -30,21 +30,21 @@ namespace DiscordBot.Player
                 {
                     var nextSong = valdMusic[serviceProvider.GetService<Random>()!.Next(valdMusic.Length)];
                     var musicUri = new Uri(serverData.BaseUri, $"/data/normalized/{nextSong.Path}");
-                    // Commented code download file locally, might be useful is the network is shit
-                    /*
+
+                    // Download the song locally because sometimes for some reason else the song is skipped?
                     var path = $"{serverData.GuildId}{Path.GetExtension(musicUri.AbsoluteUri)}";
                     File.WriteAllBytes(path, await serviceProvider.GetService<HttpClient>().GetByteArrayAsync(musicUri));
-                    */
+
                     await serverData.TextChannel.SendMessageAsync(embed: FormatSongInfo(data, nextSong, serverData.BaseUri).Build());
                     var ffmpeg = Process.Start(new ProcessStartInfo
                     {
                         FileName = "ffmpeg",
-                        Arguments = $"-hide_banner -loglevel panic -i {musicUri} -ac 2 -f s16le -ar 48000 pipe:",
+                        Arguments = $"-hide_banner -loglevel panic -i {path} -ac 2 -f s16le -ar 48000 pipe:",
                         UseShellExecute = false,
                         RedirectStandardOutput = true
                     });
                     using var output = ffmpeg.StandardOutput.BaseStream;
-                    using var discord = audioClient.CreatePCMStream(AudioApplication.Mixed);
+                    using var discord = audioClient.CreatePCMStream(AudioApplication.Music);
                     try { await output.CopyToAsync(discord); }
                     finally
                     {
