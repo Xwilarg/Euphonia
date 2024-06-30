@@ -417,8 +417,11 @@ function loadPage() {
         }
         lastTimeUpdate = player.currentTime;
     });
+    document.getElementById("currentImage").addEventListener("error", (err) => {
+        document.getElementById("error-log").innerHTML += `<div class="error">Loading "${currSong.name}" by "${currSong.artist}" thumbnail failed</div>`;
+    });
     player.addEventListener("error", (err) => {
-        console.error(err);
+        document.getElementById("error-log").innerHTML += `<div class="error">Loading "${currSong.name}" by "${currSong.artist}" music failed: ${err.message}</div>`;
         nextSong();
     });
 
