@@ -1,6 +1,7 @@
 ﻿
 namespace DiscordBot.Data;
 
+#nullable disable
 public class JsonExportData
 {
     public string[] Highlight { set; get; } = [];
@@ -30,3 +31,4 @@ public class Playlist
     public string Name { set; get; }
     public string Description { set; get; }
 }
+#nullable enable

@@ -2,5 +2,5 @@
 
 public record Credentials
 {
-    public string BotToken { init; get; }
+    public string? BotToken { init; get; }
 }

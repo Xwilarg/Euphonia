@@ -1,7 +1,7 @@
 ﻿using Discord;
-using Discord.Audio;
 using Discord.WebSocket;
 using DiscordBot.Data;
+using DiscordBot.Player;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Text.Json;
@@ -82,13 +82,19 @@ public sealed class Program
 
             serverData.VoiceChannel = (SocketVoiceChannel)gUser.VoiceChannel;
             serverData.TextChannel = (ITextChannel)arg.Channel;
-            serverData.TargetPlaylist = (string)arg.Data.Options.FirstOrDefault(x => x.Name == "playlist");
+            var opt = arg.Data.Options.FirstOrDefault(x => x.Name == "playlist");
+            serverData.TargetPlaylist = opt == null ? null : (string)opt;
+            serverData.GuildId = arg.GuildId.Value;
 
             _ = Task.Run(async () =>
             {
 
                 // Download info JSON
                 var target = (string)arg.Data.Options.First(x => x.Name == "source");
+                if (!target.StartsWith("http://") && !target.StartsWith("https://"))
+                {
+                    target = $"https://{target}";
+                }
                 Uri baseUri;
                 Uri jsonUri;
                 try
@@ -101,6 +107,7 @@ public sealed class Program
                     await arg.FollowupAsync("This source given is invalid", ephemeral: true);
                     return;
                 }
+                serverData.BaseUri = baseUri;
                 if (!_sourceData.TryGetValue(baseUri.AbsoluteUri, out var jsonExportData))
                 {
                     try
@@ -135,43 +142,8 @@ public sealed class Program
                     }
                 }
 
-                try
-                {
-                    await arg.FollowupAsync("Starting the radio");
-                    var valdMusic = serverData.TargetPlaylist == null ? jsonExportData.Musics : jsonExportData.Musics.Where(x => x.Playlist == serverData.TargetPlaylist).ToArray();
-                    var nextSong = valdMusic[_serviceProvider.GetService<Random>()!.Next(valdMusic.Length)];
-                    var audioClient = await serverData.VoiceChannel.ConnectAsync();
-                    var ffmpeg = Process.Start(new ProcessStartInfo
-                    {
-                        FileName = "ffmpeg",
-                        Arguments = $"-hide_banner -loglevel panic -i {new Uri(baseUri, $"/data/normalized/{nextSong.Path}")} -ac 2 -f s16le -ar 48000 pipe:",
-                        UseShellExecute = false,
-                        RedirectStandardOutput = true
-                    });
-                    using var output = ffmpeg.StandardOutput.BaseStream;
-                    using var discord = audioClient.CreatePCMStream(AudioApplication.Mixed);
-                    try { await output.CopyToAsync(discord); }
-                    catch (Exception ex)
-                    {
-                        await Log.LogErrorAsync(ex);
-                    }
-                    finally
-                    {
-                        await discord.FlushAsync();
-                    }
-                }
-                catch (TaskCanceledException)
-                {
-                    await arg.Channel.SendMessageAsync("Failed to connect to the text channel, please make sure I have the right permissions");
-                }
-                catch (Exception ex)
-                {
-                    await Log.LogErrorAsync(ex);
-                }
-                finally
-                {
-                    _guildData.Remove(arg.GuildId!.Value);
-                }
+                await arg.FollowupAsync("Starting the radio");
+                await MusicPlayer.PlayMusicAsync(_serviceProvider, jsonExportData, serverData);
             });
         }
         else if (arg.CommandName == "stop")
