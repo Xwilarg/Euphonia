@@ -567,7 +567,7 @@ async function musics_initAsync() {
         if (currentPlaylist === null) {
             displayPlaylists(json.playlists, "playlistlist", filterValue);
         } else {
-            displaySongs(json.musics, "songlist", filterValue, true, true, 15);
+            displaySongs(json.musics, "songlist", filterValue, true, true, filterValue !== "" ? 15 : 5);
         }
     });
     document.getElementById("filter").value = "";
