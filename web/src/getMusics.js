@@ -250,10 +250,10 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
         res = []
         for (const elem of musics)
         {
-            if (sanitize(elem.name).toLowerCase().includes(filter) ||
-            sanitize(elem.artist).toLowerCase().includes(filter) ||
-            sanitize(wanakana.toRomaji(elem.name)).toLowerCase().includes(filter) ||
-            sanitize(wanakana.toRomaji(elem.artist)).toLowerCase().includes(filter))
+            if (elem.name.toLowerCase().includes(filter) ||
+            elem.artist.toLowerCase().includes(filter) ||
+            wanakana.toRomaji(elem.name).toLowerCase().includes(filter) ||
+            wanakana.toRomaji(elem.artist).toLowerCase().includes(filter))
             {
                 res.push(elem);
                 if (res.length == count) break;
