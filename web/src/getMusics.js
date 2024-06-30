@@ -576,7 +576,7 @@ async function musics_initAsync() {
 }
 
 window.onkeydown = function(e){
-    if (e.key === ' ') { // Spacebar switch play/pause
+    if (e.key === ' ' && document.activeElement !== document.getElementById("filter")) { // Spacebar switch play/pause
         e.preventDefault(); // Prevent page from scrolling down
         togglePlay();
     }
