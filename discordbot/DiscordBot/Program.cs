@@ -72,6 +72,11 @@ public sealed class Program
                 await arg.RespondAsync("You must be in a voice channel to do this command", ephemeral: true);
                 return;
             }
+            else if (_guildData.ContainsKey(arg.GuildId!.Value))
+            {
+                await arg.RespondAsync("You must explicitly stop the previous radio with the /stop command first", ephemeral: true);
+                return;
+            }
             await arg.DeferAsync();
             ServerData serverData;
             if (!_guildData.TryGetValue(arg.GuildId!.Value, out serverData))
@@ -144,6 +149,7 @@ public sealed class Program
 
                 await arg.FollowupAsync("Starting the radio");
                 await MusicPlayer.PlayMusicAsync(_serviceProvider, jsonExportData, serverData);
+                _guildData.Remove(arg.GuildId.Value);
             });
         }
         else if (arg.CommandName == "stop")
@@ -155,8 +161,14 @@ public sealed class Program
             else
             {
                 await arg.RespondAsync("Stopping the radio...");
-                await value.VoiceChannel.DisconnectAsync();
-                _guildData.Remove(arg.GuildId.Value);
+                try
+                {
+                    await value.VoiceChannel.DisconnectAsync();
+                }
+                finally
+                {
+                    _guildData.Remove(arg.GuildId.Value);
+                }
             }
         }
     }

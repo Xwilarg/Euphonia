@@ -39,12 +39,12 @@ namespace DiscordBot.Player
                     var ffmpeg = Process.Start(new ProcessStartInfo
                     {
                         FileName = "ffmpeg",
-                        Arguments = $"-hide_banner -loglevel panic -i {path} -ac 2 -f s16le -ar 48000 pipe:",
+                        Arguments = $"-hide_banner -loglevel panic -i {path} -ac 2 -f s16le -ar 48000 pipe:1",
                         UseShellExecute = false,
                         RedirectStandardOutput = true
                     });
                     using var output = ffmpeg.StandardOutput.BaseStream;
-                    using var discord = audioClient.CreatePCMStream(AudioApplication.Music);
+                    using var discord = audioClient.CreatePCMStream(AudioApplication.Mixed);
                     try { await output.CopyToAsync(discord); }
                     finally
                     {
