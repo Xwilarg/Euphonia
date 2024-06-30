@@ -24,6 +24,10 @@ You can then run the following scripts:
 - normalize.sh/ps1: Normalize all your audio to make sure they are at the same volume
 - album.py: Automatically download album images from last.fm (requires an API key)
 
+## Listen to my music
+[!TODO]: To write
+Website, discord bot, android app
+
 ## Some of my songs are missing/are corrupted!
 If you're missing some of your songs, you can run `integrity.py` who is located inside the scripts/ folder
 
