@@ -23,7 +23,7 @@ else
 
 $credentials = json_decode(file_get_contents("../data/credentials.json"), true);
 
-// TODO: last.fm auth is such a massive pain and I don't want to spent 4 hours doing parsing for it
+// TODO: last.fm auth is a massive pain and I don't want to spent 4 hours doing parsing for it
 $url = "";
 if (isset($_GET["album"])) $url .= "album" . $_GET["album"];
 $url .= "api_key" . $credentials['apiKey'];
