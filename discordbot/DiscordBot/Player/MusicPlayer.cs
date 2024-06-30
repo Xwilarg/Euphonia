@@ -24,7 +24,7 @@ namespace DiscordBot.Player
         {
             var valdMusic = serverData.TargetPlaylist == null ? data.Musics : data.Musics.Where(x => x.Playlist == serverData.TargetPlaylist).ToArray();
             var audioClient = await serverData.VoiceChannel.ConnectAsync();
-            while (serverData.VoiceChannel.ConnectedUsers.Any())
+            while (serverData.VoiceChannel.ConnectedUsers.Count == 1)
             {
                 try
                 {
