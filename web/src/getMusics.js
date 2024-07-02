@@ -265,41 +265,45 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
         musics.sort((a, b) => a.name.localeCompare(b.name));
     }
 
-    let indexs = [];
-    for (let elem of musics) {
-        let albumImg = getAlbumImage(elem);
-        html += `
-        <div class="song" data-name="${sanitize(elem.name)}" id="song-${id}-${elem.id}">
-            <div class="song-img${isMinimalist ? " hidden" : ""}">
-                <img id="img-${id}-${elem.id}" src="${albumImg}"/>
+    if (filter !== "" && musics.length == 0) {
+        document.getElementById(id).innerHTML = "<b>No song match is matching your search</b>";
+    } else {
+        let indexs = [];
+        for (let elem of musics) {
+            let albumImg = getAlbumImage(elem);
+            html += `
+            <div class="song" data-name="${sanitize(elem.name)}" id="song-${id}-${elem.id}">
+                <div class="song-img${isMinimalist ? " hidden" : ""}">
+                    <img id="img-${id}-${elem.id}" src="${albumImg}"/>
+                </div>
+                <p>
+                    ${sanitize(elem.name)}<br/>
+                    ${sanitize(elem.artist)}
+                </p>
             </div>
-            <p>
-                ${sanitize(elem.name)}<br/>
-                ${sanitize(elem.artist)}
-            </p>
-        </div>
-        `;
-        indexs.push(elem.id);
-    }
-    document.getElementById(id).innerHTML = html;
-    for (let i of indexs) {
-        // Add listeners
-        // If we are in minimalist mode, we allow click anywhere on the song since only the text part is displayed
-        // If we are not, we only allow click on the image so user can copy text without starting song
-        document.getElementById(`img-${id}-${i}`).onclick = () => {
-            if (!isMinimalist) {
-                prepareShuffle(i);
+            `;
+            indexs.push(elem.id);
+        }
+        document.getElementById(id).innerHTML = html;
+        for (let i of indexs) {
+            // Add listeners
+            // If we are in minimalist mode, we allow click anywhere on the song since only the text part is displayed
+            // If we are not, we only allow click on the image so user can copy text without starting song
+            document.getElementById(`img-${id}-${i}`).onclick = () => {
+                if (!isMinimalist) {
+                    prepareShuffle(i);
+                }
+            }
+            document.getElementById(`song-${id}-${i}`).onclick = () => {
+                if (isMinimalist) {
+                    prepareShuffle(i);
+                }
             }
         }
-        document.getElementById(`song-${id}-${i}`).onclick = () => {
-            if (isMinimalist) {
-                prepareShuffle(i);
-            }
-        }
-    }
 
-    // Playlist changed, maybe there is a song we should highlight now
-    updateSongHighlightColor();
+        // Playlist changed, maybe there is a song we should highlight now
+        updateSongHighlightColor();
+    }
 }
 
 function addZero(nb) {

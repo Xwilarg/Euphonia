@@ -65,6 +65,7 @@ namespace DiscordBot.Player
                     break;
                 }
             }
+            await serverData.VoiceChannel.DisconnectAsync();
         }
     }
 }
