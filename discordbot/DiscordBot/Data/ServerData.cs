@@ -11,5 +11,6 @@ public class ServerData
     public ulong GuildId { set; get; }
     public string? TargetPlaylist { set; get; }
     public Uri BaseUri { set; get; }
+    public CancellationTokenSource CancelSong { set; get; } = new();
 }
 #nullable enable

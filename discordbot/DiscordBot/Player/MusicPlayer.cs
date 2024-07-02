@@ -47,7 +47,12 @@ namespace DiscordBot.Player
                     });
                     using var output = ffmpeg.StandardOutput.BaseStream;
                     using var discord = audioClient.CreatePCMStream(AudioApplication.Mixed);
-                    try { await output.CopyToAsync(discord); }
+                    try { await output.CopyToAsync(discord, serverData.CancelSong.Token); }
+                    catch (OperationCanceledException)
+                    {
+                        // Song was skipped
+                        serverData.CancelSong = new();
+                    }
                     finally
                     {
                         await discord.FlushAsync();

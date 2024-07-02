@@ -64,7 +64,7 @@ public sealed class Program
         {
             await arg.RespondAsync("Pong");
         }
-        if (arg.CommandName == "play")
+        else if (arg.CommandName == "play")
         {
             var gUser = (IGuildUser)arg.User;
             if (gUser.VoiceChannel == null)
@@ -171,6 +171,18 @@ public sealed class Program
                 }
             }
         }
+        else if (arg.CommandName == "next")
+        {
+            if (!_guildData.TryGetValue(arg.GuildId!.Value, out ServerData? value))
+            {
+                await arg.RespondAsync("No radio was start in this server", ephemeral: true);
+            }
+            else
+            {
+                _guildData[arg.GuildId.Value].CancelSong.Cancel();
+                await arg.RespondAsync($"{arg.User.Mention} skipped to the next song");
+            }
+        }
     }
 
     private const ulong DebugGuildId = 1169565317920456705;
@@ -208,6 +220,12 @@ public sealed class Program
                     {
                         Name = "stop",
                         Description = "Stop playing the radio",
+                        ContextTypes = [ InteractionContextType.Guild ]
+                    },
+                    new()
+                    {
+                        Name = "next",
+                        Description = "Go to the next song",
                         ContextTypes = [ InteractionContextType.Guild ]
                     },
                     new()
