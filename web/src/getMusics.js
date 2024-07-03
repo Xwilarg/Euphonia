@@ -66,6 +66,7 @@ function nextSong() {
 
     // Update playlist text
     let playlistSize = playlist.length - playlistIndex;
+    document.getElementById("playlist").classList.remove("hidden");
     document.getElementById("playlist-title").innerHTML =
     `<h3>${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:</h3>`;
     let playlistElems = document.getElementsByClassName("next-song");
@@ -591,6 +592,10 @@ window.onkeydown = function(e){
     else if (e.key === 'ArrowRight') {
         let player = document.getElementById("player");
         player.currentTime += 5.0;
+    }
+    else if (e.key == 'Enter') {
+        e.preventDefault();
+        e.target.blur();
     }
 }
 

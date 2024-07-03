@@ -17,6 +17,7 @@ import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
+import androidx.core.content.res.ResourcesCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -48,8 +49,6 @@ class MainActivity : AppCompatActivity() {
     lateinit var controllerFuture: ListenableFuture<MediaController>
 
     lateinit var data: MusicData
-
-    lateinit var thumbnail: ByteArray
 
     override fun onBackPressed() {
         if (currentPlaylist != null) {
@@ -96,10 +95,9 @@ class MainActivity : AppCompatActivity() {
 
     fun onRandom(v: View) {
         val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
-        val selectedMusics = filteredData.map { songToItem(data, it) }.toMutableList()
+        val selectedMusics = filteredData.map { songToItem(data, it) }.shuffled().toMutableList()
 
         controllerFuture.get().setMediaItems(selectedMusics)
-        controllerFuture.get().shuffleModeEnabled = true
 
         controllerFuture.get().prepare()
         controllerFuture.get().play()
@@ -120,19 +118,20 @@ class MainActivity : AppCompatActivity() {
     }
 
     // Get a default thumbnail when none is available
-    fun getDefaultThumbnail(): ByteArray {
-        val bmp = resources.getDrawable(R.drawable.album).toBitmap(512, 512)
+    /*fun getDefaultThumbnail(): ByteArray {
+        val bmp = ResourcesCompat.getDrawable(getResources(), R.drawable.album, null)!!.toBitmap(512, 512)
         val stream = ByteArrayOutputStream()
         bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
         return stream.toByteArray()
-    }
+    }*/
 
     fun songToItem(data: MusicData, song: Song): MediaItem {
         val albumPath = data.albums[song.album]?.path
         val builder = MediaMetadata.Builder()
         if (song.album != null) {
-            val artworkUri =
-                builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
+            builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
+        } else {
+            builder.setArtist(null)
         }
         /*if (song.album == null) {
             builder
@@ -160,8 +159,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
-        thumbnail = getDefaultThumbnail()
 
         // Ensure remote server is init
         val sharedPref = this.getSharedPreferences("settings", MODE_PRIVATE)

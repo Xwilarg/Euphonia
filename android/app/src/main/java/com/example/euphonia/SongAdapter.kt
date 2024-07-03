@@ -8,9 +8,7 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.LayoutRes
 import com.example.euphonia.data.ExtendedSong
-import com.example.euphonia.data.Song
 import java.io.File
 
 class SongAdapter(private val mContext: Context, list: List<ExtendedSong>, url: String) :
@@ -38,8 +36,8 @@ class SongAdapter(private val mContext: Context, list: List<ExtendedSong>, url: 
         val name = listItem.findViewById<View>(R.id.textView_name) as TextView
         name.setText(currentSong.song.name)
 
-        val release = listItem.findViewById<View>(R.id.textView_release) as TextView
-        release.setText(currentSong.song.album)
+        val release = listItem.findViewById<View>(R.id.textView_artist) as TextView
+        release.setText(currentSong.song.artist)
 
         return listItem
     }

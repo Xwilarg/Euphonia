@@ -176,6 +176,7 @@ img {
     width: 25em;
     border-radius: 5px;
     color: var(--playlist-text);
+    z-index: 2;
 }
 
 @media (max-width: 50em) {
@@ -190,6 +191,9 @@ img {
 
 .next-song {
     padding: .4em 10px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 
 .hidden {

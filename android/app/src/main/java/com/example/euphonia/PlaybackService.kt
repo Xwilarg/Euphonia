@@ -1,5 +1,6 @@
 package com.example.euphonia
 
+import android.content.Intent
 import androidx.media3.common.MediaItem
 import androidx.media3.exoplayer.ExoPlayer
 import androidx.media3.session.MediaSession
@@ -35,5 +36,9 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
     ): ListenableFuture<MutableList<MediaItem>> {
         val updatedMediaItems = mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
         return Futures.immediateFuture(updatedMediaItems)
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        return super.onStartCommand(intent, flags, startId)
     }
 }
