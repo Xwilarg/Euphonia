@@ -48,6 +48,25 @@ html {
     z-index: 2;
 }
 
+#volume-container {
+    position: fixed;
+    top: 3em;
+    left: 4.6em;
+    background-color: var(--settings);
+    padding: .5em;
+    height: 305px;
+    z-index: 3;
+    writing-mode: vertical-lr;
+    width: 20px;
+    border-radius: 5px;
+    direction: rtl;
+}
+
+#volume {
+    height: 90%;
+    margin-left: -10px;
+}
+
 fieldset {
     border-color: var(--fieldset);
     margin-top: 1em;

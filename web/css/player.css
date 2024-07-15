@@ -16,15 +16,6 @@
     margin-top: -5px;
 }
 
-#volume-container {
-    width: 0;
-    flex-grow: 1;
-}
-
-#volume {
-    width: 100%;
-}
-
 input[type=range] {
     vertical-align: middle;
 }

@@ -377,6 +377,27 @@ function loadPage() {
             window.prompt("Copy to share", newUrl)
         }
     });
+    document.getElementById("download").addEventListener("click", (_) => {
+        let b = document.getElementById("download");
+        b.disabled = true;
+        fetch(`/data/normalized/${currSong.path}`)
+        .then(resp => resp.ok ? resp.blob() : Promise.reject(`Code ${resp.status}`))
+        .then(blob => {
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.style.display = 'none';
+            a.href = url;
+            a.download = currSong.path;
+            document.body.appendChild(a);
+            a.click();
+            window.URL.revokeObjectURL(url);
+            b.disabled = false;
+        })
+        .catch((err) => {
+            document.getElementById("error-log").innerHTML += `<div class="error">Download "${currSong.name}" by "${currSong.artist}" failed: ${err}</div>`;
+            b.disabled = false;
+        });
+    });
     document.getElementById("volume").addEventListener("change", (_) => {
         player.volume = document.getElementById("volume").value / 100;
     });
@@ -422,7 +443,7 @@ function loadPage() {
         }
         lastTimeUpdate = player.currentTime;
     });
-    document.getElementById("currentImage").addEventListener("error", (err) => {
+    document.getElementById("currentImage").addEventListener("error", (_) => {
         document.getElementById("error-log").innerHTML += `<div class="error">Loading "${currSong.name}" by "${currSong.artist}" thumbnail failed</div>`;
     });
     player.addEventListener("error", (err) => {
@@ -491,11 +512,6 @@ function refresh() {
     displaySongs(json.musics, "songlist", "", false, true, 5);
 }
 
-// Hide / show settings
-function toggleSettings() {
-    document.getElementById("settings").hidden = !document.getElementById("settings").hidden;
-}
-
 let isMinimalist = false;
 function toggleMinimalistMode() {
     isMinimalist = !isMinimalist;
@@ -558,7 +574,8 @@ function chooseDisplay() {
 window.musics_initAsync = musics_initAsync;
 async function musics_initAsync() {
     // Buttons
-    document.getElementById("toggle-settings").addEventListener("click", toggleSettings);
+    document.getElementById("toggle-settings").addEventListener("click", () => { document.getElementById("settings").hidden = !document.getElementById("settings").hidden; });
+    document.getElementById("toggle-volume").addEventListener("click", () => { document.getElementById("volume-container").hidden = !document.getElementById("volume-container").hidden; });
     document.getElementById("refresh-btn").addEventListener("click", refresh);
     document.getElementById("random-btn").addEventListener("click", random);
     document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
