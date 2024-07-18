@@ -405,6 +405,26 @@ function loadPage() {
         player.currentTime = document.getElementById("durationSlider").value;
     });
 
+    function toggleHide(id) {
+        if (document.getElementById(id).classList.contains("hidden"))
+        {
+            document.getElementById(id).classList.remove("hidden");
+        }
+        else
+        {
+            document.getElementById(id).classList.add("hidden");
+        }
+    }
+    document.getElementById("random-title").addEventListener("click", _ => {
+        toggleHide("songlist");
+    });
+    document.getElementById("highlight-title").addEventListener("click", _ => {
+        toggleHide("highlightlist");
+    });
+    document.getElementById("latest-title").addEventListener("click", _ => {
+        toggleHide("latestlist");
+    });
+
     // Player callbacks
     player.addEventListener('volumechange', (_) => {
         document.getElementById("volume").value = player.volume * 100;

@@ -93,7 +93,7 @@ input {
     border: 1px var(--search-input-border) solid;
 }
 
-button, .button {
+button, .button:not(h2) {
     padding: .8em;
     margin: .25em;
     border-radius: 5px;
@@ -106,12 +106,17 @@ button, .button {
     text-decoration: none;
 }
 
-button:disabled, .button:disabled {
+h2.button:hover {
+    cursor: pointer;
+    color: var(--button-hover);
+}
+
+button:disabled, .button:disabled:not(h2) {
     box-shadow: none;
     background-color: var(--button-disabled);
 }
 
-button:hover:not(:disabled), .button:hover:not(:disabled) {
+button:hover:not(:disabled), .button:hover:not(h2):not(:disabled) {
     box-shadow: .25em .25em var(--button-shadow);
     background-color: var(--button-hover);
 }
