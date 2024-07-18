@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:vm="clr-namespace:Downloader.ViewModels"
-    d:DesignHeight="450"
+    d:DesignHeight="500"
     d:DesignWidth="800"
     x:DataType="vm:MainViewModel"
     mc:Ignorable="d">
@@ -22,7 +22,7 @@
         <TabItem Header="YouTube Download">
             <Grid>
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="270" />
+                    <RowDefinition Height="320" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
                 <StackPanel Grid.Row="0">
@@ -45,6 +45,20 @@
                         HorizontalAlignment="Stretch"
                         ItemsSource="{Binding PlaylistChoices}"
                         SelectedIndex="{Binding PlaylistIndex}" />
+                    <StackPanel Orientation="Horizontal">
+                        <NumericUpDown
+                            Width="200"
+                            FormatString="N0"
+                            Minimum="0"
+                            Value="{Binding StartTime}" />
+                        <TextBlock Margin="5,0,5,0" VerticalAlignment="Bottom">s to</TextBlock>
+                        <NumericUpDown
+                            Width="200"
+                            FormatString="N0"
+                            Minimum="0"
+                            Value="{Binding EndTime}" />
+                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom">s</TextBlock>
+                    </StackPanel>
                     <Button
                         HorizontalAlignment="Right"
                         Command="{Binding DownloadCmd}"
@@ -69,6 +83,11 @@
                         Height="20"
                         Maximum="1"
                         Value="{Binding DownloadMusic}" />
+                    <TextBlock>Cut</TextBlock>
+                    <ProgressBar
+                        Height="20"
+                        Maximum="1"
+                        Value="{Binding CutMusic}" />
                     <TextBlock>Normalization</TextBlock>
                     <ProgressBar
                         Height="20"

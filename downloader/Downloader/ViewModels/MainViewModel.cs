@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Controls.Shapes;
 using Avalonia.Media.Imaging;
 using Avalonia.Platform.Storage;
 using Downloader.Models;
@@ -57,7 +58,7 @@ public class MainViewModel : ViewModelBase
             var normMusicPath = $"tmpMusicNorm.{AudioFormat}";
 
             // Just in case
-            if (imagePath != null && File.Exists(imagePath)) File.Delete(imagePath);
+            if (File.Exists(imagePath)) File.Delete(imagePath);
             if (File.Exists(musicPath)) File.Delete(musicPath);
             if (File.Exists(normMusicPath)) File.Delete(normMusicPath);
 
@@ -91,6 +92,31 @@ public class MainViewModel : ViewModelBase
                     }))
                     {
                         DownloadMusic = prog;
+                    }
+
+                    var startTime = int.TryParse(StartTime, out int resStartTime) ? resStartTime : 0;
+                    var endTime = int.TryParse(EndTime, out int resEndTime) ? resEndTime : 0;
+                    if (startTime > 0 || endTime > 0)
+                    {
+                        if (endTime != 0 && endTime <= startTime)
+                        {
+                            throw new Exception("EndTime must either be 0 or superior at StartTime");
+                        }
+
+                        var duration = endTime == 0 ? 0 : endTime - startTime;
+                        var durationArg = duration == 0 ? string.Empty : $" -t {duration} ";
+                        await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg", $"-ss {startTime} {durationArg} -i {musicPath} cut_{musicPath}"), (s) =>
+                        {
+                            return 0f;
+                        }))
+                        {
+                            CutMusic = prog;
+                        }
+                        File.Move($"cut_{musicPath}", musicPath, true);
+                    }
+                    else
+                    {
+                        CutMusic = 1f;
                     }
 
                     await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"{musicPath} -pr -ext {AudioFormat} -o {normMusicPath} -c:a libmp3lame"), (_) =>
@@ -148,6 +174,7 @@ public class MainViewModel : ViewModelBase
                 {
                     DownloadImage = 0f;
                     DownloadMusic = 0f;
+                    CutMusic = 0f;
                     NormalizeMusic = 0f;
                     var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
                     MessageBoxManager.GetMessageBoxStandard("Download failed", $"An error occurred while downloading your music: {e.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
@@ -298,9 +325,12 @@ public class MainViewModel : ViewModelBase
         AlbumName = string.Empty;
         AlbumUrl = string.Empty;
         SongType = string.Empty;
+        StartTime = string.Empty;
+        EndTime = string.Empty;
 
         DownloadImage = 0f;
         DownloadMusic = 0f;
+        CutMusic = 0f;
         NormalizeMusic = 0f;
 
         SongCount = $"{_data.Musics.Count} music found";
@@ -468,6 +498,17 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _downloadMusic, value);
     }
 
+    private float _cutMusic;
+    /// <summary>
+    /// Cutting audio with ffmpeg
+    /// </summary>
+    public float CutMusic
+    {
+        get => _cutMusic;
+        set => this.RaiseAndSetIfChanged(ref _cutMusic, value);
+    }
+
+
     private float _normalizeMusic;
     /// <summary>
     /// Progress of the normalization of the song
@@ -476,5 +517,27 @@ public class MainViewModel : ViewModelBase
     {
         get => _normalizeMusic;
         set => this.RaiseAndSetIfChanged(ref _normalizeMusic, value);
+    }
+
+    private string _startTime = "0";
+    public string StartTime
+    {
+        get => _startTime;
+        set
+        {
+            if (string.IsNullOrEmpty(value)) value = "0";
+            this.RaiseAndSetIfChanged(ref _startTime, value);
+        }
+    }
+
+    private string _endTime = "0";
+    public string EndTime
+    {
+        get => _endTime;
+        set
+        {
+            if (string.IsNullOrEmpty(value)) value = "0";
+            this.RaiseAndSetIfChanged(ref _endTime, value);
+        }
     }
 }
