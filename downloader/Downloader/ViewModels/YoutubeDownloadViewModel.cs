@@ -26,7 +26,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
         MainViewModel = mainViewModel;
         MainViewModel.Views.Add(this);
 
-        DownloadCmd = ReactiveCommand.Create(() =>
+        DownloadCmd = ReactiveCommand.CreateFromTask(async () =>
         {
             IsDownloading = true;
 
@@ -39,7 +39,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
             if (MainViewModel.Data.Musics.Any(x => x.Name == SongName && x.Artist == Artist && x.Type == SongType))
             {
                 var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
-                MessageBoxManager.GetMessageBoxStandard("Song already downloaded", $"A song of the same name, same artist and same type was already downloaded", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                await MessageBoxManager.GetMessageBoxStandard("Song already downloaded", $"A song of the same name, same artist and same type was already downloaded", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
                 IsDownloading = false;
                 return;
             }
@@ -168,7 +168,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                     CutMusic = 0f;
                     NormalizeMusic = 0f;
                     var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
-                    MessageBoxManager.GetMessageBoxStandard("Download failed", $"An error occurred while downloading your music: {e.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                    await MessageBoxManager.GetMessageBoxStandard("Download failed", $"An error occurred while downloading your music: {e.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
                 }
                 finally
                 {

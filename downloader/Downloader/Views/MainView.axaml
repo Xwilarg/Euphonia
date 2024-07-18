@@ -15,9 +15,12 @@
     </Design.DataContext>
     <TabControl>
         <TabItem Header="Settings">
-            <StackPanel Grid.Row="0">
-                <Button Command="{Binding SelectDataPathCmd}">Load JSON</Button>
+            <StackPanel>
                 <TextBlock Text="{Binding SongCount}" />
+                <StackPanel Orientation="Horizontal">
+                    <Button Command="{Binding SelectDataPathCmd}">Load JSON</Button>
+                    <Button Command="{Binding CreateNewJson}">Create new JSON</Button>
+                </StackPanel>
             </StackPanel>
         </TabItem>
         <TabItem Header="YouTube Download">

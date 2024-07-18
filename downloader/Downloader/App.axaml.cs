@@ -20,11 +20,20 @@ public partial class App : Application
 
     private bool DidExecutionSucceeed(string process, params string[] parameters)
     {
-        var p = Process.Start(new ProcessStartInfo(process, string.Join(" ", parameters))
+
+        Process p;
+        try
         {
-            CreateNoWindow = true
-        });
-        p.WaitForExit();
+            p = Process.Start(new ProcessStartInfo(process, string.Join(" ", parameters))
+            {
+                CreateNoWindow = true
+            });
+            p.WaitForExit();
+        }
+        catch
+        {
+            return false;
+        }
         return p.ExitCode == 0;
     }
 

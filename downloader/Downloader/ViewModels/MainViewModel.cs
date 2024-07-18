@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Windows.Input;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Downloader.ViewModels;
 
@@ -44,13 +45,44 @@ public class MainViewModel : ViewModelBase
                 try
                 {
                     Init();
-                    MessageBoxManager.GetMessageBoxStandard("Load succeed", $"The file was successfully loaded with {SongCount} songs", icon: Icon.Success).ShowAsPopupAsync(mainWindow);
+                    await MessageBoxManager.GetMessageBoxStandard("Load succeed", $"The file was successfully loaded with {SongCount} songs", icon: Icon.Success).ShowAsPopupAsync(mainWindow);
                 }
                 catch
                 {
-                    MessageBoxManager.GetMessageBoxStandard("Project data can't be loaded", "Impossible to parse the selected project file, make sure it is a valid Euphonia file", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                    await MessageBoxManager.GetMessageBoxStandard("Project data can't be loaded", "Impossible to parse the selected project file, make sure it is a valid Euphonia file", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
                     DataPath = null;
                 }
+            }
+        });
+
+        CreateNewJson = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+
+            try
+            {
+                if (File.Exists("Data/info.json"))
+                {
+                    var answer = await MessageBoxManager.GetMessageBoxStandard("File already exists", "There is already an info file exists, continue?", ButtonEnum.YesNo, Icon.Warning).ShowAsPopupAsync(mainWindow);
+                    if (answer == ButtonResult.No)
+                    {
+                        return;
+                    }
+                    Directory.Delete("Data/", true);
+                    Directory.CreateDirectory("Data/");
+                }
+                else if (!Directory.Exists("Data/"))
+                {
+                    Directory.CreateDirectory("Data/");
+                }
+                DataPath = "Data/info.json";
+                File.WriteAllText("Data/info.json", "{}");
+                Init();
+            }
+            catch (Exception e)
+            {
+                await MessageBoxManager.GetMessageBoxStandard("Error while creating data", e.Message, icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                DataPath = null;
             }
         });
     }
@@ -69,6 +101,7 @@ public class MainViewModel : ViewModelBase
     public JsonSerializerOptions JsonOptions { private set; get; }
     public HttpClient Client { private set; get; }
     public ICommand SelectDataPathCmd { get; }
+    public ICommand CreateNewJson { get; }
 
     public void Init()
     {
