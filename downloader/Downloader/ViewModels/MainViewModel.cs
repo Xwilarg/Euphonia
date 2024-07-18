@@ -107,9 +107,10 @@ public class MainViewModel : ViewModelBase
                         outMusicPath += $"_{SongType}";
                     }
                     outMusicPath += $".{AudioFormat}";
+                    var hasAlbum = !string.IsNullOrWhiteSpace(AlbumName);
                     var m = new Song
                     {
-                        Album = string.IsNullOrWhiteSpace(AlbumName) ? null : AlbumName,
+                        Album = hasAlbum ? AlbumName : null,
                         Artist = Artist,
                         Name = SongName,
                         Path = outMusicPath,
@@ -119,6 +120,14 @@ public class MainViewModel : ViewModelBase
                     };
 
                     _data.Musics.Add(m);
+                    var albumPath = $"{CleanPath(Artist)}_{CleanPath(AlbumName)}";
+                    if (hasAlbum && !_data.Albums.ContainsKey(AlbumName))
+                    {
+                        _data.Albums.Add(albumPath, new()
+                        {
+                            Path = $"{albumPath}.png",
+                        });
+                    }
                     if (imagePath != null)
                     {
                         File.Move(imagePath, $"{_dataFolderPath}/icon/{CleanPath(AlbumName)}.png");
@@ -200,6 +209,7 @@ public class MainViewModel : ViewModelBase
             .. _data.Playlists.Select(x => x.Value.Name)
         ];
 
+        PlaylistIndex = 0;
         ClearAll();
     }
 
@@ -269,9 +279,9 @@ public class MainViewModel : ViewModelBase
         return name;
     }
 
-    private bool CleanCompare(string a, string b)
+    private bool CleanCompare(string? a, string? b)
     {
-        return a.Trim().ToUpperInvariant() == b.Trim().ToUpperInvariant();
+        return a?.Trim()?.ToUpperInvariant() == b?.Trim()?.ToUpperInvariant();
     }
 
     private void ClearAll()
@@ -282,7 +292,6 @@ public class MainViewModel : ViewModelBase
         AlbumName = string.Empty;
         AlbumUrl = string.Empty;
         SongType = string.Empty;
-        PlaylistIndex = 0;
 
         DownloadImage = 0f;
         DownloadMusic = 0f;
@@ -360,7 +369,7 @@ public class MainViewModel : ViewModelBase
             {
                 CanInputAlbumUrl = false;
             }
-            else if (_data.Albums.Any(x => CleanCompare(x.Key, value)))
+            else if (_data.Albums.Any(x => CleanCompare($"{CleanPath(Artist)}_{CleanPath(AlbumName)}", value)))
             {
                 CanInputAlbumUrl = false;
             }
