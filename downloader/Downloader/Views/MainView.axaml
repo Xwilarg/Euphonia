@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:v="clr-namespace:Downloader.Views"
     xmlns:vm="clr-namespace:Downloader.ViewModels"
     d:DesignHeight="500"
     d:DesignWidth="800"
@@ -20,81 +21,7 @@
             </StackPanel>
         </TabItem>
         <TabItem Header="YouTube Download">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="320" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                <StackPanel Grid.Row="0">
-                    <StackPanel.IsEnabled>
-                        <MultiBinding Converter="{x:Static BoolConverters.And}">
-                            <Binding Path="!IsDownloading" />
-                            <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="DataPath" />
-                        </MultiBinding>
-                    </StackPanel.IsEnabled>
-                    <TextBox Text="{Binding SongName}" Watermark="Name" />
-                    <TextBox Text="{Binding Artist}" Watermark="Artist" />
-                    <TextBox Text="{Binding MusicUrl}" Watermark="YouTube URL" />
-                    <TextBox Text="{Binding AlbumName}" Watermark="Album Name" />
-                    <TextBox
-                        IsEnabled="{Binding CanInputAlbumUrl}"
-                        Text="{Binding AlbumUrl}"
-                        Watermark="Album URL" />
-                    <TextBox Text="{Binding SongType}" Watermark="Song Type" />
-                    <ComboBox
-                        HorizontalAlignment="Stretch"
-                        ItemsSource="{Binding PlaylistChoices}"
-                        SelectedIndex="{Binding PlaylistIndex}" />
-                    <StackPanel Orientation="Horizontal">
-                        <NumericUpDown
-                            Width="200"
-                            FormatString="N0"
-                            Minimum="0"
-                            Value="{Binding StartTime}" />
-                        <TextBlock Margin="5,0,5,0" VerticalAlignment="Bottom">s to</TextBlock>
-                        <NumericUpDown
-                            Width="200"
-                            FormatString="N0"
-                            Minimum="0"
-                            Value="{Binding EndTime}" />
-                        <TextBlock Margin="5,0,0,0" VerticalAlignment="Bottom">s</TextBlock>
-                    </StackPanel>
-                    <Button
-                        HorizontalAlignment="Right"
-                        Command="{Binding DownloadCmd}"
-                        Content="Download">
-                        <Button.IsEnabled>
-                            <MultiBinding Converter="{x:Static BoolConverters.And}">
-                                <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="SongName" />
-                                <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="Artist" />
-                                <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="MusicUrl" />
-                            </MultiBinding>
-                        </Button.IsEnabled>
-                    </Button>
-                </StackPanel>
-                <StackPanel Grid.Row="1" Margin="5,0,5,0">
-                    <TextBlock>Thumbnail</TextBlock>
-                    <ProgressBar
-                        Height="20"
-                        Maximum="1"
-                        Value="{Binding DownloadImage}" />
-                    <TextBlock>Music</TextBlock>
-                    <ProgressBar
-                        Height="20"
-                        Maximum="1"
-                        Value="{Binding DownloadMusic}" />
-                    <TextBlock>Cut</TextBlock>
-                    <ProgressBar
-                        Height="20"
-                        Maximum="1"
-                        Value="{Binding CutMusic}" />
-                    <TextBlock>Normalization</TextBlock>
-                    <ProgressBar
-                        Height="20"
-                        Maximum="1"
-                        Value="{Binding NormalizeMusic}" />
-                </StackPanel>
-            </Grid>
+            <v:YoutubeDownloadView Name="YoutubeDownload" />
         </TabItem>
     </TabControl>
 </UserControl>
