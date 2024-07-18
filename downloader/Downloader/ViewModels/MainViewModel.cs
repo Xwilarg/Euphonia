@@ -271,7 +271,7 @@ public class MainViewModel : ViewModelBase
 
     private string CleanPath(string name)
     {
-        var forbidden = new[] { '<', '>', ':', '\\', '/', '"', '|', '?', '*' };
+        var forbidden = new[] { '<', '>', ':', '\\', '/', '"', '|', '?', '*', '#', '&', '%' };
         foreach (var c in forbidden)
         {
             name = name.Replace(c.ToString(), string.Empty);
