@@ -89,11 +89,15 @@ public class MainViewModel : ViewModelBase
 
     public void LateInit()
     {
-        var debugPath = "../../../../../web/data/info.json";
-        if (File.Exists(debugPath))
+        string[] possiblePaths = ["../../../../../web/data/info.json", "Data/info.json"];
+        foreach (var path in possiblePaths)
         {
-            DataPath = debugPath;
-            Init();
+            if (File.Exists(path))
+            {
+                DataPath = path;
+                Init();
+                break;
+            }
         }
     }
 
