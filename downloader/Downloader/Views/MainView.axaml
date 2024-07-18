@@ -15,10 +15,12 @@
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="50" />
-            <RowDefinition Height="220" />
-            <RowDefinition Height="50" />
+            <RowDefinition Height="270" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Button Command="{Binding SelectDataPathCmd}">Load JSON</Button>
+        </StackPanel>
         <TextBlock
             Grid.Row="0"
             HorizontalAlignment="Center"
@@ -32,7 +34,13 @@
             HorizontalAlignment="Right"
             VerticalAlignment="Top"
             Text="{Binding SongCount}" />
-        <StackPanel Grid.Row="1" IsEnabled="{Binding !IsDownloading}">
+        <StackPanel Grid.Row="1">
+            <StackPanel.IsEnabled>
+                <MultiBinding Converter="{x:Static BoolConverters.And}">
+                    <Binding Path="!IsDownloading" />
+                    <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="DataPath" />
+                </MultiBinding>
+            </StackPanel.IsEnabled>
             <TextBox Text="{Binding SongName}" Watermark="Name" />
             <TextBox Text="{Binding Artist}" Watermark="Artist" />
             <TextBox Text="{Binding MusicUrl}" Watermark="YouTube URL" />
@@ -46,15 +54,20 @@
                 HorizontalAlignment="Stretch"
                 ItemsSource="{Binding PlaylistChoices}"
                 SelectedIndex="{Binding PlaylistIndex}" />
+            <Button
+                HorizontalAlignment="Right"
+                Command="{Binding DownloadCmd}"
+                Content="Download">
+                <Button.IsEnabled>
+                    <MultiBinding Converter="{x:Static BoolConverters.And}">
+                        <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="SongName" />
+                        <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="Artist" />
+                        <Binding Converter="{x:Static StringConverters.IsNotNullOrEmpty}" Path="MusicUrl" />
+                    </MultiBinding>
+                </Button.IsEnabled>
+            </Button>
         </StackPanel>
-        <StackPanel
-            Grid.Row="2"
-            HorizontalAlignment="Right"
-            IsEnabled="{Binding !IsDownloading}"
-            Orientation="Horizontal">
-            <Button Command="{Binding DownloadCmd}">Download</Button>
-        </StackPanel>
-        <StackPanel Grid.Row="3" Margin="5,0,5,0">
+        <StackPanel Grid.Row="2" Margin="5,0,5,0">
             <TextBlock>Thumbnail</TextBlock>
             <ProgressBar
                 Height="20"

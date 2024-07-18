@@ -7,7 +7,6 @@ using Downloader.Views;
 using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
 using System.Diagnostics;
-using System;
 using System.Linq;
 
 namespace Downloader;

@@ -1,5 +1,8 @@
-﻿using Avalonia.Controls;
+﻿using Avalonia;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
+using Avalonia.Platform.Storage;
 using Downloader.Models;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -10,6 +13,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -24,54 +28,11 @@ public class MainViewModel : ViewModelBase
     {
         _jsonOptions = new()
         {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase
+            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
         };
 
         _client = new();
-
-        if (Design.IsDesignMode)
-        {
-            // XAML preview doesn't need to do anything
-            _data = new();
-        }
-        else if (!Directory.Exists("data"))
-        {
-            Directory.CreateDirectory("data");
-            _data = new();
-        }
-        else
-        {
-            if (File.Exists("data/info.json"))
-            {
-                _data = JsonSerializer.Deserialize<JsonExportData>(File.ReadAllText("data/info.json"), _jsonOptions) ?? new();
-            }
-            else
-            {
-                _data = new();
-            }
-        }
-        if (!Design.IsDesignMode)
-        {
-            if (!Directory.Exists("data/icon"))
-            {
-                Directory.CreateDirectory("data/icon");
-            }
-            if (!Directory.Exists("data/raw"))
-            {
-                Directory.CreateDirectory("data/raw");
-            }
-            if (!Directory.Exists("data/normalized"))
-            {
-                Directory.CreateDirectory("data/normalized");
-            }
-        }
-
-        PlaylistChoices = [
-            "None",
-            .. _data.Playlists.Select(x => x.Value.Name)
-        ];
-
-        ClearAll();
 
         DownloadCmd = ReactiveCommand.Create(() =>
         {
@@ -85,7 +46,8 @@ public class MainViewModel : ViewModelBase
 
             if (_data.Musics.Any(x => x.Name == SongName && x.Artist == Artist && x.Type == SongType))
             {
-                MessageBoxManager.GetMessageBoxStandard("Song already downloaded", $"A song of the same name, same artist and same type was already downloaded", icon: Icon.Info);
+                var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+                MessageBoxManager.GetMessageBoxStandard("Song already downloaded", $"A song of the same name, same artist and same type was already downloaded", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
                 IsDownloading = false;
                 return;
             }
@@ -153,16 +115,17 @@ public class MainViewModel : ViewModelBase
                         Path = outMusicPath,
                         Playlist = PlaylistIndex == 0 ? "default" : _data.Playlists.Keys.ElementAt(PlaylistIndex - 1),
                         Source = MusicUrl,
-                        Type = SongType
+                        Type = string.IsNullOrWhiteSpace(SongType) ? null : SongType
                     };
 
                     _data.Musics.Add(m);
                     if (imagePath != null)
                     {
-                        File.Move(imagePath, $"data/icon/{CleanPath(AlbumName)}.png");
+                        File.Move(imagePath, $"{_dataFolderPath}/icon/{CleanPath(AlbumName)}.png");
                     }
-                    File.Move(musicPath, $"data/raw/{outMusicPath}");
-                    File.Move(normMusicPath, $"data/normalized/{outMusicPath}");
+                    File.Move(musicPath, $"{_dataFolderPath}/raw/{outMusicPath}");
+                    File.Move(normMusicPath, $"{_dataFolderPath}/normalized/{outMusicPath}");
+                    File.WriteAllText(_dataPath, JsonSerializer.Serialize(_data, _jsonOptions));
 
                     ClearAll();
                 }
@@ -171,7 +134,8 @@ public class MainViewModel : ViewModelBase
                     DownloadImage = 0f;
                     DownloadMusic = 0f;
                     NormalizeMusic = 0f;
-                    MessageBoxManager.GetMessageBoxStandard("Download failed", $"An error occurred while downloading your music: {e.Message}", icon: Icon.Error);
+                    var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+                    MessageBoxManager.GetMessageBoxStandard("Download failed", $"An error occurred while downloading your music: {e.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
                 }
                 finally
                 {
@@ -179,6 +143,64 @@ public class MainViewModel : ViewModelBase
                 }
             });
         });
+
+        SelectDataPathCmd = ReactiveCommand.CreateFromTask(async () =>
+        {
+            var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+            var files = await mainWindow.StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = "Open Data",
+                AllowMultiple = false,
+                FileTypeFilter = [ new("JSON file") { Patterns = ["*.json"], MimeTypes = ["application/json"] }]
+            });
+            if (files.Any())
+            {
+                var target = files[0];
+                DataPath = target.Path.LocalPath;
+                try
+                {
+                    Init();
+                    MessageBoxManager.GetMessageBoxStandard("Load succeed", $"The file was successfully loaded with {SongCount} songs", icon: Icon.Success).ShowAsPopupAsync(mainWindow);
+                }
+                catch
+                {
+                    MessageBoxManager.GetMessageBoxStandard("Project data can't be loaded", "Impossible to parse the selected project file, make sure it is a valid Euphonia file", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                    DataPath = null;
+                }
+            }
+        });
+
+        var debugPath = "../../../../../web/data/info.json";
+        if (File.Exists(debugPath))
+        {
+            DataPath = debugPath;
+            Init();
+        }
+    }
+
+    public void Init()
+    {
+        _data = JsonSerializer.Deserialize<JsonExportData>(File.ReadAllText(DataPath), _jsonOptions) ?? throw new NullReferenceException();
+
+        if (!Directory.Exists($"{_dataFolderPath}/icon"))
+        {
+            Directory.CreateDirectory($"{_dataFolderPath}/icon");
+        }
+        if (!Directory.Exists($"{_dataFolderPath}/raw"))
+        {
+            Directory.CreateDirectory($"{_dataFolderPath}/raw");
+        }
+        if (!Directory.Exists($"{_dataFolderPath}/normalized"))
+        {
+            Directory.CreateDirectory($"{_dataFolderPath}/normalized");
+        }
+
+        PlaylistChoices = [
+            "None",
+            .. _data.Playlists.Select(x => x.Value.Name)
+        ];
+
+        ClearAll();
     }
 
     private async IAsyncEnumerable<float> ExecuteAndFollowAsync(ProcessStartInfo startInfo, Func<string, float> parseMethod)
@@ -276,6 +298,23 @@ public class MainViewModel : ViewModelBase
     private const string AudioFormat = "mp3";
 
     public ICommand DownloadCmd { get; }
+    public ICommand SelectDataPathCmd { get; }
+
+    private string _dataFolderPath;
+    private string _dataPath;
+    /// <summary>
+    /// Name of the song
+    /// </summary>
+    public string DataPath
+    {
+        get => _dataPath;
+        set
+        {
+            if (value == null) _dataFolderPath = null;
+            else _dataFolderPath = new FileInfo(value).Directory.FullName;
+            this.RaiseAndSetIfChanged(ref _dataPath, value);
+        }
+    }
 
     private string _songName;
     /// <summary>
