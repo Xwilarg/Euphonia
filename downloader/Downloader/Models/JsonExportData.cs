@@ -13,6 +13,7 @@ namespace Downloader.Models
     public class Album
     {
         public string Path { set; get; }
+        public string Name { set; get; }
     }
 
     public class Song

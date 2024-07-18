@@ -107,10 +107,16 @@ public class MainViewModel : ViewModelBase
                         outMusicPath += $"_{SongType}";
                     }
                     outMusicPath += $".{AudioFormat}";
+
+                    string albumKey = null;
                     var hasAlbum = !string.IsNullOrWhiteSpace(AlbumName);
+                    if (hasAlbum)
+                    {
+                        albumKey = $"{CleanPath(Artist)}_{CleanPath(AlbumName)}";
+                    }
                     var m = new Song
                     {
-                        Album = hasAlbum ? AlbumName : null,
+                        Album = albumKey,
                         Artist = Artist,
                         Name = SongName,
                         Path = outMusicPath,
@@ -120,12 +126,12 @@ public class MainViewModel : ViewModelBase
                     };
 
                     _data.Musics.Add(m);
-                    var albumPath = $"{CleanPath(Artist)}_{CleanPath(AlbumName)}";
                     if (hasAlbum && !_data.Albums.ContainsKey(AlbumName))
                     {
-                        _data.Albums.Add(albumPath, new()
+                        _data.Albums.Add(albumKey, new()
                         {
-                            Path = $"{albumPath}.png",
+                            Name = AlbumName,
+                            Path = $"{albumKey}.png",
                         });
                     }
                     if (imagePath != null)

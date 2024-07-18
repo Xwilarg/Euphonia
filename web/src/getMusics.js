@@ -166,9 +166,9 @@ function sanitize(text) {
 
 function getAlbumImage(elem) {
     if (elem.album === null) {
-        return "./img/CD.png";
+        return "/img/CD.png";
     }
-    return "./data/icon/" + json.albums[elem.album].path;
+    return "/data/icon/" + json.albums[elem.album].path;
 }
 
 function getPlaylistHtml(id, name) {
