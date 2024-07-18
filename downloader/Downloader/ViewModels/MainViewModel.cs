@@ -136,7 +136,7 @@ public class MainViewModel : ViewModelBase
                     }
                     if (imagePath != null)
                     {
-                        File.Move(imagePath, $"{_dataFolderPath}/icon/{CleanPath(AlbumName)}.png");
+                        File.Move(imagePath, $"{_dataFolderPath}/icon/{albumKey}.png");
                     }
                     File.Move(musicPath, $"{_dataFolderPath}/raw/{outMusicPath}");
                     File.Move(normMusicPath, $"{_dataFolderPath}/normalized/{outMusicPath}");
