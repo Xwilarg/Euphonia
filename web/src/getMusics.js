@@ -267,7 +267,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     }
 
     if (filter !== "" && musics.length == 0) {
-        document.getElementById(id).innerHTML = "<b>No song match is matching your search</b>";
+        document.getElementById(id).innerHTML = "<b>No song name or artist is matching your search</b>";
     } else {
         let indexs = [];
         for (let elem of musics) {
