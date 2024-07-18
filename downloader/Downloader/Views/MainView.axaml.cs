@@ -13,8 +13,8 @@ public partial class MainView : UserControl
         DataContextChanged += (object _sender, EventArgs _args) =>
         {
             var mainVM = (MainViewModel)DataContext;
-            var yt = this.FindControl<YoutubeDownloadView>("YoutubeDownload");
-            yt.DataContext = new YoutubeDownloadViewModel(mainVM);
+            this.FindControl<YoutubeDownloadView>("YoutubeDownload").DataContext = new YoutubeDownloadViewModel(mainVM);
+            this.FindControl<ImportSongsView>("ImportSongs").DataContext = new ImportSongsViewModel(mainVM);
 
             mainVM.LateInit();
         };

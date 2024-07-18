@@ -270,7 +270,10 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
 
     public void AfterInit()
     {
+        // Change to 0 doesn't update field because it's already the previous state
+        PlaylistIndex = 1;
         PlaylistIndex = 0;
+
         ClearAll();
     }
 
@@ -279,9 +282,6 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
     public ICommand DownloadCmd { get; }
 
     private MainViewModel _mainViewModel;
-    /// <summary>
-    /// Name of the song
-    /// </summary>
     public MainViewModel MainViewModel
     {
         get => _mainViewModel;

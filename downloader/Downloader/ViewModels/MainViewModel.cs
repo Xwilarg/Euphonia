@@ -105,7 +105,12 @@ public class MainViewModel : ViewModelBase
         SongCount = $"{Data.Musics.Count} music found";
     }
 
-    public string[] PlaylistChoices { private set; get; }
+    private string[] _playlistChoices;
+    public string[] PlaylistChoices
+    {
+        get => _playlistChoices;
+        set => this.RaiseAndSetIfChanged(ref _playlistChoices, value);
+    }
 
 
     private string _songCount;
