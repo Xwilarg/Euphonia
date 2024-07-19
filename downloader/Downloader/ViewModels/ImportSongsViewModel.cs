@@ -63,7 +63,7 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
                     ImportSong = 0;
                     int prog = 0;
                     foreach (var g in _allFiles)
-                    {
+                    { // TODO: Revert or smth if this fails
                         var filename = Path.GetFileNameWithoutExtension(g);
                         if (!await _mainViewModel.AddMusicAsync(
                             GetRegexMatch(filename, RegexSongName ?? string.Empty, int.TryParse(GroupSongName, out var resGroupName) ? resGroupName : 0) ?? filename,

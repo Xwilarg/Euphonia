@@ -12,4 +12,23 @@
     <Design.DataContext>
         <vm:ImportAlbumsViewModel />
     </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="320" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0" IsEnabled="{Binding !IsImporting}">
+            <TextBox Text="{Binding LastFmApiKey}" Watermark="last.fm API key" />
+            <CheckBox IsChecked="{Binding ImportLocalOnly}">Only look for files from local import</CheckBox>
+            <TextBlock Text="{Binding AffectedFiles}" />
+            <Button Command="{Binding ImportAll}" IsEnabled="{Binding LastFmApiKey, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">Import</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="5,0,5,0">
+            <TextBlock>Import</TextBlock>
+            <ProgressBar
+                Height="20"
+                Maximum="1"
+                Value="{Binding ImportAlbums}" />
+        </StackPanel>
+    </Grid>
 </UserControl>
