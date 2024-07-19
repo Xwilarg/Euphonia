@@ -28,6 +28,7 @@
                 </StackPanel>
                 <ComboBox
                     HorizontalAlignment="Stretch"
+                    IsEnabled="{Binding AnyPlaylistAvailable}"
                     ItemsSource="{Binding DataImportChoices}"
                     SelectedIndex="{Binding DataImportIndex}" />
             </StackPanel>
@@ -37,6 +38,9 @@
         </TabItem>
         <TabItem Header="Import Songs">
             <v:ImportSongsView Name="ImportSongs" />
+        </TabItem>
+        <TabItem Header="Import Albums">
+            <v:ImportAlbumsView Name="ImportAlbums" />
         </TabItem>
     </TabControl>
 </UserControl>

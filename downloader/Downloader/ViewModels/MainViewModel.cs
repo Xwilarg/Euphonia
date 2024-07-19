@@ -30,14 +30,18 @@ public class MainViewModel : ViewModelBase
 
         Client = new();
 
-        if (!Directory.Exists("Data/"))
+        try
         {
-            Directory.CreateDirectory("Data/");
+            if (!Directory.Exists("Data/"))
+            {
+                Directory.CreateDirectory("Data/");
+            }
+            if (!File.Exists("Data/info.json"))
+            {
+                File.WriteAllText("Data/info.json", "{}");
+            }
         }
-        if (!File.Exists("Data/info.json"))
-        {
-            File.WriteAllText("Data/info.json", "{}");
-        }
+        catch { }
 
         SelectDataPathCmd = ReactiveCommand.CreateFromTask(async () =>
         {
@@ -106,8 +110,11 @@ public class MainViewModel : ViewModelBase
             }
         }
 
-        DataImportChoices = [.. validData];
-        DataImportIndex = 0;
+        if (validData.Any())
+        {
+            DataImportChoices = [.. validData];
+            DataImportIndex = 0;
+        }
     }
 
     public const string AudioFormat = "mp3";
@@ -307,6 +314,13 @@ public class MainViewModel : ViewModelBase
         set => this.RaiseAndSetIfChanged(ref _title, value);
     }
 
+    private bool _anyPlaylistAvailable;
+    public bool AnyPlaylistAvailable
+    {
+        get => _anyPlaylistAvailable;
+        set => this.RaiseAndSetIfChanged(ref _anyPlaylistAvailable, value);
+    }
+
     private int _dataImportIndex = -1;
     public int DataImportIndex
     {
@@ -314,7 +328,8 @@ public class MainViewModel : ViewModelBase
         set
         {
             this.RaiseAndSetIfChanged(ref _dataImportIndex, value);
-            if (value >= 0)
+            AnyPlaylistAvailable = value >= 0;
+            if (AnyPlaylistAvailable)
             {
                 DataPath = _dataImportChoices[value];
                 _ = Task.Run(async () =>
