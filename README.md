@@ -8,21 +8,15 @@ An easy way to store and listen to your music
 
 ## How to add songs
 
-### YouTube
+### Add songs
 First you will need to download the following:
- - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
+ - [yt-dlp](https://github.com/yt-dlp/yt-dlp) (YouTube only)
+ - [ffmpeg](https://www.ffmpeg.org/) (YouTube only)
  - [ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)
-and place them in your path
 
-You can then use the software inside downloader/
+And place them in your path
 
-### Import songs
-You'll need to download the following:
-- [ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)
-You can then run the following scripts:
-- import.py: Import all your songs given a path
-- normalize.sh/ps1: Normalize all your audio to make sure they are at the same volume
-- album.py: Automatically download album images from last.fm (requires an API key)
+You can then use the software inside downloader/ to either download from YouTube or import songs from a folder
 
 ## Listen to my music
 [!TODO]: To write

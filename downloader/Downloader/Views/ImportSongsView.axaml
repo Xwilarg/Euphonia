@@ -17,7 +17,7 @@
             <RowDefinition Height="320" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
+        <StackPanel Grid.Row="0" IsEnabled="{Binding !IsImporting}">
             <Button Command="{Binding SearchFolder}">Import from folder</Button>
             <TextBlock Text="{Binding ToImportFound}" />
             <StackPanel IsEnabled="{Binding DirName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
@@ -49,8 +49,8 @@
                     Height="100"
                     IsReadOnly="True"
                     Text="{Binding PreviewRegexArea}" />
+                <Button HorizontalAlignment="Right" Command="{Binding ImportAll}">Import</Button>
             </StackPanel>
-            <Button HorizontalAlignment="Right" Command="{Binding ImportAll}">Import</Button>
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="5,0,5,0">
             <TextBlock>Import</TextBlock>

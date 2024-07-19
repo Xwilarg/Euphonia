@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Downloader.Models;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -12,6 +13,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Json;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Downloader.ViewModels;
@@ -101,52 +103,93 @@ public class MainViewModel : ViewModelBase
     }
 
     public const string AudioFormat = "mp3";
-    public void AddMusic(string songName, string source, string artist, string album, string songType, int playlistIndex, string imagePath, string musicPath, string normMusicPath)
+    public async ValueTask<bool> AddMusicAsync(string songName, string? source, string? artist, string? album, string? songType, int playlistIndex, string? imagePath, string musicPath, string? normMusicPath, bool copyOnly)
     {
-        var outMusicPath = GetSongName(songName, artist);
-        if (!string.IsNullOrWhiteSpace(songType))
+        try
         {
-            outMusicPath += $"_{songType}";
-        }
-        else
-        {
-            songType = null;
-        }
-        outMusicPath += $".{AudioFormat}";
-
-        string albumKey = null;
-        var hasAlbum = !string.IsNullOrWhiteSpace(album);
-        if (hasAlbum)
-        {
-            albumKey = GetAlbumName(artist, album);
-        }
-        var m = new Song
-        {
-            Album = albumKey,
-            Artist = artist,
-            Name = songName,
-            Path = outMusicPath,
-            Playlist = playlistIndex == 0 ? "default" : Data.Playlists.Keys.ElementAt(playlistIndex - 1),
-            Source = source,
-            Type = songType
-        };
-
-        Data.Musics.Add(m);
-        if (hasAlbum && !Data.Albums.ContainsKey(album))
-        {
-            Data.Albums.Add(albumKey, new()
+            // Create output path
+            var outMusicPath = GetSongName(songName, artist);
+            if (!string.IsNullOrWhiteSpace(songType))
             {
-                Name = album,
-                Path = $"{albumKey}.png",
-            });
+                outMusicPath += $"_{songType}";
+            }
+            else
+            {
+                songType = null;
+            }
+
+            // If file already exists, we do filename_2 (and increment that number if still exists)
+            var incrementOutMusicPath = outMusicPath;
+            int i = 2;
+            while (File.Exists($"{DataFolderPath}/raw/{incrementOutMusicPath}.{AudioFormat}"))
+            {
+                incrementOutMusicPath = $"{outMusicPath}_{i}";
+                i++;
+            }
+            outMusicPath = incrementOutMusicPath;
+
+            // Add file extension
+            outMusicPath += $".{AudioFormat}";
+
+            // Format album data
+            string albumKey = null;
+            var hasAlbum = !string.IsNullOrWhiteSpace(album);
+            if (hasAlbum)
+            {
+                albumKey = GetAlbumName(artist, album);
+            }
+
+            // Create Song class
+            var m = new Song
+            {
+                Album = albumKey,
+                Artist = artist,
+                Name = songName,
+                Path = outMusicPath,
+                Playlist = playlistIndex == 0 ? "default" : Data.Playlists.Keys.ElementAt(playlistIndex - 1),
+                Source = source,
+                Type = songType
+            };
+            Data.Musics.Add(m);
+
+            // If album exists we add it to the JSON too
+            if (hasAlbum && !Data.Albums.ContainsKey(album))
+            {
+                Data.Albums.Add(albumKey, new()
+                {
+                    Name = album,
+                    Path = $"{albumKey}.png",
+                });
+            }
+
+            // Copy (or move) the files
+            Action<string, string> fileMethod = copyOnly ? File.Copy : File.Move;
+            if (imagePath != null)
+            {
+                fileMethod(imagePath, $"{DataFolderPath}/icon/{albumKey}.png");
+            }
+            fileMethod(musicPath, $"{DataFolderPath}/raw/{outMusicPath}");
+            if (normMusicPath == null)
+            {
+                normMusicPath = $"tmpMusicNorm.{AudioFormat}";
+                await foreach (var prog in ProcessManager.Normalize(musicPath, normMusicPath)) { }
+            }
+            fileMethod(normMusicPath, $"{DataFolderPath}/normalized/{outMusicPath}");
+
+            // Update the JSON with all we did
+            File.WriteAllText(DataPath, JsonSerializer.Serialize(Data, JsonOptions));
+            UpdateMainUI();
+            return true;
         }
-        if (imagePath != null)
+        catch (Exception ex)
         {
-            File.Move(imagePath, $"{DataFolderPath}/icon/{albumKey}.png");
+            var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+            Dispatcher.UIThread.Post(async () =>
+            {
+                await MessageBoxManager.GetMessageBoxStandard("Error while adding music", $"Error while adding {songName}: {ex.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+            });
+            return false;
         }
-        File.Move(musicPath, $"{DataFolderPath}/raw/{outMusicPath}");
-        File.Move(normMusicPath, $"{DataFolderPath}/normalized/{outMusicPath}");
-        File.WriteAllText(DataPath, JsonSerializer.Serialize(Data, JsonOptions));
     }
 
     public string CleanPath(string name)
@@ -159,13 +202,22 @@ public class MainViewModel : ViewModelBase
         return name;
     }
 
-    public string GetAlbumName(string artist, string album)
-        => $"{CleanPath(artist)}_{CleanPath(album)}";
+    public string GetAlbumName(string? artist, string album)
+        => $"{CleanPath(artist ?? "unknown")}_{CleanPath(album)}";
 
-    public string GetSongName(string song, string artist)
-        => $"{CleanPath(song)}_{CleanPath(artist)}";
+    public string GetSongName(string song, string? artist)
+        => $"{CleanPath(song)}_{CleanPath(artist ?? "unknown")}";
 
-    public JsonExportData Data { private set; get; }
+    private JsonExportData _data;
+    public JsonExportData Data
+    {
+        private set
+        {
+            _data = value;
+            Title = _data?.Metadata?.Title ?? "Unknown";
+        }
+        get => _data;
+    }
     public JsonSerializerOptions JsonOptions { private set; get; }
     public HttpClient Client { private set; get; }
     public ICommand SelectDataPathCmd { get; }
@@ -226,9 +278,6 @@ public class MainViewModel : ViewModelBase
 
     public string DataFolderPath { private set; get; }
     private string _dataPath;
-    /// <summary>
-    /// Name of the song
-    /// </summary>
     public string DataPath
     {
         get => _dataPath;
@@ -238,5 +287,15 @@ public class MainViewModel : ViewModelBase
             else DataFolderPath = new FileInfo(value).Directory.FullName;
             this.RaiseAndSetIfChanged(ref _dataPath, value);
         }
+    }
+
+    private string _title;
+    /// <summary>
+    /// Name of the song
+    /// </summary>
+    public string Title
+    {
+        get => _title;
+        set => this.RaiseAndSetIfChanged(ref _title, value);
     }
 }

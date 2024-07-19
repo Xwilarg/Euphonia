@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
+using Avalonia.Threading;
 using Downloader.Models;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
@@ -64,7 +65,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                     if (CanInputAlbumUrl)
                     {
                         using var ms = new MemoryStream();
-                        await foreach (var prog in DownloadAndFollowAsync(AlbumUrl, ms, new()))
+                        await foreach (var prog in ProcessManager.DownloadAndFollowAsync(MainViewModel.Client, AlbumUrl, ms, new()))
                         {
                             DownloadImage = prog;
                         }
@@ -77,7 +78,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         DownloadImage = 1f;
                     }
 
-                    await foreach (var prog in ExecuteAndFollowAsync(new("yt-dlp", $"{MusicUrl} -o {musicPath} -x --audio-format {MainViewModel.AudioFormat} -q --progress"), (s) =>
+                    await foreach (var prog in ProcessManager.ExecuteAndFollowAsync(new("yt-dlp", $"{MusicUrl} -o {musicPath} -x --audio-format {MainViewModel.AudioFormat} -q --progress"), (s) =>
                     {
                         var m = Regex.Match(s, "([0-9.]+)%");
                         if (!m.Success) return -1f;
@@ -98,7 +99,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
 
                         var duration = endTime == 0 ? 0 : endTime - startTime;
                         var durationArg = duration == 0 ? string.Empty : $" -t {duration} ";
-                        await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg", $"-ss {startTime} {durationArg} -i {musicPath} cut_{musicPath}"), (s) =>
+                        await foreach (var prog in ProcessManager.ExecuteAndFollowAsync(new("ffmpeg", $"-ss {startTime} {durationArg} -i {musicPath} cut_{musicPath}"), (s) =>
                         {
                             return 0f;
                         }))
@@ -112,15 +113,12 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         CutMusic = 1f;
                     }
 
-                    await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"{musicPath} -pr -ext {MainViewModel.AudioFormat} -o {normMusicPath} -c:a libmp3lame"), (_) =>
-                    {
-                        return 0f;
-                    }))
+                    await foreach (var prog in ProcessManager.Normalize(musicPath, normMusicPath))
                     {
                         NormalizeMusic = prog;
                     }
 
-                    MainViewModel.AddMusic(
+                    if (await MainViewModel.AddMusicAsync(
                         SongName,
                         MusicUrl,
                         Artist,
@@ -129,9 +127,11 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         PlaylistIndex,
                         imagePath,
                         musicPath,
-                        normMusicPath);
-
-                    ClearAll();
+                        normMusicPath,
+                        copyOnly: false))
+                    {
+                        ClearAll();
+                    }
                 }
                 catch (Exception e)
                 {
@@ -140,7 +140,10 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                     CutMusic = 0f;
                     NormalizeMusic = 0f;
                     var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
-                    await MessageBoxManager.GetMessageBoxStandard("Download failed", $"An error occurred while downloading your music: {e.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                    Dispatcher.UIThread.Post(async () =>
+                    {
+                        await MessageBoxManager.GetMessageBoxStandard("Download failed", $"An error occurred while downloading your music: {e.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                    });
                 }
                 finally
                 {
@@ -148,62 +151,6 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                 }
             });
         });
-    }
-
-    private async IAsyncEnumerable<float> ExecuteAndFollowAsync(ProcessStartInfo startInfo, Func<string, float> parseMethod)
-    {
-        startInfo.CreateNoWindow = true;
-        startInfo.RedirectStandardError = true;
-        startInfo.RedirectStandardOutput = true;
-        startInfo.UseShellExecute = false;
-
-        var p = Process.Start(startInfo);
-        p.Start();
-
-        var stdout = p.StandardOutput;
-        //var stderr = p.StandardError;
-
-        string line = stdout.ReadLine();
-        while (line != null)
-        {
-            var r = parseMethod(line);
-            if (r >= 0f)
-            {
-                yield return r;
-            }
-            line = stdout.ReadLine();
-        }
-
-        p.WaitForExit();
-        yield return 1f;
-    }
-
-    private async IAsyncEnumerable<float> DownloadAndFollowAsync(string url, Stream destination, CancellationToken token)
-    {
-        using var response = await MainViewModel.Client.GetAsync(url, HttpCompletionOption.ResponseHeadersRead);
-        var contentLength = response.Content.Headers.ContentLength;
-
-        using var download = await response.Content.ReadAsStreamAsync(token);
-
-        if (!contentLength.HasValue)
-        {
-            await download.CopyToAsync(destination);
-            yield return 1f;
-        }
-        else
-        {
-            var buffer = new byte[8192];
-            float totalBytesRead = 0;
-            int bytesRead;
-            while ((bytesRead = await download.ReadAsync(buffer, 0, buffer.Length, token).ConfigureAwait(false)) != 0)
-            {
-                await destination.WriteAsync(buffer, 0, bytesRead, token).ConfigureAwait(false);
-                totalBytesRead += bytesRead;
-                yield return totalBytesRead / contentLength.Value;
-            }
-
-            yield return 1f;
-        }
     }
 
     private bool CleanCompare(string? a, string? b)

@@ -7,6 +7,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows.Input;
 
 namespace Downloader.ViewModels;
@@ -42,19 +43,53 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
                 {
                     DirName = null;
                 }
-
             }
             else
             {
                 _songPreview = [];
             }
 
+            ImportSong = 0;
             UpdatePreview();
         });
 
         ImportAll = ReactiveCommand.CreateFromTask(async () =>
         {
-
+            IsImporting = true;
+            _ = Task.Run(async() =>
+            {
+                try
+                {
+                    ImportSong = 0;
+                    int prog = 0;
+                    foreach (var g in _allFiles)
+                    {
+                        var filename = Path.GetFileNameWithoutExtension(g);
+                        if (!await _mainViewModel.AddMusicAsync(
+                            GetRegexMatch(filename, RegexSongName ?? string.Empty, int.TryParse(GroupSongName, out var resGroupName) ? resGroupName : 0) ?? filename,
+                            "localfile",
+                            GetRegexMatch(filename, RegexSongArtist ?? string.Empty, int.TryParse(GroupSongArtist, out var resGroupArtist) ? resGroupArtist : 0),
+                            null,
+                            null,
+                            0,
+                            null,
+                            g,
+                            null,
+                            true
+                            ))
+                        {
+                            ImportSong = 0;
+                            break;
+                        }
+                        prog++;
+                        ImportSong = (float)prog / _allFiles.Length;
+                    }
+                }
+                finally
+                {
+                    IsImporting = false;
+                }
+            });
         });
     }
 
@@ -100,7 +135,10 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
     public ICommand ImportAll { get; }
 
     public void AfterInit()
-    { }
+    {
+        ImportSong = 0;
+        UpdatePreview();
+    }
 
     private string[] _allFiles = [];
     private string[] _songPreview = [];
@@ -171,12 +209,16 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
     }
 
     private float _importSong;
-    /// <summary>
-    /// Progress of the download of the image
-    /// </summary>
     public float ImportSong
     {
         get => _importSong;
         set => this.RaiseAndSetIfChanged(ref _importSong, value);
+    }
+
+    private bool _isImporting;
+    public bool IsImporting
+    {
+        get => _isImporting;
+        set => this.RaiseAndSetIfChanged(ref _isImporting, value);
     }
 }

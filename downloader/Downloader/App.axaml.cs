@@ -8,6 +8,7 @@ using MsBox.Avalonia.Enums;
 using MsBox.Avalonia;
 using System.Diagnostics;
 using System.Linq;
+using Downloader.Models;
 
 namespace Downloader;
 
@@ -16,25 +17,6 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
-    }
-
-    private bool DidExecutionSucceeed(string process, params string[] parameters)
-    {
-
-        Process p;
-        try
-        {
-            p = Process.Start(new ProcessStartInfo(process, string.Join(" ", parameters))
-            {
-                CreateNoWindow = true
-            });
-            p.WaitForExit();
-        }
-        catch
-        {
-            return false;
-        }
-        return p.ExitCode == 0;
     }
 
     private bool CheckIntegrity()
@@ -47,7 +29,7 @@ public partial class App : Application
         ];
         foreach (var p in processes)
         {
-            if (!DidExecutionSucceeed(p[0], p.Skip(1).ToArray()))
+            if (!ProcessManager.DidExecutionSucceeed(p[0], p.Skip(1).ToArray()))
             {
                 var dialog = MessageBoxManager
                     .GetMessageBoxStandard("Executable not found", $"Please install {p[0]} and make sure it is in your path",

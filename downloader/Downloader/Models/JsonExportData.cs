@@ -4,10 +4,16 @@ namespace Downloader.Models;
 
 public class JsonExportData
 {
+    public Metadata Metadata { set; get; } = new();
     public List<string> Highlight { set; get; } = [];
     public Dictionary<string, Playlist> Playlists { set; get; } = [];
     public List<Song> Musics { set; get; } = [];
     public Dictionary<string, Album> Albums { set; get; } = [];
+}
+
+public class Metadata
+{
+    public string Title { set; get; } = "Euphonia";
 }
 
 public class Album
