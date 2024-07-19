@@ -26,6 +26,10 @@
                     <Button Command="{Binding SelectDataPathCmd}">Load JSON</Button>
                     <Button Command="{Binding CreateNewJson}">Create new JSON</Button>
                 </StackPanel>
+                <ComboBox
+                    HorizontalAlignment="Stretch"
+                    ItemsSource="{Binding DataImportChoices}"
+                    SelectedIndex="{Binding DataImportIndex}" />
             </StackPanel>
         </TabItem>
         <TabItem Header="YouTube Download">

@@ -30,6 +30,15 @@ public class MainViewModel : ViewModelBase
 
         Client = new();
 
+        if (!Directory.Exists("Data/"))
+        {
+            Directory.CreateDirectory("Data/");
+        }
+        if (!File.Exists("Data/info.json"))
+        {
+            File.WriteAllText("Data/info.json", "{}");
+        }
+
         SelectDataPathCmd = ReactiveCommand.CreateFromTask(async () =>
         {
             var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
@@ -42,16 +51,17 @@ public class MainViewModel : ViewModelBase
             if (files.Any())
             {
                 var target = files[0];
-                DataPath = target.Path.LocalPath;
-                try
+                if (DataImportChoices.Contains(target.Path.LocalPath))
                 {
-                    Init();
-                    await MessageBoxManager.GetMessageBoxStandard("Load succeed", $"The file was successfully loaded with {SongCount} songs", icon: Icon.Success).ShowAsPopupAsync(mainWindow);
+                    await MessageBoxManager.GetMessageBoxStandard("Project already loaded", "A project with this path was already loaded", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
                 }
-                catch
+                else
                 {
-                    await MessageBoxManager.GetMessageBoxStandard("Project data can't be loaded", "Impossible to parse the selected project file, make sure it is a valid Euphonia file", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
-                    DataPath = null;
+                    DataImportChoices = [
+                        ..DataImportChoices,
+                        target.Path.LocalPath
+                    ];
+                    DataImportIndex = files.Count - 1;
                 }
             }
         });
@@ -72,10 +82,6 @@ public class MainViewModel : ViewModelBase
                     Directory.Delete("Data/", true);
                     Directory.CreateDirectory("Data/");
                 }
-                else if (!Directory.Exists("Data/"))
-                {
-                    Directory.CreateDirectory("Data/");
-                }
                 DataPath = "Data/info.json";
                 File.WriteAllText("Data/info.json", "{}");
                 Init();
@@ -91,15 +97,17 @@ public class MainViewModel : ViewModelBase
     public void LateInit()
     {
         string[] possiblePaths = ["../../../../../web/data/info.json", "Data/info.json"];
+        List<string> validData = new();
         foreach (var path in possiblePaths)
         {
             if (File.Exists(path))
             {
-                DataPath = path;
-                Init();
-                break;
+                validData.Add(new FileInfo(path).FullName);
             }
         }
+
+        DataImportChoices = [.. validData];
+        DataImportIndex = 0;
     }
 
     public const string AudioFormat = "mp3";
@@ -297,5 +305,42 @@ public class MainViewModel : ViewModelBase
     {
         get => _title;
         set => this.RaiseAndSetIfChanged(ref _title, value);
+    }
+
+    private int _dataImportIndex = -1;
+    public int DataImportIndex
+    {
+        get => _dataImportIndex;
+        set
+        {
+            this.RaiseAndSetIfChanged(ref _dataImportIndex, value);
+            if (value >= 0)
+            {
+                DataPath = _dataImportChoices[value];
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        Init();
+                    }
+                    catch
+                    {
+                        var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+                        Dispatcher.UIThread.Post(async () =>
+                        {
+                            await MessageBoxManager.GetMessageBoxStandard("Project data can't be loaded", "Impossible to parse the selected project file, make sure it is a valid Euphonia file", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                        });
+                        DataPath = null;
+                    }
+                });
+            }
+        }
+    }
+
+    private string[] _dataImportChoices;
+    public string[] DataImportChoices
+    {
+        get => _dataImportChoices;
+        set => this.RaiseAndSetIfChanged(ref _dataImportChoices, value);
     }
 }
