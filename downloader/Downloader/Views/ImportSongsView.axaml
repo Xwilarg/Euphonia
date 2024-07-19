@@ -12,4 +12,52 @@
     <Design.DataContext>
         <vm:ImportSongsViewModel />
     </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="320" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <Button Command="{Binding SearchFolder}">Import from folder</Button>
+            <TextBlock Text="{Binding ToImportFound}" />
+            <StackPanel IsEnabled="{Binding DirName, Converter={x:Static StringConverters.IsNotNullOrEmpty}}">
+                <StackPanel Orientation="Horizontal">
+                    <TextBox
+                        Width="500"
+                        Text="{Binding RegexSongName}"
+                        Watermark="REGEX matching song name" />
+                    <NumericUpDown
+                        Width="200"
+                        FormatString="N0"
+                        Minimum="0"
+                        Watermark="Group number"
+                        Value="{Binding GroupSongName}" />
+                </StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBox
+                        Width="500"
+                        Text="{Binding RegexSongArtist}"
+                        Watermark="REGEX matching artist name" />
+                    <NumericUpDown
+                        Width="200"
+                        FormatString="N0"
+                        Minimum="0"
+                        Watermark="Group number"
+                        Value="{Binding GroupSongArtist}" />
+                </StackPanel>
+                <TextBox
+                    Height="100"
+                    IsReadOnly="True"
+                    Text="{Binding PreviewRegexArea}" />
+            </StackPanel>
+            <Button HorizontalAlignment="Right" Command="{Binding ImportAll}">Import</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="5,0,5,0">
+            <TextBlock>Import</TextBlock>
+            <ProgressBar
+                Height="20"
+                Maximum="1"
+                Value="{Binding ImportSong}" />
+        </StackPanel>
+    </Grid>
 </UserControl>

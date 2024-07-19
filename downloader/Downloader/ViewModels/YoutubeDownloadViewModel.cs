@@ -11,7 +11,6 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Json;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -21,10 +20,13 @@ namespace Downloader.ViewModels;
 
 public class YoutubeDownloadViewModel : ViewModelBase, ITabView
 {
+    public YoutubeDownloadViewModel() : this(null)
+    { }
+
     public YoutubeDownloadViewModel(MainViewModel mainViewModel)
     {
         MainViewModel = mainViewModel;
-        MainViewModel.Views.Add(this);
+        MainViewModel?.Views?.Add(this);
 
         DownloadCmd = ReactiveCommand.CreateFromTask(async () =>
         {
@@ -45,8 +47,8 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
             }
 
             string? imagePath = CanInputAlbumUrl ? "tmpLogo.png" : null;
-            var musicPath = $"tmpMusicRaw.{AudioFormat}";
-            var normMusicPath = $"tmpMusicNorm.{AudioFormat}";
+            var musicPath = $"tmpMusicRaw.{MainViewModel.AudioFormat}";
+            var normMusicPath = $"tmpMusicNorm.{MainViewModel.AudioFormat}";
 
             // Just in case
             if (File.Exists(imagePath)) File.Delete(imagePath);
@@ -75,7 +77,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         DownloadImage = 1f;
                     }
 
-                    await foreach (var prog in ExecuteAndFollowAsync(new("yt-dlp", $"{MusicUrl} -o {musicPath} -x --audio-format {AudioFormat} -q --progress"), (s) =>
+                    await foreach (var prog in ExecuteAndFollowAsync(new("yt-dlp", $"{MusicUrl} -o {musicPath} -x --audio-format {MainViewModel.AudioFormat} -q --progress"), (s) =>
                     {
                         var m = Regex.Match(s, "([0-9.]+)%");
                         if (!m.Success) return -1f;
@@ -110,7 +112,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         CutMusic = 1f;
                     }
 
-                    await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"{musicPath} -pr -ext {AudioFormat} -o {normMusicPath} -c:a libmp3lame"), (_) =>
+                    await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"{musicPath} -pr -ext {MainViewModel.AudioFormat} -o {normMusicPath} -c:a libmp3lame"), (_) =>
                     {
                         return 0f;
                     }))
@@ -118,46 +120,16 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         NormalizeMusic = prog;
                     }
 
-                    var outMusicPath = $"{CleanPath(SongName)}_{CleanPath(Artist)}";
-                    if (!string.IsNullOrWhiteSpace(SongType))
-                    {
-                        outMusicPath += $"_{SongType}";
-                    }
-                    outMusicPath += $".{AudioFormat}";
-
-                    string albumKey = null;
-                    var hasAlbum = !string.IsNullOrWhiteSpace(AlbumName);
-                    if (hasAlbum)
-                    {
-                        albumKey = $"{CleanPath(Artist)}_{CleanPath(AlbumName)}";
-                    }
-                    var m = new Song
-                    {
-                        Album = albumKey,
-                        Artist = Artist,
-                        Name = SongName,
-                        Path = outMusicPath,
-                        Playlist = PlaylistIndex == 0 ? "default" : MainViewModel.Data.Playlists.Keys.ElementAt(PlaylistIndex - 1),
-                        Source = MusicUrl,
-                        Type = string.IsNullOrWhiteSpace(SongType) ? null : SongType
-                    };
-
-                    MainViewModel.Data.Musics.Add(m);
-                    if (hasAlbum && !MainViewModel.Data.Albums.ContainsKey(AlbumName))
-                    {
-                        MainViewModel.Data.Albums.Add(albumKey, new()
-                        {
-                            Name = AlbumName,
-                            Path = $"{albumKey}.png",
-                        });
-                    }
-                    if (imagePath != null)
-                    {
-                        File.Move(imagePath, $"{MainViewModel.DataFolderPath}/icon/{albumKey}.png");
-                    }
-                    File.Move(musicPath, $"{MainViewModel.DataFolderPath}/raw/{outMusicPath}");
-                    File.Move(normMusicPath, $"{MainViewModel.DataFolderPath}/normalized/{outMusicPath}");
-                    File.WriteAllText(MainViewModel.DataPath, JsonSerializer.Serialize(MainViewModel.Data, MainViewModel.JsonOptions));
+                    MainViewModel.AddMusic(
+                        SongName,
+                        MusicUrl,
+                        Artist,
+                        AlbumName,
+                        SongType,
+                        PlaylistIndex,
+                        imagePath,
+                        musicPath,
+                        normMusicPath);
 
                     ClearAll();
                 }
@@ -234,16 +206,6 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
         }
     }
 
-    private string CleanPath(string name)
-    {
-        var forbidden = new[] { '<', '>', ':', '\\', '/', '"', '|', '?', '*', '#', '&', '%' };
-        foreach (var c in forbidden)
-        {
-            name = name.Replace(c.ToString(), string.Empty);
-        }
-        return name;
-    }
-
     private bool CleanCompare(string? a, string? b)
     {
         return a?.Trim()?.ToUpperInvariant() == b?.Trim()?.ToUpperInvariant();
@@ -276,8 +238,6 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
 
         ClearAll();
     }
-
-    private const string AudioFormat = "mp3";
 
     public ICommand DownloadCmd { get; }
 
@@ -332,7 +292,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
             {
                 CanInputAlbumUrl = false;
             }
-            else if (MainViewModel.Data.Albums.Any(x => CleanCompare($"{CleanPath(Artist)}_{CleanPath(AlbumName)}", value)))
+            else if (MainViewModel.Data.Albums.Any(x => CleanCompare(MainViewModel.GetAlbumName(Artist, AlbumName), value)))
             {
                 CanInputAlbumUrl = false;
             }

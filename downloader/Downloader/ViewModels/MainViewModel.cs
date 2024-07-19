@@ -13,7 +13,6 @@ using System.Net.Http;
 using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Windows.Input;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Downloader.ViewModels;
 
@@ -100,6 +99,71 @@ public class MainViewModel : ViewModelBase
             }
         }
     }
+
+    public const string AudioFormat = "mp3";
+    public void AddMusic(string songName, string source, string artist, string album, string songType, int playlistIndex, string imagePath, string musicPath, string normMusicPath)
+    {
+        var outMusicPath = GetSongName(songName, artist);
+        if (!string.IsNullOrWhiteSpace(songType))
+        {
+            outMusicPath += $"_{songType}";
+        }
+        else
+        {
+            songType = null;
+        }
+        outMusicPath += $".{AudioFormat}";
+
+        string albumKey = null;
+        var hasAlbum = !string.IsNullOrWhiteSpace(album);
+        if (hasAlbum)
+        {
+            albumKey = GetAlbumName(artist, album);
+        }
+        var m = new Song
+        {
+            Album = albumKey,
+            Artist = artist,
+            Name = songName,
+            Path = outMusicPath,
+            Playlist = playlistIndex == 0 ? "default" : Data.Playlists.Keys.ElementAt(playlistIndex - 1),
+            Source = source,
+            Type = songType
+        };
+
+        Data.Musics.Add(m);
+        if (hasAlbum && !Data.Albums.ContainsKey(album))
+        {
+            Data.Albums.Add(albumKey, new()
+            {
+                Name = album,
+                Path = $"{albumKey}.png",
+            });
+        }
+        if (imagePath != null)
+        {
+            File.Move(imagePath, $"{DataFolderPath}/icon/{albumKey}.png");
+        }
+        File.Move(musicPath, $"{DataFolderPath}/raw/{outMusicPath}");
+        File.Move(normMusicPath, $"{DataFolderPath}/normalized/{outMusicPath}");
+        File.WriteAllText(DataPath, JsonSerializer.Serialize(Data, JsonOptions));
+    }
+
+    public string CleanPath(string name)
+    {
+        var forbidden = new[] { '<', '>', ':', '\\', '/', '"', '|', '?', '*', '#', '&', '%' };
+        foreach (var c in forbidden)
+        {
+            name = name.Replace(c.ToString(), string.Empty);
+        }
+        return name;
+    }
+
+    public string GetAlbumName(string artist, string album)
+        => $"{CleanPath(artist)}_{CleanPath(album)}";
+
+    public string GetSongName(string song, string artist)
+        => $"{CleanPath(song)}_{CleanPath(artist)}";
 
     public JsonExportData Data { private set; get; }
     public JsonSerializerOptions JsonOptions { private set; get; }
