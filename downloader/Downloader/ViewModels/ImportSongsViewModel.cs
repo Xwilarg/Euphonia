@@ -137,9 +137,11 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
 
     public void AfterInit()
     {
-        ImportSong = 0;
         UpdatePreview();
     }
+
+    public void OnDataRefresh()
+    { }
 
     private string[] _allFiles = [];
     private string[] _songPreview = [];

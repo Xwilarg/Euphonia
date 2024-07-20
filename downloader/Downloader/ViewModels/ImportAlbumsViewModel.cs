@@ -6,13 +6,11 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using System;
-using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Input;
-using System.Xml.Linq;
 
 namespace Downloader.ViewModels;
 
@@ -31,6 +29,8 @@ public class ImportAlbumsViewModel : ViewModelBase, ITabView
             IsImporting = true;
             _ = Task.Run(async () =>
             {
+                string reqUrl;
+                LastFmApi json;
                 try
                 {
                     var songs = _mainViewModel.Data.Musics.Where(x => x.Album == null);
@@ -38,25 +38,31 @@ public class ImportAlbumsViewModel : ViewModelBase, ITabView
                     {
                         songs = songs.Where(x => x.Source == "localfile");
                     }
+                    int i = 0;
+                    var songCount = songs.Count();
                     foreach (var s in songs)
                     {
-                        var reqUrl = $"https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={LastFmApiKey}&artist={HttpUtility.UrlEncode(s.Artist)}&track={HttpUtility.UrlEncode(s.Name)}&format=json";
-                        var json = JsonSerializer.Deserialize<LastFmApi>(await _mainViewModel.Client.GetStringAsync(reqUrl));
+                        reqUrl = $"https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={LastFmApiKey}&artist={HttpUtility.UrlEncode(s.Artist)}&track={HttpUtility.UrlEncode(s.Name)}&format=json";
+                        json = JsonSerializer.Deserialize<LastFmApi>(await _mainViewModel.Client.GetStringAsync(reqUrl), _mainViewModel.JsonOptions);
 
-                        if (json.Message != null && json.Track.Album != null && json.Track.Album.Image.Any())
+                        if (json.Message == null && json.Track.Album != null && json.Track.Album.Image.Any())
                         {
                             string album = json.Track.Album.Title;
                             var url = json.Track.Album.Image.Last().Text;
                             if (url != string.Empty)
                             {
                                 var path = _mainViewModel.GetAlbumName(s.Artist, album);
-                                if (_mainViewModel.Data.Albums.Any(x => x.Key == path))
+                                if (!_mainViewModel.Data.Albums.Any(x => x.Key == path))
                                 {
                                     await foreach (var prog in ProcessManager.DownloadImageAsync(_mainViewModel.Client, url, $"{_mainViewModel.DataFolderPath}/icon/{path}.png")) { }
+                                    s.Album = path;
                                     _mainViewModel.SaveImage(path, album, url);
                                 }
                             }
                         }
+
+                        i++;
+                        ImportAlbums = i / (float)songCount;
                     }
                 }
                 catch (Exception ex)
@@ -69,6 +75,9 @@ public class ImportAlbumsViewModel : ViewModelBase, ITabView
                 }
                 finally
                 {
+                    _mainViewModel.SaveData();
+                    UpdateAffectedFiles();
+                    ImportAlbums = 0f;
                     IsImporting = false;
                 }
             });
@@ -82,6 +91,11 @@ public class ImportAlbumsViewModel : ViewModelBase, ITabView
     }
 
     public void AfterInit()
+    {
+        UpdateAffectedFiles();
+    }
+
+    public void OnDataRefresh()
     {
         UpdateAffectedFiles();
     }

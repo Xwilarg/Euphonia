@@ -66,7 +66,7 @@ public class MainViewModel : ViewModelBase
                         ..DataImportChoices,
                         target.Path.LocalPath
                     ];
-                    DataImportIndex = files.Count - 1;
+                    DataImportIndex = DataImportChoices.Length - 1;
                 }
             }
         });
@@ -140,6 +140,11 @@ public class MainViewModel : ViewModelBase
     }
 
     public const string AudioFormat = "mp3";
+
+    public void SaveData()
+    {
+        File.WriteAllText(DataPath, JsonSerializer.Serialize(Data, JsonOptions));
+    }
 
     public void SaveImage(string key, string name, string source)
     {
@@ -221,8 +226,9 @@ public class MainViewModel : ViewModelBase
             fileMethod(normMusicPath, $"{DataFolderPath}/normalized/{outMusicPath}");
 
             // Update the JSON with all we did
-            File.WriteAllText(DataPath, JsonSerializer.Serialize(Data, JsonOptions));
+            SaveData();
             UpdateMainUI();
+            foreach (var view in Views) view.OnDataRefresh();
             return true;
         }
         catch (Exception ex)

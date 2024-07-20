@@ -179,6 +179,9 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
         ClearAll();
     }
 
+    public void OnDataRefresh()
+    { }
+
     public ICommand DownloadCmd { get; }
 
     private MainViewModel _mainViewModel;
