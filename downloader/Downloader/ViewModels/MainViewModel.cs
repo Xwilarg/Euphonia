@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Downloader.Models;
+using DynamicData;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
@@ -86,9 +87,24 @@ public class MainViewModel : ViewModelBase
                     Directory.Delete("Data/", true);
                     Directory.CreateDirectory("Data/");
                 }
-                DataPath = "Data/info.json";
+                else
+                {
+                    if (!Directory.Exists("Data/"))
+                    {
+                        Directory.CreateDirectory("Data/");
+                    }
+                }
                 File.WriteAllText("Data/info.json", "{}");
-                Init();
+                var target = new FileInfo("Data/info.json").FullName;
+                if (!DataImportChoices.Contains(target))
+                {
+                    DataImportChoices = [..DataImportChoices, target];
+                    DataImportIndex = DataImportChoices.Length - 1;
+                }
+                else
+                {
+                    DataImportIndex = DataImportChoices.IndexOf(target);
+                }
             }
             catch (Exception e)
             {
@@ -113,8 +129,14 @@ public class MainViewModel : ViewModelBase
         if (validData.Any())
         {
             DataImportChoices = [.. validData];
-            DataImportIndex = 0;
         }
+        else
+        {
+            if (!Directory.Exists("Data/info.json")) Directory.CreateDirectory("Data/");
+            File.WriteAllText("Data/info.json", "{}");
+            DataImportChoices = [ new FileInfo("Data/info.json").FullName ];
+        }
+        DataImportIndex = 0;
     }
 
     public const string AudioFormat = "mp3";
@@ -345,7 +367,7 @@ public class MainViewModel : ViewModelBase
                     {
                         Init();
                     }
-                    catch
+                    catch (Exception e)
                     {
                         var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
                         Dispatcher.UIThread.Post(async () =>
