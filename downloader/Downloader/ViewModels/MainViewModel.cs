@@ -160,6 +160,14 @@ public class MainViewModel : ViewModelBase
     {
         try
         {
+            // We sanitize user inputs just in case
+            songName = songName.Trim();
+            artist = artist?.Trim();
+            songType = artist?.Trim();
+            album = album?.Trim();
+            albumUrl = albumUrl?.Trim();
+            source = source?.Trim();
+
             // Create output path
             var outMusicPath = GetSongName(songName, artist);
             if (!string.IsNullOrWhiteSpace(songType))
@@ -253,10 +261,10 @@ public class MainViewModel : ViewModelBase
     }
 
     public string GetAlbumName(string? artist, string album)
-        => $"{CleanPath(artist ?? "unknown")}_{CleanPath(album)}";
+        => $"{CleanPath(artist?.Trim() ?? "unknown")}_{CleanPath(album.Trim())}";
 
     public string GetSongName(string song, string? artist)
-        => $"{CleanPath(song)}_{CleanPath(artist ?? "unknown")}";
+        => $"{CleanPath(song.Trim())}_{CleanPath(artist?.Trim() ?? "unknown")}";
 
     private JsonExportData _data;
     public JsonExportData Data
