@@ -5,7 +5,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using Downloader.ViewModels;
-using Avalonia.Media.Imaging;
+using SixLabors.ImageSharp;
 
 namespace Downloader.Models
 {
@@ -110,8 +110,8 @@ namespace Downloader.Models
                 yield return prog;
             }
             ms.Position = 0;
-            var bmp = new Bitmap(ms);
-            bmp.Save(savePath);
+            var image = Image.Load(ms);
+            image.Save(savePath);
         }
     }
 }

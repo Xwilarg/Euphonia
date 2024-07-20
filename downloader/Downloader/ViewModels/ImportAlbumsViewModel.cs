@@ -58,6 +58,10 @@ public class ImportAlbumsViewModel : ViewModelBase, ITabView
                                     s.Album = path;
                                     _mainViewModel.SaveImage(path, album, url);
                                 }
+                                else
+                                {
+                                    s.Album = path;
+                                }
                             }
                         }
 
