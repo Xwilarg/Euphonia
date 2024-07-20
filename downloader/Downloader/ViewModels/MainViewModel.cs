@@ -118,7 +118,18 @@ public class MainViewModel : ViewModelBase
     }
 
     public const string AudioFormat = "mp3";
-    public async ValueTask<bool> AddMusicAsync(string songName, string? source, string? artist, string? album, string? songType, int playlistIndex, string? imagePath, string musicPath, string? normMusicPath, bool copyOnly)
+
+    public void SaveImage(string key, string name, string source)
+    {
+        Data.Albums.Add(key, new()
+        {
+            Name = name,
+            Path = $"{key}.png",
+            Source = source
+        });
+    }
+
+    public async ValueTask<bool> AddMusicAsync(string songName, string? source, string? artist, string? album, string? albumUrl, string? songType, int playlistIndex, string? imagePath, string musicPath, string? normMusicPath, bool copyOnly)
     {
         try
         {
@@ -170,11 +181,7 @@ public class MainViewModel : ViewModelBase
             // If album exists we add it to the JSON too
             if (hasAlbum && !Data.Albums.ContainsKey(album))
             {
-                Data.Albums.Add(albumKey, new()
-                {
-                    Name = album,
-                    Path = $"{albumKey}.png",
-                });
+                SaveImage(albumKey, albumKey, albumUrl);
             }
 
             // Copy (or move) the files

@@ -5,6 +5,7 @@ using System.IO;
 using System.Net.Http;
 using System.Threading;
 using Downloader.ViewModels;
+using Avalonia.Media.Imaging;
 
 namespace Downloader.Models
 {
@@ -99,6 +100,18 @@ namespace Downloader.Models
 
                 yield return 1f;
             }
+        }
+
+        public static async IAsyncEnumerable<float> DownloadImageAsync(HttpClient client, string url, string savePath)
+        {
+            using var ms = new MemoryStream();
+            await foreach (var prog in DownloadAndFollowAsync(client, url, ms, new()))
+            {
+                yield return prog;
+            }
+            ms.Position = 0;
+            var bmp = new Bitmap(ms);
+            bmp.Save(savePath);
         }
     }
 }

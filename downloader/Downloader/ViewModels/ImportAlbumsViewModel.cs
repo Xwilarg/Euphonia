@@ -6,6 +6,7 @@ using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using System;
+using System.IO;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -46,6 +47,15 @@ public class ImportAlbumsViewModel : ViewModelBase, ITabView
                         {
                             string album = json.Track.Album.Title;
                             var url = json.Track.Album.Image.Last().Text;
+                            if (url != string.Empty)
+                            {
+                                var path = _mainViewModel.GetAlbumName(s.Artist, album);
+                                if (_mainViewModel.Data.Albums.Any(x => x.Key == path))
+                                {
+                                    await foreach (var prog in ProcessManager.DownloadImageAsync(_mainViewModel.Client, url, $"{_mainViewModel.DataFolderPath}/icon/{path}.png")) { }
+                                    _mainViewModel.SaveImage(path, album, url);
+                                }
+                            }
                         }
                     }
                 }

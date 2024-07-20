@@ -23,4 +23,5 @@ namespace Downloader.Models
     {
         [JsonPropertyName("#text")]
         public string Text { set; get; }
+    }
 }

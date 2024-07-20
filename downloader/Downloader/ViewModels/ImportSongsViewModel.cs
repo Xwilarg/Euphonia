@@ -71,6 +71,7 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
                             GetRegexMatch(filename, RegexSongArtist ?? string.Empty, int.TryParse(GroupSongArtist, out var resGroupArtist) ? resGroupArtist : 0),
                             null,
                             null,
+                            null,
                             0,
                             null,
                             g,

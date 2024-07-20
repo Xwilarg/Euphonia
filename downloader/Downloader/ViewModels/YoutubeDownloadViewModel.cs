@@ -60,14 +60,10 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                     // Download all
                     if (CanInputAlbumUrl)
                     {
-                        using var ms = new MemoryStream();
-                        await foreach (var prog in ProcessManager.DownloadAndFollowAsync(MainViewModel.Client, AlbumUrl, ms, new()))
+                        await foreach (var prog in ProcessManager.DownloadImageAsync(MainViewModel.Client, AlbumUrl, imagePath!))
                         {
                             DownloadImage = prog;
                         }
-                        ms.Position = 0;
-                        var bmp = new Bitmap(ms);
-                        bmp.Save(imagePath!);
                     }
                     else
                     {
@@ -119,6 +115,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         MusicUrl,
                         Artist,
                         AlbumName,
+                        AlbumUrl,
                         SongType,
                         PlaylistIndex,
                         imagePath,
