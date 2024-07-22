@@ -1,8 +1,12 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using Downloader.Models;
+using MsBox.Avalonia;
+using MsBox.Avalonia.Enums;
 using ReactiveUI;
+using System;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -63,32 +67,56 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
                     ImportSong = 0;
                     int prog = 0;
                     foreach (var g in _allFiles)
-                    { // TODO: Revert or smth if this fails
-                        var filename = Path.GetFileNameWithoutExtension(g);
-                        if (!await _mainViewModel.AddMusicAsync(
-                            GetRegexMatch(filename, RegexSongName ?? string.Empty, int.TryParse(GroupSongName, out var resGroupName) ? resGroupName : 0) ?? filename,
-                            "localfile",
-                            GetRegexMatch(filename, RegexSongArtist ?? string.Empty, int.TryParse(GroupSongArtist, out var resGroupArtist) ? resGroupArtist : 0),
-                            null,
-                            null,
-                            null,
-                            0,
-                            null,
-                            g,
-                            null,
-                            true
-                            ))
+                    {
+                        string songName = string.Empty;
+                        try
                         {
-                            ImportSong = 0;
-                            break;
+                            var filename = Path.GetFileNameWithoutExtension(g);
+                            songName = GetRegexMatch(filename, RegexSongName ?? string.Empty, int.TryParse(GroupSongName, out var resGroupName) ? resGroupName : 0) ?? filename;
+                            var artist = GetRegexMatch(filename, RegexSongArtist ?? string.Empty, int.TryParse(GroupSongArtist, out var resGroupArtist) ? resGroupArtist : 0);
+
+                            var musicKey = _mainViewModel.GetMusicKey(songName, artist, null);
+                            var rawPath = _mainViewModel.GetRawMusicPath(musicKey);
+                            var normPath = _mainViewModel.GetNormalizedMusicPath(musicKey);
+
+                            File.Copy(g, rawPath);
+                            prog++;
+                            ImportSong = prog / (_allFiles.Length * 3f);
+
+                            await foreach (var _ in ProcessManager.Normalize(rawPath, normPath)) {}
+                            prog++;
+                            ImportSong = prog / (_allFiles.Length * 3f);
+
+                            _mainViewModel.AddMusic(
+                                songName,
+                                "localfile",
+                                artist,
+                                null,
+                                null,
+                                null,
+                                0
+                                );
+                            prog++;
+                            ImportSong = prog / (_allFiles.Length * 3f);
                         }
-                        prog++;
-                        ImportSong = (float)prog / _allFiles.Length;
+                        catch (Exception ex)
+                        {
+                            var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+                            bool? shouldReturnTrue = null;
+                            Dispatcher.UIThread.Post(async () =>
+                            {
+                                var answer = await MessageBoxManager.GetMessageBoxStandard("Error while adding music", $"Error while adding {songName}: {ex.Message}\nDo you still want to continue?", ButtonEnum.OkAbort, icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                                shouldReturnTrue = answer == ButtonResult.Ok;
+                            });
+                            while (shouldReturnTrue == null) await Task.Delay(100);
+                            if (!shouldReturnTrue.Value) return;
+                        }
                     }
                 }
                 finally
                 {
                     IsImporting = false;
+                    ImportSong = 0;
                 }
             });
         });

@@ -3,6 +3,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Downloader.Models;
+using Downloader.Views;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
@@ -43,24 +44,17 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                 return;
             }
 
-            string? imagePath = CanInputAlbumUrl ? "tmpLogo.png" : null;
-            var musicPath = $"tmpMusicRaw.{MainViewModel.AudioFormat}";
-            var normMusicPath = $"tmpMusicNorm.{MainViewModel.AudioFormat}";
-
-            // Just in case
-            if (File.Exists(imagePath)) File.Delete(imagePath);
-            if (File.Exists(musicPath)) File.Delete(musicPath);
-            if (File.Exists(normMusicPath)) File.Delete(normMusicPath);
-
 
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    // Download all
+                    var albumName = MainViewModel.GetAlbumName(Artist, AlbumName);
+                    var imagePath = MainViewModel.GetImagePath(albumName);
+
                     if (CanInputAlbumUrl)
                     {
-                        await foreach (var prog in ProcessManager.DownloadImageAsync(MainViewModel.Client, AlbumUrl, imagePath!))
+                        await foreach (var prog in ProcessManager.DownloadImageAsync(MainViewModel.Client, AlbumUrl, MainViewModel.GetImagePath(imagePath)))
                         {
                             DownloadImage = prog;
                         }
@@ -70,7 +64,32 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         DownloadImage = 1f;
                     }
 
-                    await foreach (var prog in ProcessManager.ExecuteAndFollowAsync(new("yt-dlp", $"{MusicUrl} -o {musicPath} -x --audio-format {MainViewModel.AudioFormat} -q --progress"), (s) =>
+                    var startTime = int.TryParse(StartTime, out int resStartTime) ? resStartTime : 0;
+                    var endTime = int.TryParse(EndTime, out int resEndTime) ? resEndTime : 0;
+
+                    bool needCut = startTime > 0 || endTime > 0;
+                    if (needCut && endTime != 0 && endTime <= startTime)
+                    {
+                        throw new Exception("EndTime must either be 0 or superior at StartTime");
+                    }
+
+                    var musicKey = MainViewModel.GetMusicKey(SongName, Artist, SongType);
+                    var rawSongPath = MainViewModel.GetRawMusicPath(musicKey);
+                    var normSongPath = MainViewModel.GetRawMusicPath(musicKey);
+
+                    if (File.Exists(normSongPath) || File.Exists(rawSongPath))
+                    {
+                        throw new Exception($"There is already a music saved with the same filename");
+                    }
+
+                    var keyCut = $"youtube_tmp.{MainViewModel.AudioFormat}";
+                    var targetRawDownload = needCut ? keyCut : rawSongPath;
+                    if (needCut)
+                    {
+                        File.Delete(keyCut);
+                    }
+
+                    await foreach (var prog in ProcessManager.ExecuteAndFollowAsync(new("yt-dlp", $"{MusicUrl} -o \"{targetRawDownload}\" -x --audio-format {MainViewModel.AudioFormat} -q --progress"), (s) =>
                     {
                         var m = Regex.Match(s, "([0-9.]+)%");
                         if (!m.Success) return -1f;
@@ -80,51 +99,37 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         DownloadMusic = prog;
                     }
 
-                    var startTime = int.TryParse(StartTime, out int resStartTime) ? resStartTime : 0;
-                    var endTime = int.TryParse(EndTime, out int resEndTime) ? resEndTime : 0;
-                    if (startTime > 0 || endTime > 0)
+                    if (needCut)
                     {
-                        if (endTime != 0 && endTime <= startTime)
-                        {
-                            throw new Exception("EndTime must either be 0 or superior at StartTime");
-                        }
-
                         var duration = endTime == 0 ? 0 : endTime - startTime;
                         var durationArg = duration == 0 ? string.Empty : $" -t {duration} ";
-                        await foreach (var prog in ProcessManager.ExecuteAndFollowAsync(new("ffmpeg", $"-ss {startTime} {durationArg} -i {musicPath} cut_{musicPath}"), (s) =>
+                        await foreach (var prog in ProcessManager.ExecuteAndFollowAsync(new("ffmpeg", $"-ss {startTime} {durationArg} -i {targetRawDownload} \"{rawSongPath}\""), (s) =>
                         {
                             return 0f;
                         }))
                         {
                             CutMusic = prog;
                         }
-                        File.Move($"cut_{musicPath}", musicPath, true);
+                        File.Delete(keyCut);
                     }
                     else
                     {
                         CutMusic = 1f;
                     }
 
-                    await foreach (var prog in ProcessManager.Normalize(musicPath, normMusicPath))
+                    await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
                     {
                         NormalizeMusic = prog;
                     }
 
-                    if (await MainViewModel.AddMusicAsync(
+                    MainViewModel.AddMusic(
                         SongName,
                         MusicUrl,
                         Artist,
                         AlbumName,
                         AlbumUrl,
                         SongType,
-                        PlaylistIndex,
-                        imagePath,
-                        musicPath,
-                        normMusicPath,
-                        copyOnly: false))
-                    {
-                        ClearAll();
-                    }
+                        PlaylistIndex);
                 }
                 catch (Exception e)
                 {

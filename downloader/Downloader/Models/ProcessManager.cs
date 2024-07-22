@@ -7,6 +7,7 @@ using System.Threading;
 using Downloader.ViewModels;
 using SixLabors.ImageSharp;
 using System.Threading.Tasks;
+using System.Text;
 
 namespace Downloader.Models
 {
@@ -14,8 +15,7 @@ namespace Downloader.Models
     {
         public static async IAsyncEnumerable<float> Normalize(string inPath, string outPath)
         {
-            File.Delete(outPath);
-            await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"\"{inPath}\" -pr -ext {MainViewModel.AudioFormat} -o {outPath} -c:a libmp3lame"), (_) =>
+            await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"\"{inPath}\" -pr -ext {MainViewModel.AudioFormat} -o \"{outPath}\" -c:a libmp3lame"), (_) =>
             {
                 return 0f;
             }))
@@ -64,7 +64,14 @@ namespace Downloader.Models
             p.Start();
 
             var stdout = p.StandardOutput;
-            //var stderr = p.StandardError;
+
+            StringBuilder err = new();
+
+            p.ErrorDataReceived += (_, e) =>
+            {
+                if (!string.IsNullOrWhiteSpace(e.Data)) err.AppendLine(e.Data);
+            };
+            p.BeginErrorReadLine();
 
             string line = stdout.ReadLine();
             while (line != null)
@@ -82,7 +89,7 @@ namespace Downloader.Models
 
             if (p.ExitCode != 0)
             {
-                throw new Exception($"{startInfo.FileName} returned {p.ExitCode}");
+                throw new Exception($"{startInfo.FileName} failed: {err}");
             }
 
             yield return 1f;
