@@ -26,6 +26,16 @@ html {
     font-size: xx-large;
 }
 
+@media (max-width: 600px) {
+    #banner {
+        justify-content: right;
+    }
+
+    #banner h1 {
+        margin-right: 20px;
+    }
+}
+
 #banner-buttons {
     position: fixed;
     top: .2em;
