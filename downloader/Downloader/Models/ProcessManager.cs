@@ -6,6 +6,7 @@ using System.Net.Http;
 using System.Threading;
 using Downloader.ViewModels;
 using SixLabors.ImageSharp;
+using System.Threading.Tasks;
 
 namespace Downloader.Models
 {
@@ -13,6 +14,7 @@ namespace Downloader.Models
     {
         public static async IAsyncEnumerable<float> Normalize(string inPath, string outPath)
         {
+            File.Delete(outPath);
             await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"\"{inPath}\" -pr -ext {MainViewModel.AudioFormat} -o {outPath} -c:a libmp3lame"), (_) =>
             {
                 return 0f;
@@ -42,12 +44,23 @@ namespace Downloader.Models
 
         public static async IAsyncEnumerable<float> ExecuteAndFollowAsync(ProcessStartInfo startInfo, Func<string, float> parseMethod)
         {
+            using CancellationTokenSource source = new();
+
             startInfo.CreateNoWindow = true;
             startInfo.RedirectStandardError = true;
             startInfo.RedirectStandardOutput = true;
             startInfo.UseShellExecute = false;
 
             var p = Process.Start(startInfo);
+            Task t = Task.Run(async () =>
+            {
+                for (int i = 0; i < 60000; i += 1000)
+                {
+                    if (source.Token.IsCancellationRequested) return;
+                    await Task.Delay(1000);
+                }
+                p.Kill();
+            });
             p.Start();
 
             var stdout = p.StandardOutput;
@@ -65,6 +78,7 @@ namespace Downloader.Models
             }
 
             p.WaitForExit();
+            source.Cancel();
 
             if (p.ExitCode != 0)
             {

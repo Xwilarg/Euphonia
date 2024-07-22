@@ -179,7 +179,7 @@ public class MainViewModel : ViewModelBase
                 songType = null;
             }
 
-            // If file already exists, we do filename_2 (and increment that number if still exists)
+            /*
             var incrementOutMusicPath = outMusicPath;
             int i = 2;
             while (File.Exists($"{DataFolderPath}/raw/{incrementOutMusicPath}.{AudioFormat}"))
@@ -188,9 +188,15 @@ public class MainViewModel : ViewModelBase
                 i++;
             }
             outMusicPath = incrementOutMusicPath;
+            */
 
             // Add file extension
             outMusicPath += $".{AudioFormat}";
+
+            if (File.Exists($"{DataFolderPath}/raw/{outMusicPath}")) // Music was already added
+            {
+                return true;
+            }
 
             // Format album data
             string albumKey = null;
@@ -226,12 +232,10 @@ public class MainViewModel : ViewModelBase
                 fileMethod(imagePath, $"{DataFolderPath}/icon/{albumKey}.png");
             }
             fileMethod(musicPath, $"{DataFolderPath}/raw/{outMusicPath}");
-            if (normMusicPath == null)
+            if (normMusicPath != null)
             {
-                normMusicPath = $"tmpMusicNorm.{AudioFormat}";
-                await foreach (var prog in ProcessManager.Normalize(musicPath, normMusicPath)) { }
+                fileMethod(normMusicPath, $"{DataFolderPath}/normalized/{outMusicPath}");
             }
-            fileMethod(normMusicPath, $"{DataFolderPath}/normalized/{outMusicPath}");
 
             // Update the JSON with all we did
             SaveData();
@@ -242,11 +246,14 @@ public class MainViewModel : ViewModelBase
         catch (Exception ex)
         {
             var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+            bool? shouldReturnTrue = null;
             Dispatcher.UIThread.Post(async () =>
             {
-                await MessageBoxManager.GetMessageBoxStandard("Error while adding music", $"Error while adding {songName}: {ex.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                var answer = await MessageBoxManager.GetMessageBoxStandard("Error while adding music", $"Error while adding {songName}: {ex.Message}\nDo you still want to continue?", ButtonEnum.OkAbort, icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                shouldReturnTrue = answer == ButtonResult.Ok;
             });
-            return false;
+            while (shouldReturnTrue == null) await Task.Delay(100);
+            return shouldReturnTrue.Value;
         }
     }
 
