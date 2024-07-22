@@ -49,6 +49,7 @@
                     Height="100"
                     IsReadOnly="True"
                     Text="{Binding PreviewRegexArea}" />
+                <CheckBox IsChecked="{Binding IgnoreErrors}">Don't warn on error</CheckBox>
                 <Button HorizontalAlignment="Right" Command="{Binding ImportAll}">Import</Button>
             </StackPanel>
         </StackPanel>

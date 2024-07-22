@@ -101,15 +101,18 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
                         }
                         catch (Exception ex)
                         {
-                            var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
-                            bool? shouldReturnTrue = null;
-                            Dispatcher.UIThread.Post(async () =>
+                            if (!IgnoreErrors)
                             {
-                                var answer = await MessageBoxManager.GetMessageBoxStandard("Error while adding music", $"Error while adding {songName}: {ex.Message}\nDo you still want to continue?", ButtonEnum.OkAbort, icon: Icon.Error).ShowAsPopupAsync(mainWindow);
-                                shouldReturnTrue = answer == ButtonResult.Ok;
-                            });
-                            while (shouldReturnTrue == null) await Task.Delay(100);
-                            if (!shouldReturnTrue.Value) return;
+                                var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+                                bool? shouldReturnTrue = null;
+                                Dispatcher.UIThread.Post(async () =>
+                                {
+                                    var answer = await MessageBoxManager.GetMessageBoxStandard("Error while adding music", $"Error while adding {songName}: {ex.Message}\nDo you still want to continue?", ButtonEnum.OkAbort, icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                                    shouldReturnTrue = answer == ButtonResult.Ok;
+                                });
+                                while (shouldReturnTrue == null) await Task.Delay(100);
+                                if (!shouldReturnTrue.Value) return;
+                            }
                         }
                     }
                 }
@@ -251,5 +254,12 @@ public class ImportSongsViewModel : ViewModelBase, ITabView
     {
         get => _isImporting;
         set => this.RaiseAndSetIfChanged(ref _isImporting, value);
+    }
+
+    private bool _ignoreErrors;
+    public bool IgnoreErrors
+    {
+        get => _ignoreErrors;
+        set => this.RaiseAndSetIfChanged(ref _ignoreErrors, value);
     }
 }
