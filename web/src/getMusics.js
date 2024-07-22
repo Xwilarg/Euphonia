@@ -152,6 +152,7 @@ function playSingleSong(index) {
 
 // Sanitize a name so the user can't inject HTML with the title
 function sanitize(text) {
+    if (text === null) return "";
     return text
         .replaceAll('&', '$amp;')
         .replaceAll('<', '&lt;')
@@ -252,9 +253,9 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
         for (const elem of musics)
         {
             if (elem.name.toLowerCase().includes(filter) ||
-            elem.artist.toLowerCase().includes(filter) ||
+            (elem.artist != null && elem.artist.toLowerCase().includes(filter)) ||
             wanakana.toRomaji(elem.name).toLowerCase().includes(filter) ||
-            wanakana.toRomaji(elem.artist).toLowerCase().includes(filter))
+            (elem.artist != null && wanakana.toRomaji(elem.artist).toLowerCase().includes(filter)))
             {
                 res.push(elem);
                 if (res.length == count) break;
