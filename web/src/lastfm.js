@@ -1,3 +1,5 @@
+// module "lastfm.js"
+
 let lastFmApiKey;
 
 // https://stackoverflow.com/a/21125098
@@ -40,8 +42,7 @@ async function makeAuthCallAsync(method, params)
     return await resp.json();
 }
 
-window.lastfm_registerNowPlayingAsync = lastfm_registerNowPlayingAsync;
-async function lastfm_registerNowPlayingAsync(song, artist, album, length)
+export async function registerNowPlayingAsync(song, artist, album, length)
 {
     if (!lastFmApiKey) return;
     const json = await makeAuthCallAsync("track.updateNowPlaying", {
@@ -53,8 +54,7 @@ async function lastfm_registerNowPlayingAsync(song, artist, album, length)
     console.log(`[last.fm] Updated track being played: ${JSON.stringify(json)}`);
 }
 
-window.lastfm_registerScrobbleAsync = lastfm_registerScrobbleAsync;
-async function lastfm_registerScrobbleAsync(song, artist, album, length, timestamp)
+export async function registerScrobbleAsync(song, artist, album, length, timestamp)
 {
     if (!lastFmApiKey) return;
     const json = await makeAuthCallAsync("track.scrobble", {
@@ -67,8 +67,7 @@ async function lastfm_registerScrobbleAsync(song, artist, album, length, timesta
     console.log(`[last.fm] Updated track scrobbled: ${JSON.stringify(json)}`);
 }
 
-window.lastfm_initAsync = lastfm_initAsync;
-async function lastfm_initAsync()
+export async function lastfm_initAsync()
 {
     const resp = await fetch("/php/getLastfmApiKey.php");
     lastFmApiKey = await resp.text();

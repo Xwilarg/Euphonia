@@ -1,4 +1,7 @@
+// module "getMusics.js"
+
 import * as wanakana from 'wanakana';
+import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 
 let json;
 
@@ -345,7 +348,7 @@ async function updateScrobblerAsync() {
     console.log(`[Song] Last song was listened for a duration of ${timeListened} out of ${trackDuration} seconds`);
     if (currSong !== null && trackDuration != 0 && (timeListened > trackDuration / 2 || timeListened > 240))
     {
-        window.lastfm_registerScrobbleAsync(currSong.name, currSong.artist, currSong.album, trackDuration, timeStarted);
+        registerScrobbleAsync(currSong.name, currSong.artist, currSong.album, trackDuration, timeStarted);
     }
 }
 
@@ -441,7 +444,7 @@ function loadPage() {
         document.getElementById("durationSlider").max = player.duration;
 
         // A song was played
-        window.lastfm_registerNowPlayingAsync(currSong.name, currSong.artist, currSong.album, player.duration);
+        registerNowPlayingAsync(currSong.name, currSong.artist, currSong.album, player.duration);
         trackDuration = player.duration;
     });
     player.addEventListener('timeupdate', (_) => {
@@ -592,8 +595,7 @@ function chooseDisplay() {
     loadPage();
 }
 
-window.musics_initAsync = musics_initAsync;
-async function musics_initAsync() {
+export async function musics_initAsync() {
     // Buttons
     document.getElementById("toggle-settings").addEventListener("click", () => { document.getElementById("settings").hidden = !document.getElementById("settings").hidden; });
     document.getElementById("toggle-volume").addEventListener("click", () => { document.getElementById("volume-container").hidden = !document.getElementById("volume-container").hidden; });
