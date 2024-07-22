@@ -181,7 +181,7 @@ public class MainViewModel : ViewModelBase
         // We sanitize user inputs just in case
         songName = songName.Trim();
         artist = artist?.Trim();
-        songType = artist?.Trim();
+        songType = songType?.Trim();
         album = album?.Trim();
         albumUrl = albumUrl?.Trim();
         source = source?.Trim();
