@@ -56,6 +56,17 @@ html {
     padding: .5em;
     height: 100%;
     z-index: 2;
+    width: 500px;
+}
+
+#settings fieldset {
+    max-height: 300px;
+    overflow: auto;
+}
+
+#settings .error {
+    max-width: 450px;
+    white-space: nowrap;
 }
 
 #volume-container {
