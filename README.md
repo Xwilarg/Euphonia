@@ -26,4 +26,5 @@ Website, discord bot, android app
 If you're missing some of your songs, you can run `integrity.py` who is located inside the scripts/ folder
 
 ## Website customization
-You can change the colors of the website in web/css/customize.cs
+You can change some metadata of your website in `web/data/metadata.json` \
+You can also change its style on `web/css/customize.cs`
