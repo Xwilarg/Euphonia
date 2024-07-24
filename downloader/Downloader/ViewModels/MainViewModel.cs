@@ -1,4 +1,5 @@
 ﻿using Avalonia;
+using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform.Storage;
 using Avalonia.Threading;
@@ -116,6 +117,8 @@ public class MainViewModel : ViewModelBase
 
     public void LateInit()
     {
+        if (Design.IsDesignMode) return;
+
         string[] possiblePaths = ["../../../../../web/data/info.json", "Data/info.json"];
         List<string> validData = new();
         foreach (var path in possiblePaths)
