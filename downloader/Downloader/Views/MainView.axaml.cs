@@ -19,6 +19,7 @@ public partial class MainView : UserControl
             this.FindControl<YoutubeDownloadView>("YoutubeDownload").DataContext = new YoutubeDownloadViewModel(mainVM);
             this.FindControl<ImportSongsView>("ImportSongs").DataContext = new ImportSongsViewModel(mainVM);
             this.FindControl<ImportAlbumsView>("ImportAlbums").DataContext = new ImportAlbumsViewModel(mainVM);
+            this.FindControl<IntegrityView>("Integrity").DataContext = new IntegrityViewModel(mainVM);
 
             mainVM.LateInit();
         };

@@ -14,7 +14,7 @@
         <vm:MainViewModel />
     </Design.DataContext>
     <TabControl>
-        <TabItem Header="Settings">
+        <TabItem Header="General">
             <StackPanel>
                 <TextBlock
                     HorizontalAlignment="Center"
@@ -33,14 +33,17 @@
                     SelectedIndex="{Binding DataImportIndex}" />
             </StackPanel>
         </TabItem>
-        <TabItem Header="YouTube Download">
+        <TabItem Header="Import YouTube">
             <v:YoutubeDownloadView Name="YoutubeDownload" />
         </TabItem>
-        <TabItem Header="Import Songs">
+        <TabItem Header="Import Folder">
             <v:ImportSongsView Name="ImportSongs" />
         </TabItem>
         <TabItem Header="Import Albums">
             <v:ImportAlbumsView Name="ImportAlbums" />
+        </TabItem>
+        <TabItem Header="Verify Integrity">
+            <v:IntegrityView Name="Integrity" />
         </TabItem>
     </TabControl>
 </UserControl>

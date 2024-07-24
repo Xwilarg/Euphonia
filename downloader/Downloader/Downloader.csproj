@@ -25,4 +25,8 @@
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\YoutubeDownloadView.axaml" />
   </ItemGroup>
+
+  <ItemGroup>
+    <UpToDateCheckInput Remove="Views\IntegrityView.axaml" />
+  </ItemGroup>
 </Project>
