@@ -69,6 +69,8 @@ export async function registerScrobbleAsync(song, artist, album, length, timesta
 
 export async function lastfm_initAsync()
 {
+    if (document.getElementById("lastfmLogin") === null) return; // lastfm was disabled, nothing to do
+
     const resp = await fetch("/php/getLastfmApiKey.php");
     lastFmApiKey = await resp.text();
 

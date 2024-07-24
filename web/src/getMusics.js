@@ -169,7 +169,7 @@ function sanitize(text) {
 // #region On page load
 
 function getAlbumImage(elem) {
-    if (elem.album === null) {
+    if (elem.album === null || elem.album === undefined) {
         return "/img/CD.png";
     }
     return "/data/icon/" + json.albums[elem.album].path;
@@ -319,15 +319,6 @@ function addZero(nb) {
 }
 
 let oldRanges = "";
-
-async function loadSongsAsync() {
-    // Get music infos
-    json = JSON.parse(document.getElementById("data").innerText);
-
-    if (json.readme !== undefined) {
-        document.getElementById("readme").innerHTML = json.readme.join("<br/>");
-    }
-}
 
 async function updateScrobblerAsync() {
     // last.fm documentation says a song can be srobbled if we listended for more than its halve, or more than 4 minutes
@@ -549,7 +540,7 @@ function chooseDisplay() {
     // If parameter is not set or set to a wrong value
     if (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined) {
         // If there is no playlist we just display the default one
-        if (json.musics !== undefined && json.musics.some(x => x.playlist !== "default")) {
+        if (json.musics !== undefined && json.musics.some(x => x.playlist !== "default" && x.playlist !== null && x.playlist !== undefined)) {
             if (playlist === "default") {
                 playlist = "default";
             } else {
@@ -572,7 +563,7 @@ function chooseDisplay() {
         document.getElementById("back").hidden = false;
         if (json.musics !== undefined)
         {
-            json.musics = json.musics.filter(x => x.playlist === playlist);
+            json.musics = json.musics.filter(x => x.playlist === playlist || (playlist === "default" && x.playlist === undefined));
             for (let id in json.musics) {
                 json.musics[id].id = id;
             }
@@ -587,9 +578,9 @@ export async function musics_initAsync() {
     document.getElementById("toggle-volume").addEventListener("click", () => { document.getElementById("volume-container").hidden = !document.getElementById("volume-container").hidden; });
     document.getElementById("refresh-btn").addEventListener("click", refresh);
     document.getElementById("random-btn").addEventListener("click", random);
-    document.getElementById("minimalistMode").addEventListener("click", toggleMinimalistMode);
+    document.getElementById("minimalistMode")?.addEventListener("click", toggleMinimalistMode);
 
-    await loadSongsAsync();
+    json = JSON.parse(document.getElementById("data").innerText);
 
     // Filter text bar
     document.getElementById("filter").addEventListener("input", (e) => {
