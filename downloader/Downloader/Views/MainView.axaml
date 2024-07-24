@@ -39,7 +39,7 @@
         <TabItem Header="Import Folder">
             <v:ImportSongsView Name="ImportSongs" />
         </TabItem>
-        <TabItem Header="Import Albums">
+        <TabItem Header="Update Albums">
             <v:ImportAlbumsView Name="ImportAlbums" />
         </TabItem>
         <TabItem Header="Verify Integrity">
