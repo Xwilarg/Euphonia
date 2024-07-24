@@ -18,8 +18,10 @@ jobs:
         node-version: 20.x
         cache: 'npm'
         cache-dependency-path: 'web/package-lock.json'
-    - name: Install dependencies
+    - name: Install JS dependencies
       run: npm i
+    - name: Install PHP dependencies
+      run: composer i
     - name: Build scripts
       run: npm run build
     - name: Move scripts
@@ -31,6 +33,6 @@ jobs:
         username: ${{ secrets.DEPLOY_USER }}
         port: 22
         key: ${{ secrets.DEPLOY_SSHKEY }}
-        source: "web/css/,web/img/,web/index.html,web/js/,web/node_modules/,web/package-lock.json,web/package.json,web/php/,web/scripts"
+        source: "web/css/,web/img/,web/index.php,web/js/,web/node_modules/,web/package-lock.json,web/package.json,web/php/,web/scripts,web/templates/,web/vendor/"
         target: ${{ secrets.DEPLOY_TARGET }}
         strip_components: 1

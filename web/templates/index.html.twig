@@ -1,18 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <title>Euphonia</title>
+        <title>{{ metadata.name }}</title>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="js/index.js"></script>
+        <script id="data" type="application/json">
+            {{ json | replace({'<': '\\<' }) | raw }}
+        </script>
+        <script src="/js/index.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
-        <link rel="stylesheet" href="css/customize.css"/>
-        <link rel="stylesheet" href="css/index.css"/>
-        <link rel="stylesheet" href="css/player.css"/>
+        <link rel="stylesheet" href="/css/customize.css"/>
+        <link rel="stylesheet" href="/css/index.css"/>
+        <link rel="stylesheet" href="/css/player.css"/>
     </head>
     <body>
         <div id="banner">
-            <h1>Euphonia</h1>
+            <h1>{{ metadata.name }}</h1>
         </div>
         <div id="banner-buttons">
             <button id="toggle-settings"><span class="material-symbols-outlined">menu</span></button>
@@ -20,10 +23,15 @@
             <button id="back"><span class="material-symbols-outlined">arrow_back</span></button>
         </div>
         <div id="settings" hidden>
+            {% if metadata.readme is not empty %}
             <fieldset>
                 <legend>Readme</legend>
-                <div id="readme"></div>
+                <div id="readme">
+                    {{ metadata.readme | join('<br>') | replace({'<': '\\<' }) | raw }}
+                </div>
             </fieldset>
+            {% endif %}
+            {% if metadata.showGitHub %}
             <fieldset>
                 <legend>last.fm</legend>
                 <div>
@@ -33,14 +41,17 @@
                     last.fm status: <span id="lastfmStatus"></span><br/>
                 </div>
             </fieldset>
+            {% endif %}
             <fieldset>
                 <legend>Error Logs</legend>
                 <p id="error-log"></p>
             </fieldset>
+            {% if metadata.showGitHub %}
             <fieldset>
                 <legend>Source Code</legend>
                 <a class="button" target="_blank" href="https://github.com/Xwilarg/Euphonia">GitHub</a>
             </fieldset>
+            {% endif %}
         </div>
         <div id="volume-container" hidden>
             <input type="range" max="100" id="volume"/>

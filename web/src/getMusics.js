@@ -322,21 +322,7 @@ let oldRanges = "";
 
 async function loadSongsAsync() {
     // Get music infos
-    const resp = await fetch("./php/getInfoJson.php");
-    json = await resp.json();
-
-    // Update JSON names
-    if (json.musics !== undefined)
-    {
-        for (let elem of json.musics) {
-            if (elem.type !== undefined && elem.type !== null) {
-                elem.name += ` (${elem.type})`;
-            }
-            if (elem.playlist === undefined || elem.playlist === null) {
-                elem.playlist = "default";
-            }
-        }
-    }
+    json = JSON.parse(document.getElementById("data").innerText);
 
     if (json.readme !== undefined) {
         document.getElementById("readme").innerHTML = json.readme.join("<br/>");

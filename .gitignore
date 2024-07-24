@@ -9,4 +9,4 @@ web/data/*
 node_modules/
 
 # PHP
-composer.lock
+vendor/
