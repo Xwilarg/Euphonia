@@ -1,9 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
-using Avalonia.Media.Imaging;
 using Avalonia.Threading;
 using Downloader.Models;
-using Downloader.Views;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
@@ -54,7 +52,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
 
                     if (CanInputAlbumUrl)
                     {
-                        await foreach (var prog in ProcessManager.DownloadImageAsync(MainViewModel.Client, AlbumUrl, MainViewModel.GetImagePath(imagePath)))
+                        await foreach (var prog in ProcessManager.DownloadImageAsync(MainViewModel.Client, AlbumUrl, imagePath))
                         {
                             DownloadImage = prog;
                         }
