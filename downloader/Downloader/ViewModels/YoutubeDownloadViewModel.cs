@@ -128,6 +128,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         AlbumUrl,
                         SongType,
                         PlaylistIndex);
+                    ClearAll();
                 }
                 catch (Exception e)
                 {
