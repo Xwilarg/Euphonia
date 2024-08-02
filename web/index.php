@@ -8,6 +8,8 @@ use Twig\Environment;
 $loader = new FilesystemLoader(["templates"]);
 $twig = new Environment($loader);
 
+$json = isset($_GET["json"]) && $_GET["json"] === "1";
+
 $rawInfo = file_get_contents("data/info.json");
 $info = json_decode($rawInfo, true);
 $metadata = json_decode(file_get_contents("data/metadata.json"), true);
@@ -27,11 +29,19 @@ if (isset($_GET["playlist"]))
     }
 }
 
-echo $twig->render("index.html.twig", [
-    "json" => $rawInfo,
-    "metadata" => $metadata,
-    "og" => [
-        "name" => $name,
-        "description" => $description
-    ]
-]);
+if ($json)
+{
+    header('Content-Type: application/json; charset=utf-8');
+    echo $rawInfo;
+}
+else
+{
+    echo $twig->render("index.html.twig", [
+        "json" => $rawInfo,
+        "metadata" => $metadata,
+        "og" => [
+            "name" => $name,
+            "description" => $description
+        ]
+    ]);
+}

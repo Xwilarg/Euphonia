@@ -105,7 +105,7 @@ public sealed class Program
                 try
                 {
                     baseUri = new(target);
-                    jsonUri = new(baseUri, "/php/getInfoJson.php");
+                    jsonUri = new(baseUri, "?json=1");
                 }
                 catch
                 {

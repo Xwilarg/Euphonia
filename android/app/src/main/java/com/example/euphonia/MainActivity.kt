@@ -209,7 +209,7 @@ class MainActivity : AppCompatActivity() {
             // Update data from remove server
             val text: String
             try {
-                text = URL("https://${currUrl}php/getInfoJson.php").readText()
+                text = URL("https://${currUrl}?json=1").readText()
                 File(filesDir, "${currUrl}info.json").writeText(text)
             } catch (e: Exception) {
                 Log.e("Network Error", e.message.toString())
