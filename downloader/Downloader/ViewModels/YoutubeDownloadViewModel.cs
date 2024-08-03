@@ -73,7 +73,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
 
                     var musicKey = MainViewModel.GetMusicKey(SongName, Artist, SongType);
                     var rawSongPath = MainViewModel.GetRawMusicPath(musicKey);
-                    var normSongPath = MainViewModel.GetRawMusicPath(musicKey);
+                    var normSongPath = MainViewModel.GetNormalizedMusicPath(musicKey);
 
                     if (File.Exists(normSongPath) || File.Exists(rawSongPath))
                     {
@@ -239,7 +239,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
             {
                 CanInputAlbumUrl = false;
             }
-            else if (MainViewModel.Data.Albums.Any(x => CleanCompare(MainViewModel.GetAlbumName(Artist, AlbumName), value)))
+            else if (MainViewModel.Data.Albums.Any(x => CleanCompare(MainViewModel.GetAlbumName(Artist, value), x.Key)))
             {
                 CanInputAlbumUrl = false;
             }

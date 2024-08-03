@@ -195,7 +195,7 @@ public class MainViewModel : ViewModelBase
 
         // Format album data
         string albumKey = null;
-        var hasAlbum = !string.IsNullOrWhiteSpace(album);
+        var hasAlbum = !string.IsNullOrWhiteSpace(albumUrl);
         if (hasAlbum)
         {
             albumKey = GetAlbumName(artist, album);
