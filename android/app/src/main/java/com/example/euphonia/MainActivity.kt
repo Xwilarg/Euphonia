@@ -129,9 +129,11 @@ class MainActivity : AppCompatActivity() {
         val albumPath = data.albums[song.album]?.path
         val builder = MediaMetadata.Builder()
         if (song.album != null) {
+            builder.setArtist(song.artist)
             builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
         } else {
             builder.setArtist(null)
+            builder.setArtworkUri(Uri.parse("https://${currUrl}img/CD.png"))
         }
         /*if (song.album == null) {
             builder
@@ -150,7 +152,6 @@ class MainActivity : AppCompatActivity() {
                 builder
                     .setTitle(song.name)
                     .setAlbumTitle(song.album)
-                    .setArtist(song.artist)
                     .build()
             )
             .build()
