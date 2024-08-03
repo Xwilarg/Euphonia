@@ -180,6 +180,7 @@ class MainActivity : AppCompatActivity() {
             .setContentTitle("Updating data...")
             .setSmallIcon(R.drawable.icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setSilent(true)
             .setOngoing(true)
         val channel = NotificationChannel("download_channel", "Data Download Progress", NotificationManager.IMPORTANCE_LOW)
         notificationManager.createNotificationChannel(channel)
@@ -224,7 +225,6 @@ class MainActivity : AppCompatActivity() {
             // Download missing songs
             data.musics.forEachIndexed{ index, song ->
                 if (!File(filesDir, "${currUrl}music/${song.path}").exists()) {
-                    updateList()
                     builder.setContentText("$index / ${data.musics.size}")
                     notificationManager.notify(1, builder.build())
                     try
@@ -237,11 +237,9 @@ class MainActivity : AppCompatActivity() {
                     }
                     catch (_: Exception)
                     { }
-                    updateList()
                 }
                 val albumPath = data.albums[song.album]?.path
                 if (song.album != null && !File(filesDir, "${currUrl}icon/${albumPath}").exists()) {
-                    updateList()
                     notificationManager.notify(1, builder.build())
                     try
                     {
@@ -253,13 +251,14 @@ class MainActivity : AppCompatActivity() {
                     }
                     catch (_: Exception)
                     { }
-                    updateList()
                 }
                 downloaded.add(0, song)
+                // TODO: Update list
             }
 
             builder
                 .setContentText("${data.musics.size} / ${data.musics.size}")
+                .setSilent(false)
                 .setOngoing(false)
             notificationManager.notify(1, builder.build())
             updateList()
