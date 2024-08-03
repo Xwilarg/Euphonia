@@ -135,17 +135,6 @@ class MainActivity : AppCompatActivity() {
             builder.setArtist(null)
             builder.setArtworkUri(Uri.parse("https://${currUrl}img/CD.png"))
         }
-        /*if (song.album == null) {
-            builder
-                .setArtworkData(thumbnail, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-        } else {
-            try {
-                builder.setArtworkData(File("${filesDir}/${currUrl}icon/${albumPath}").readBytes(), MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-            } catch (_: Exception) {
-                builder
-                    .setArtworkData(thumbnail, MediaMetadata.PICTURE_TYPE_FRONT_COVER)
-            }
-        }*/
         return MediaItem.Builder()
             .setMediaId("${filesDir}/${currUrl}music/${song.path}")
             .setMediaMetadata(
