@@ -50,7 +50,7 @@
     </ListView>
 
     <Button
-        android:id="@+id/next"
+        android:id="@+id/play"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onPlay"
@@ -61,7 +61,7 @@
         app:layout_constraintTop_toTopOf="@+id/guideline2" />
 
     <Button
-        android:id="@+id/next"
+        android:id="@+id/previous"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:onClick="onPrevious"
