@@ -49,7 +49,7 @@
 
     </ListView>
 
-    <androidx.media3.ui.PlayerControlView
+    <androidx.media3.ui.PlayerView
         android:id="@+id/player"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -63,6 +63,6 @@
         app:show_previous_button="true"
         app:show_timeout="0">
 
-    </androidx.media3.ui.PlayerControlView>
+    </androidx.media3.ui.PlayerView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
