@@ -4,7 +4,6 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.ComponentName
 import android.content.Intent
-import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -17,18 +16,17 @@ import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.content.getSystemService
-import androidx.core.content.res.ResourcesCompat
-import androidx.core.graphics.drawable.toBitmap
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.media3.ui.PlayerView
 import com.example.euphonia.data.ExtendedSong
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
 import com.google.common.util.concurrent.ListenableFuture
+import com.google.common.util.concurrent.MoreExecutors
 import com.google.gson.Gson
-import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.net.URL
@@ -77,22 +75,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun onPlay(v: View) {
-        if (controllerFuture.get().isPlaying) {
-            controllerFuture.get().pause()
-        } else {
-            controllerFuture.get().play()
-        }
-    }
-
-    fun onPrevious(v: View) {
-        controllerFuture.get().seekToPreviousMediaItem()
-    }
-
-    fun onNext(v: View) {
-        controllerFuture.get().seekToNextMediaItem()
-    }
-
     fun onRandom(v: View) {
         val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
         val selectedMusics = filteredData.map { songToItem(data, it) }.shuffled().toMutableList()
@@ -117,20 +99,12 @@ class MainActivity : AppCompatActivity() {
         controllerFuture.get().play()
     }
 
-    // Get a default thumbnail when none is available
-    /*fun getDefaultThumbnail(): ByteArray {
-        val bmp = ResourcesCompat.getDrawable(getResources(), R.drawable.album, null)!!.toBitmap(512, 512)
-        val stream = ByteArrayOutputStream()
-        bmp.compress(Bitmap.CompressFormat.PNG, 100, stream)
-        return stream.toByteArray()
-    }*/
-
     fun songToItem(data: MusicData, song: Song): MediaItem {
         val albumPath = data.albums[song.album]?.path
         val builder = MediaMetadata.Builder()
         if (song.album != null) {
             builder.setArtist(song.artist)
-            builder.setArtworkUri(Uri.fromFile(File("${filesDir}/${currUrl}icon/${albumPath}")))
+            builder.setArtworkUri(Uri.parse("file:///${filesDir}/${currUrl}icon/${albumPath}"))
         } else {
             builder.setArtist(null)
             builder.setArtworkUri(Uri.parse("https://${currUrl}img/CD.png"))
@@ -159,15 +133,15 @@ class MainActivity : AppCompatActivity() {
         }
 
         //  Init media session
-        //val videoView = findViewById<PlayerView>(R.id.player)
+        val videoView = findViewById<PlayerView>(R.id.player)
         val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
-        /*controllerFuture.addListener(
+        controllerFuture.addListener(
             {
                 videoView.player = controllerFuture.get()
             },
             MoreExecutors.directExecutor()
-        )*/
+        )
 
         // Update JSON info
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
