@@ -15,13 +15,8 @@ class SongAdapter(private val mContext: Context, list: List<ExtendedSong>, url: 
     ArrayAdapter<ExtendedSong>(
         mContext, 0, list
     ) {
-    private val songList: List<ExtendedSong>
-    private val currUrl: String
-
-    init {
-        songList = list
-        currUrl = url
-    }
+    private val songList: List<ExtendedSong> = list
+    private val currUrl: String = url
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
         var listItem = convertView
