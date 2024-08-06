@@ -20,6 +20,7 @@ import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
+import androidx.media3.ui.PlayerControlView
 import androidx.media3.ui.PlayerView
 import com.example.euphonia.data.ExtendedSong
 import com.example.euphonia.data.MusicData
@@ -104,7 +105,7 @@ class MainActivity : AppCompatActivity() {
         val builder = MediaMetadata.Builder()
         if (song.album != null) {
             builder.setArtist(song.artist)
-            builder.setArtworkUri(Uri.parse("file:///${filesDir}/${currUrl}icon/${albumPath}"))
+            builder.setArtworkUri(Uri.parse("${filesDir}/${currUrl}icon/${albumPath}"))
         } else {
             builder.setArtist(null)
             builder.setArtworkUri(Uri.parse("https://${currUrl}img/CD.png"))
@@ -133,7 +134,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         //  Init media session
-        val videoView = findViewById<PlayerView>(R.id.player)
+        val videoView = findViewById<PlayerControlView>(R.id.player)
         val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
         controllerFuture.addListener(
