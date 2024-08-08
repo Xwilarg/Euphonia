@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity() {
         val notificationManager = this.getSystemService<NotificationManager>()!!
 
         val builder = NotificationCompat.Builder(this, "download_channel")
-            .setContentTitle("Updating data...")
+            .setContentTitle(applicationContext.getString(R.string.main_dataUpdate))
             .setSmallIcon(R.drawable.icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSilent(true)

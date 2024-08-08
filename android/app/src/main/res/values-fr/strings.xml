@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Euphonia</string>
+    <string name="title_play">Lecteur</string>
+    <string name="title_music">Musique</string>
+    <string name="title_settings">Options</string>
+    <string name="pref_website">Ouvrir le site web</string>
+    <string name="main_dataUpdate">Mise à jour des données...</string>
+</resources>
