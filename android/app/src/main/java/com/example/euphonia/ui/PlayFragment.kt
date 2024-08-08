@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import com.example.euphonia.R
 import com.example.euphonia.MainActivity
@@ -15,6 +16,7 @@ class PlayFragment : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
+    @UnstableApi
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -30,6 +32,7 @@ class PlayFragment : Fragment() {
             },
             MoreExecutors.directExecutor()
         )
+        videoView.showController()
 
         return view
     }
