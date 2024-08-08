@@ -8,9 +8,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.ListView
+import androidx.activity.OnBackPressedCallback
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import com.example.euphonia.R
@@ -25,19 +27,34 @@ class MusicFragment : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        pView = requireActivity() as MainActivity
+
         val view =  inflater.inflate(R.layout.fragment_music, container, false)
+        pView = requireActivity() as MainActivity
+
+        requireActivity()
+            .onBackPressedDispatcher
+            .addCallback(this, object : OnBackPressedCallback(true) {
+                override fun handleOnBackPressed() {
+                    if (pView.currentPlaylist != null) {
+                        pView.currentPlaylist = null
+                        updateList()
+                    } else {
+                        requireActivity().onBackPressed()
+                    }
+                }
+            })
 
         list = view.findViewById(R.id.musicData)
         // Callback when we click on a song
         list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
             if (!shouldDisplaySongs()) {
                 // Clicked on a playlist element
-                currentPlaylist = pView.data.playlists!!.keys.elementAt(position)
+                pView.currentPlaylist = pView.data.playlists!!.keys.elementAt(position)
                 updateList()
             } else {
                 // Clicked on a song
@@ -50,22 +67,9 @@ class MusicFragment : Fragment() {
         return view
     }
 
-    // Current playlist that need to be displayed
-    var currentPlaylist: String? = null
-
     lateinit var list: ListView
 
     lateinit var pView: MainActivity
-
-
-    /*override fun onBackPressed() {
-        if (currentPlaylist != null) {
-            currentPlaylist = null
-            updateList()
-        } else {
-            onBackPressedDispatcher.onBackPressed()
-        }
-    }*/
 
     /*fun onRandom(v: View) {
         val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
@@ -79,7 +83,7 @@ class MusicFragment : Fragment() {
 
     fun onRandomFromSong(position: Int) {
 
-        val filteredData = pView.downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
+        val filteredData = pView.downloaded.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }
         val song = filteredData[position]
 
         val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(pView.data, it) }.toMutableList()
@@ -114,7 +118,7 @@ class MusicFragment : Fragment() {
 
     // We display the songs if there is no playlist available or if we chose one already
     fun shouldDisplaySongs(): Boolean {
-        return pView.data.playlists == null || pView.data.playlists!!.isEmpty() || currentPlaylist != null;
+        return pView.data.playlists == null || pView.data.playlists!!.isEmpty() || pView.currentPlaylist != null;
     }
 
     fun updateList() {
@@ -122,7 +126,7 @@ class MusicFragment : Fragment() {
         handler.post {
             val adapter =
                 if (shouldDisplaySongs()) {
-                    SongAdapter(requireContext(), pView.downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }.map { ExtendedSong(it, pView.data.albums[it.album]) }, pView.currUrl!!)
+                    SongAdapter(requireContext(), pView.downloaded.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }.map { ExtendedSong(it, pView.data.albums[it.album]) }, pView.currUrl!!)
                 } else {
                     ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, pView.data.playlists!!.map { it.value.name })
                 }

@@ -16,7 +16,8 @@
         app:layout_constraintTop_toTopOf="parent"
         app:show_next_button="true"
         app:show_previous_button="true"
-        app:show_timeout="0">
+        app:show_timeout="0"
+        app:hide_on_touch="false">
 
     </androidx.media3.ui.PlayerView>
 </androidx.constraintlayout.widget.ConstraintLayout>

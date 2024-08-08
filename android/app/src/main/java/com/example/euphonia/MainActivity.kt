@@ -33,6 +33,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     var currUrl: String? = null
 
+    // Current playlist that need to be displayed
+    var currentPlaylist: String? = null
+
     lateinit var controllerFuture: ListenableFuture<MediaController>
     // List of songs that were downloaded
     var downloaded: MutableList<Song> = mutableListOf()
@@ -128,9 +131,6 @@ class MainActivity : AppCompatActivity() {
                 .setSilent(false)
                 .setOngoing(false)
             notificationManager.notify(1, builder.build())
-
-           /* val musicF = supportFragmentManager.findFragmentById(R.id.navigation_music) as MusicFragment
-            musicF.updateList()*/
         }
     }
 
