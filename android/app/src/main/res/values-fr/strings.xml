@@ -5,5 +5,10 @@
     <string name="title_music">Musique</string>
     <string name="title_settings">Options</string>
     <string name="pref_website">Ouvrir le site web</string>
-    <string name="main_dataUpdate">Mise à jour des données...</string>
+    <string name="main_dataUpdate">Mise à jour des données…</string>
+    <string name="sort_date">Date</string>
+    <string name="sort_random">Aléatoire</string>
+    <string name="pref_sort">Mode de tri des musiques</string>
+    <string name="sort_musicName">Nom de musique</string>
+    <string name="sort_artistName">Nom d\'artiste</string>
 </resources>

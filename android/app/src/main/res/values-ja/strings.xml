@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Euphonia</string>
+    <string name="title_play">プレイヤー</string>
+    <string name="title_music">曲</string>
+    <string name="title_settings">設定</string>
+    <string name="pref_website">ウェブサイトへ</string>
+    <string name="main_dataUpdate">アップデート中…</string>
+    <string name="sort_date">日付</string>
+    <string name="sort_random">ランダム</string>
+    <string name="pref_sort">曲の並べ替え</string>
+    <string name="sort_musicName">曲名</string>
+    <string name="sort_artistName">アーティスト名</string>
+</resources>

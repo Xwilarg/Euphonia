@@ -1,5 +1,6 @@
 package com.example.euphonia.ui
 
+import android.content.Context
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,12 +16,14 @@ import android.widget.ListView
 import androidx.activity.OnBackPressedCallback
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
+import androidx.preference.PreferenceManager
 import com.example.euphonia.R
 import com.example.euphonia.SongAdapter
 import com.example.euphonia.data.ExtendedSong
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
 import com.example.euphonia.MainActivity
+import kotlin.random.Random
 
 class MusicFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,9 +73,10 @@ class MusicFragment : Fragment() {
     lateinit var list: ListView
 
     lateinit var pView: MainActivity
+    lateinit var displayedData : List<Song>
 
     /*fun onRandom(v: View) {
-        val filteredData = downloaded.filter { currentPlaylist == null || it.playlist == currentPlaylist }
+        val filteredData = displayedData.filter { currentPlaylist == null || it.playlist == currentPlaylist }
         val selectedMusics = filteredData.map { songToItem(data, it) }.shuffled().toMutableList()
 
         controllerFuture.get().setMediaItems(selectedMusics)
@@ -83,7 +87,7 @@ class MusicFragment : Fragment() {
 
     fun onRandomFromSong(position: Int) {
 
-        val filteredData = pView.downloaded.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }
+        val filteredData = displayedData.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }
         val song = filteredData[position]
 
         val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(pView.data, it) }.toMutableList()
@@ -122,11 +126,19 @@ class MusicFragment : Fragment() {
     }
 
     fun updateList() {
+        val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val sort = pref.getString("sort_mode", "DATE")
         val handler = Handler(Looper.getMainLooper())
         handler.post {
             val adapter =
                 if (shouldDisplaySongs()) {
-                    SongAdapter(requireContext(), pView.downloaded.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }.map { ExtendedSong(it, pView.data.albums[it.album]) }, pView.currUrl!!)
+                    displayedData = pView.downloaded.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }
+
+                    if (sort == "RANDOM") displayedData = displayedData.shuffled()
+                    else if (sort == "MUSICNAME") displayedData = displayedData.sortedBy { it.name }
+                    else if (sort == "ARTISTNAME") displayedData = displayedData.sortedBy { it.artist }
+
+                    SongAdapter(requireContext(), displayedData.map { ExtendedSong(it, pView.data.albums[it.album]) }, pView.currUrl!!)
                 } else {
                     ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, pView.data.playlists!!.map { it.value.name })
                 }

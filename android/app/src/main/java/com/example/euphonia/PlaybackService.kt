@@ -35,10 +35,7 @@ class PlaybackService : MediaSessionService(), MediaSession.Callback {
         mediaItems: MutableList<MediaItem>
     ): ListenableFuture<MutableList<MediaItem>> {
         val updatedMediaItems = mediaItems.map { it.buildUpon().setUri(it.mediaId).build() }.toMutableList()
-        return Futures.immediateFuture(updatedMediaItems)
-    }
 
-    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        return super.onStartCommand(intent, flags, startId)
+        return Futures.immediateFuture(updatedMediaItems)
     }
 }

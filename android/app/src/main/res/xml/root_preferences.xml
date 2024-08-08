@@ -3,4 +3,10 @@
     <Preference
         android:key="website"
         app:title="@string/pref_website" />
+    <ListPreference
+        android:defaultValue="DATE"
+        android:entries="@array/sort_mode_key"
+        android:entryValues="@array/sort_mode_value"
+        android:key="sort_mode"
+        android:title="@string/pref_sort" />
 </PreferenceScreen>
