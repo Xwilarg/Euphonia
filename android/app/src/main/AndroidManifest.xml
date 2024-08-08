@@ -17,15 +17,12 @@
         android:theme="@style/Theme.Euphonia"
         tools:targetApi="31" >
         <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:label="@string/title_activity_main" />
-        <activity
             android:name=".SetupActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity2"
-            android:exported="true" >
+            android:name=".MainActivity"
+            android:exported="true"
+            android:label="@string/title_activity_main"  >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

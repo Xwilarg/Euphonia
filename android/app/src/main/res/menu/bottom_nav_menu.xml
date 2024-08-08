@@ -3,17 +3,17 @@
 
     <item
         android:id="@+id/navigation_play"
-        android:icon="@android:drawable/ic_media_play"
+        android:icon="@drawable/baseline_play_arrow_24"
         android:title="@string/title_play" />
 
     <item
         android:id="@+id/navigation_music"
-        android:icon="@drawable/media_session_service_notification_ic_music_note"
+        android:icon="@drawable/baseline_music_note_24"
         android:title="@string/title_music" />
 
     <item
         android:id="@+id/navigation_settings"
-        android:icon="@drawable/media3_icon_settings"
+        android:icon="@drawable/baseline_settings_24"
         android:title="@string/title_settings" />
 
 </menu>
