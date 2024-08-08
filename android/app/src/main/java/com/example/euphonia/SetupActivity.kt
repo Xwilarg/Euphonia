@@ -49,7 +49,7 @@ class SetupActivity : AppCompatActivity() {
                 apply()
             }
 
-            val intent = Intent(applicationContext, MainActivity::class.java)
+            val intent = Intent(applicationContext, MainActivity2::class.java)
             startActivity(intent)
         }
     }

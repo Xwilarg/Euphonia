@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_play">
+
+    <fragment
+        android:id="@+id/navigation_play"
+        android:name="com.example.euphonia.ui.play.PlayFragment"
+        android:label="@string/title_home"
+        tools:layout="@layout/fragment_play" />
+
+    <fragment
+        android:id="@+id/navigation_music"
+        android:name="com.example.euphonia.ui.music.MusicFragment"
+        android:label="@string/title_dashboard"
+        tools:layout="@layout/fragment_music" />
+
+    <fragment
+        android:id="@+id/navigation_settings"
+        android:name="com.example.euphonia.ui.settings.SettingsFragment"
+        android:label="@string/title_notifications"
+        tools:layout="@layout/fragment_settings" />
+</navigation>
