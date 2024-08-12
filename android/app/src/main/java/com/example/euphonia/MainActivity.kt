@@ -73,6 +73,8 @@ class MainActivity : AppCompatActivity() {
 
         downloaded = mutableListOf()
 
+        data = MusicData(arrayOf<Song>(), arrayOf<String>(), emptyMap(), emptyMap())
+
         if (!File(filesDir, "${currUrl}info.json").exists()) {
             // Somehow the target file is missing? We need the user to go by the setup phase again
             val intent = Intent(applicationContext, SetupActivity::class.java)
