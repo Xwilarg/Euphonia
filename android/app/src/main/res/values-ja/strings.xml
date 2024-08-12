@@ -11,4 +11,5 @@
     <string name="pref_sort">曲の並べ替え</string>
     <string name="sort_musicName">曲名</string>
     <string name="sort_artistName">アーティスト名</string>
+    <string name="view_search">検索</string>
 </resources>

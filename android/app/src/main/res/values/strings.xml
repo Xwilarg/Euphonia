@@ -10,4 +10,5 @@
     <string name="pref_sort">Music sort mode</string>
     <string name="sort_musicName">Song name</string>
     <string name="sort_artistName">Artist name</string>
+    <string name="view_search">Search</string>
 </resources>
