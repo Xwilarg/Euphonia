@@ -18,7 +18,6 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.core.app.NotificationCompat
 import android.app.NotificationChannel
-import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song

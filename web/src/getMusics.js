@@ -157,7 +157,6 @@ function playSingleSong(index) {
 function sanitize(text) {
     if (text === null) return "";
     return text
-        .replaceAll('&', '$amp;')
         .replaceAll('<', '&lt;')
         .replaceAll('>', '&gt;')
         .replaceAll('"', '&quot;')
