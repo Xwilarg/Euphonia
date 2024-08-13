@@ -45,7 +45,13 @@ class SetupActivity : AppCompatActivity() {
 
             val sharedPref = this.getSharedPreferences("settings", Context.MODE_PRIVATE)
             with(sharedPref.edit()) {
-                putString("remoteServer", url)
+                val data = sharedPref.getStringSet("remoteServers", emptySet<String>())!!
+                val editableData = data.toMutableList()
+                if (!data.contains(url)) {
+                    editableData.add(url)
+                    putStringSet("remoteServers", editableData.toSet())
+                }
+                putInt("currentServer", 0)
                 apply()
             }
 

@@ -9,4 +9,7 @@
         android:entryValues="@array/sort_mode_value"
         android:key="sort_mode"
         android:title="@string/pref_sort" />
+    <Preference
+        android:key="source"
+        android:title="@string/pref_source_set" />
 </PreferenceScreen>

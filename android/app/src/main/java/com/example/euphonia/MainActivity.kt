@@ -18,11 +18,10 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.core.app.NotificationCompat
 import android.app.NotificationChannel
-import android.util.Log
+import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
-import com.example.euphonia.ui.MusicFragment
 import com.google.gson.Gson
 import java.io.File
 import java.io.FileOutputStream
@@ -41,12 +40,13 @@ class MainActivity : AppCompatActivity() {
     var downloaded: MutableList<Song> = mutableListOf()
 
     lateinit var data: MusicData
+    var loadingError: Exception? = null
 
     fun init() {
         // Ensure remote server is init
         val sharedPref = this.getSharedPreferences("settings", MODE_PRIVATE)
-        currUrl = sharedPref.getString("remoteServer", null)
-        if (currUrl == null) {
+        val index = sharedPref.getInt("currentServer", -1)
+        if (index == -1) {
             val intent = Intent(applicationContext, SetupActivity::class.java)
             startActivity(intent)
         }
@@ -55,13 +55,25 @@ class MainActivity : AppCompatActivity() {
         val sessionToken = SessionToken(this, ComponentName(this, PlaybackService::class.java))
         controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
 
+        loadData()
+    }
+
+    fun loadData() {
+        loadingError = null
+
+        val sharedPref = this.getSharedPreferences("settings", MODE_PRIVATE)
+        val index = sharedPref.getInt("currentServer", -1)
+
+        val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
+        currUrl = servers.elementAt(index)
+
         // Update JSON info
         val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
         val notificationManager = this.getSystemService<NotificationManager>()!!
 
         val builder = NotificationCompat.Builder(this, "download_channel")
-            .setContentTitle(applicationContext.getString(R.string.main_dataUpdate))
+            .setContentTitle(applicationContext.getString(R.string.main_data_update))
             .setSmallIcon(R.drawable.icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSilent(true)
@@ -88,11 +100,11 @@ class MainActivity : AppCompatActivity() {
             try {
                 text = URL("https://${currUrl}?json=1").readText()
                 File(filesDir, "${currUrl}info.json").writeText(text)
+                data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
             } catch (e: Exception) {
-                Log.e("Network Error", e.message.toString())
+                loadingError = e
+                return@execute
             }
-
-            data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
 
             // Download missing songs
             data.musics.forEachIndexed{ index, song ->

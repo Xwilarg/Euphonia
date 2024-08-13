@@ -14,6 +14,7 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -37,6 +38,12 @@ class MusicFragment : Fragment() {
 
         val view =  inflater.inflate(R.layout.fragment_music, container, false)
         pView = requireActivity() as MainActivity
+
+        view.findViewById<TextView>(R.id.loadingError).text = if (pView.loadingError == null) {
+            ""
+        } else {
+            pView.loadingError!!.message.toString()
+        }
 
         searchBar = view.findViewById<EditText>(R.id.searchBar)
         searchBar.addTextChangedListener(object : TextWatcher {
@@ -157,7 +164,11 @@ class MusicFragment : Fragment() {
         val handler = Handler(Looper.getMainLooper())
         handler.post {
             val adapter =
-                if (shouldDisplaySongs()) {
+                if (pView.loadingError != null) {
+                    searchBar.visibility = View.INVISIBLE
+                    ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, emptyArray<String>())
+                }
+                else if (shouldDisplaySongs()) {
                     searchBar.visibility = View.VISIBLE
 
                     displayedData = getCurrentMusics()

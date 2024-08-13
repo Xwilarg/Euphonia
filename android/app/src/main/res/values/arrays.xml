@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <array name="sort_mode_key">
-        <item>@string/sort_musicName</item>
-        <item>@string/sort_artistName</item>
+        <item>@string/sort_music_name</item>
+        <item>@string/sort_artist_name</item>
         <item>@string/sort_date</item>
         <item>@string/sort_random</item>
     </array>

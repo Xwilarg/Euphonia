@@ -1,15 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Euphonia</string>
     <string name="title_play">Lecteur</string>
     <string name="title_music">Musique</string>
     <string name="title_settings">Options</string>
     <string name="pref_website">Ouvrir le site web</string>
-    <string name="main_dataUpdate">Mise à jour des données…</string>
+    <string name="main_data_update">Mise à jour des données…</string>
     <string name="sort_date">Date</string>
     <string name="sort_random">Aléatoire</string>
     <string name="pref_sort">Mode de tri des musiques</string>
-    <string name="sort_musicName">Nom de musique</string>
-    <string name="sort_artistName">Nom d\'artiste</string>
+    <string name="sort_music_name">Nom de musique</string>
+    <string name="sort_artist_name">Nom d\'artiste</string>
     <string name="view_search">Chercher</string>
+    <string name="pref_source_set">Changer la provenance des données</string>
+    <string name="init_set_source">Charger les données</string>
+    <string name="pref_source_add">Ajouter une source de données</string>
 </resources>
