@@ -48,6 +48,7 @@ class MainActivity : AppCompatActivity() {
         if (index == -1) {
             val intent = Intent(applicationContext, SetupActivity::class.java)
             startActivity(intent)
+            return
         }
 
         //  Init media session

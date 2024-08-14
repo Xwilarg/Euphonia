@@ -26,9 +26,9 @@ class PlayFragment : Fragment() {
 
         val pView = requireActivity() as MainActivity
 
-        pView.controllerFuture.addListener(
+        pView.controllerFuture?.addListener(
             {
-                videoView.player = pView.controllerFuture.get()
+                videoView.player = pView.controllerFuture!!.get()
             },
             MoreExecutors.directExecutor()
         )
