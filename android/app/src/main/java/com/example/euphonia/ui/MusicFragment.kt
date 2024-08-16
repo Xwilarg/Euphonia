@@ -128,12 +128,12 @@ class MusicFragment : Fragment() {
         val albumPath = data.albums[song.album]?.path
         val builder = MediaMetadata.Builder()
         if (song.album != null) {
-            builder.setArtist(song.artist)
             builder.setArtworkUri(Uri.parse("${requireContext().filesDir}/${pView.currUrl}icon/${albumPath}"))
+            builder.setAlbumTitle(data.albums[song.album]?.name)
         } else {
-            builder.setArtist(null)
             builder.setArtworkUri(Uri.parse("https://${pView.currUrl}img/CD.png"))
         }
+        builder.setArtist(song.artist)
         return MediaItem.Builder()
             .setMediaId("${requireContext().filesDir}/${pView.currUrl}music/${song.path}")
             .setMediaMetadata(
@@ -148,9 +148,6 @@ class MusicFragment : Fragment() {
     // We display the songs if there is no playlist available or if we chose one already
     fun shouldDisplaySongs(): Boolean {
         return pView.data.playlists == null || pView.data.playlists!!.isEmpty() || pView.currentPlaylist != null;
-    }
-
-    fun sortDisplayData() {
     }
 
     fun getCurrentMusics(): List<Song> {
