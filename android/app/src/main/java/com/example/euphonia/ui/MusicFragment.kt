@@ -118,10 +118,10 @@ class MusicFragment : Fragment() {
         val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(pView.data, it) }.toMutableList()
         selectedMusics.add(0, songToItem(pView.data, song))
 
-        pView.controllerFuture.get().setMediaItems(selectedMusics)
+        pView.controllerFuture!!.get().setMediaItems(selectedMusics)
 
-        pView.controllerFuture.get().prepare()
-        pView.controllerFuture.get().play()
+        pView.controllerFuture!!.get().prepare()
+        pView.controllerFuture!!.get().play()
     }
 
     fun songToItem(data: MusicData, song: Song): MediaItem {

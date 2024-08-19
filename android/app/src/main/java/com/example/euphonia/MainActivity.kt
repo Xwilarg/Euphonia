@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity() {
     // Current playlist that need to be displayed
     var currentPlaylist: String? = null
 
-    lateinit var controllerFuture: ListenableFuture<MediaController>
+    var controllerFuture: ListenableFuture<MediaController>? = null
     // List of songs that were downloaded
     var downloaded: MutableList<Song> = mutableListOf()
 
