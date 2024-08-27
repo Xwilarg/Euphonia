@@ -87,12 +87,7 @@ public class YoutubeDownloadViewModel : ViewModelBase, ITabView
                         File.Delete(keyCut);
                     }
 
-                    await foreach (var prog in ProcessManager.ExecuteAndFollowAsync(new("yt-dlp", $"{MusicUrl} -o \"{targetRawDownload}\" -x --audio-format {MainViewModel.AudioFormat} -q --progress"), (s) =>
-                    {
-                        var m = Regex.Match(s, "([0-9.]+)%");
-                        if (!m.Success) return -1f;
-                        return float.Parse(m.Groups[1].Value) / 100f;
-                    }))
+                    await foreach (var prog in ProcessManager.YouTubeDownload(MusicUrl, targetRawDownload))
                     {
                         DownloadMusic = prog;
                     }

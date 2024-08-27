@@ -8,11 +8,25 @@ using Downloader.ViewModels;
 using SixLabors.ImageSharp;
 using System.Threading.Tasks;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace Downloader.Models
 {
     public static class ProcessManager
     {
+        public static async IAsyncEnumerable<float> YouTubeDownload(string url, string outPath)
+        {
+            await foreach (var prog in ExecuteAndFollowAsync(new("yt-dlp", $"{url} -o \"{outPath}\" -x --audio-format {MainViewModel.AudioFormat} -q --progress"), (s) =>
+            {
+                var m = Regex.Match(s, "([0-9.]+)%");
+                if (!m.Success) return -1f;
+                return float.Parse(m.Groups[1].Value) / 100f;
+            }))
+            {
+                yield return prog;
+            }
+        }
+
         public static async IAsyncEnumerable<float> Normalize(string inPath, string outPath)
         {
             await foreach (var prog in ExecuteAndFollowAsync(new("ffmpeg-normalize", $"\"{inPath}\" -pr -ext {MainViewModel.AudioFormat} -o \"{outPath}\" -c:a libmp3lame"), (_) =>

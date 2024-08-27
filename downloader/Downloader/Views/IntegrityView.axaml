@@ -12,4 +12,21 @@
     <Design.DataContext>
         <vm:IntegrityViewModel />
     </Design.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="320" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <StackPanel Grid.Row="0">
+            <CheckBox IsChecked="{Binding DownloadMissingSongs}">Download missing songs</CheckBox>
+            <Button Command="{Binding VerifyCmd}" IsEnabled="{Binding IsVerifying}">Verify</Button>
+        </StackPanel>
+        <StackPanel Grid.Row="1" Margin="5,0,5,0">
+            <TextBlock>Verify</TextBlock>
+            <ProgressBar
+                Height="20"
+                Maximum="1"
+                Value="{Binding VerifyProgress}" />
+        </StackPanel>
+    </Grid>
 </UserControl>
