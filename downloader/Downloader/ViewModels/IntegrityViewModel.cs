@@ -26,6 +26,7 @@ namespace Downloader.ViewModels
             {
                 _ = Task.Run(async () =>
                 {
+                    IsVerifying = true;
                     try
                     {
                         int i = 0;
