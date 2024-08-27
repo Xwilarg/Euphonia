@@ -43,7 +43,7 @@ namespace Downloader.ViewModels
                                 { }
                             }
 
-                            if (m.Source.StartsWith("https://youtu.be/") || m.Source.StartsWith("https://youtube.com/") || m.Source.StartsWith("https://www.youtube.com/"))
+                            if (DownloadMissingSongs && (m.Source.StartsWith("https://youtu.be/") || m.Source.StartsWith("https://youtube.com/") || m.Source.StartsWith("https://www.youtube.com/")))
                             {
 
                                 await foreach (var prog in ProcessManager.YouTubeDownload(m.Source, rawSongPath))
