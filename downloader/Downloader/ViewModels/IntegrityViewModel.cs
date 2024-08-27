@@ -35,13 +35,6 @@ namespace Downloader.ViewModels
                             var rawSongPath = $"{_mainViewModel.DataFolderPath}/raw/{m.Path}";
                             var normSongPath = $"{_mainViewModel.DataFolderPath}/normalized/{m.Path}";
 
-                            if (File.Exists(normSongPath)) continue;
-
-                            if (!File.Exists(rawSongPath))
-                            {
-                                await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
-                                { }
-                            }
 
                             if (m.Album != null)
                             {
@@ -56,13 +49,22 @@ namespace Downloader.ViewModels
                                 }
                             }
 
-                            if (DownloadMissingSongs && (m.Source.StartsWith("https://youtu.be/") || m.Source.StartsWith("https://youtube.com/") || m.Source.StartsWith("https://www.youtube.com/")))
+                            if (!File.Exists(normSongPath))
                             {
+                                if (!File.Exists(rawSongPath))
+                                {
+                                    await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
+                                    { }
+                                }
 
-                                await foreach (var prog in ProcessManager.YouTubeDownload(m.Source, rawSongPath))
-                                { }
-                                await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
-                                { }
+                                if (DownloadMissingSongs && (m.Source.StartsWith("https://youtu.be/") || m.Source.StartsWith("https://youtube.com/") || m.Source.StartsWith("https://www.youtube.com/")))
+                                {
+
+                                    await foreach (var prog in ProcessManager.YouTubeDownload(m.Source, rawSongPath))
+                                    { }
+                                    await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
+                                    { }
+                                }
                             }
 
                             i++;
