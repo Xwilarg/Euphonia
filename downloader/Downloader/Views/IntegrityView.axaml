@@ -17,9 +17,9 @@
             <RowDefinition Height="320" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        <StackPanel Grid.Row="0">
+        <StackPanel Grid.Row="0" IsEnabled="{Binding !IsVerifying}">
             <CheckBox IsChecked="{Binding DownloadMissingSongs}">Download missing songs</CheckBox>
-            <Button Command="{Binding VerifyCmd}" IsEnabled="{Binding IsVerifying}">Verify</Button>
+            <Button Command="{Binding VerifyCmd}">Verify</Button>
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="5,0,5,0">
             <TextBlock>Verify</TextBlock>
