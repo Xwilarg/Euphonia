@@ -45,7 +45,7 @@ namespace Downloader.ViewModels
 
                             if (m.Album != null)
                             {
-                                if (_mainViewModel.Data.Albums.ContainsKey(m.Album))
+                                if (!_mainViewModel.Data.Albums.ContainsKey(m.Album))
                                 {
                                     // TODO
                                 }
