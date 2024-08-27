@@ -562,7 +562,7 @@ function chooseDisplay() {
         document.getElementById("back").hidden = false;
         if (json.musics !== undefined)
         {
-            json.musics = json.musics.filter(x => x.playlist === playlist || (playlist === "default" && x.playlist === undefined));
+            json.musics = json.musics.filter(x => x.playlist === playlist || (playlist === "default" && (x.playlist === undefined || x.playlist === null)));
             for (let id in json.musics) {
                 json.musics[id].id = id;
             }

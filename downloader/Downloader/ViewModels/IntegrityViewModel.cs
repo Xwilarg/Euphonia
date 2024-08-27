@@ -26,15 +26,14 @@ namespace Downloader.ViewModels
             {
                 _ = Task.Run(async () =>
                 {
-                    IsVerifying = true;
+                    IsVerifying = false;
                     try
                     {
                         int i = 0;
                         foreach (var m in _mainViewModel.Data.Musics)
                         {
-                            var musicKey = _mainViewModel.GetMusicKey(m.Name, m.Artist, m.Type);
-                            var rawSongPath = _mainViewModel.GetRawMusicPath(musicKey);
-                            var normSongPath = _mainViewModel.GetNormalizedMusicPath(musicKey);
+                            var rawSongPath = $"{_mainViewModel.DataFolderPath}/raw/{m.Path}";
+                            var normSongPath = $"{_mainViewModel.DataFolderPath}/normalized/{m.Path}";
 
                             if (File.Exists(normSongPath)) continue;
 
@@ -42,6 +41,19 @@ namespace Downloader.ViewModels
                             {
                                 await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
                                 { }
+                            }
+
+                            if (m.Album != null)
+                            {
+                                if (_mainViewModel.Data.Albums.ContainsKey(m.Album))
+                                {
+                                    // TODO
+                                }
+                                else if (!File.Exists(_mainViewModel.Data.Albums[m.Album].Path) && _mainViewModel.Data.Albums[m.Album].Source != null &&
+                                    (_mainViewModel.Data.Albums[m.Album].Source.StartsWith("http://") || _mainViewModel.Data.Albums[m.Album].Source.StartsWith("https://")))
+                                {
+                                    await foreach (var prog in ProcessManager.DownloadImageAsync(_mainViewModel.Client, _mainViewModel.Data.Albums[m.Album].Source, $"{_mainViewModel.DataFolderPath}/icon/{_mainViewModel.Data.Albums[m.Album].Path}")) { }
+                                }
                             }
 
                             if (DownloadMissingSongs && (m.Source.StartsWith("https://youtu.be/") || m.Source.StartsWith("https://youtube.com/") || m.Source.StartsWith("https://www.youtube.com/")))
