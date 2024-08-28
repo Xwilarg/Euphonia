@@ -75,10 +75,14 @@ namespace Downloader.ViewModels
                             catch (Exception ex)
                             {
                                 var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+                                bool? shouldReturnTrue = null;
                                 Dispatcher.UIThread.Post(async () =>
                                 {
-                                    await MessageBoxManager.GetMessageBoxStandard("Error while verifying song", $"Error while verifying {m.Name} by {m.Artist}: {ex.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                                    var answer = await MessageBoxManager.GetMessageBoxStandard("Error while verifying song", $"Error while verifying {m.Name} by {m.Artist}: {ex.Message}\nDo you still want to continue?", ButtonEnum.OkAbort, icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                                    shouldReturnTrue = answer == ButtonResult.Ok;
                                 });
+                                while (shouldReturnTrue == null) await Task.Delay(100);
+                                if (!shouldReturnTrue.Value) return;
                                 return;
                             }
                         }
