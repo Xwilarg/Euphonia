@@ -32,52 +32,56 @@ namespace Downloader.ViewModels
                         int i = 0;
                         foreach (var m in _mainViewModel.Data.Musics)
                         {
-                            var rawSongPath = $"{_mainViewModel.DataFolderPath}/raw/{m.Path}";
-                            var normSongPath = $"{_mainViewModel.DataFolderPath}/normalized/{m.Path}";
-
-
-                            if (m.Album != null)
+                            try
                             {
-                                if (!_mainViewModel.Data.Albums.ContainsKey(m.Album))
-                                {
-                                    // TODO
-                                }
-                                else if (!File.Exists(_mainViewModel.Data.Albums[m.Album].Path) && _mainViewModel.Data.Albums[m.Album].Source != null &&
-                                    (_mainViewModel.Data.Albums[m.Album].Source.StartsWith("http://") || _mainViewModel.Data.Albums[m.Album].Source.StartsWith("https://")))
-                                {
-                                    await foreach (var prog in ProcessManager.DownloadImageAsync(_mainViewModel.Client, _mainViewModel.Data.Albums[m.Album].Source, $"{_mainViewModel.DataFolderPath}/icon/{_mainViewModel.Data.Albums[m.Album].Path}")) { }
-                                }
-                            }
+                                var rawSongPath = $"{_mainViewModel.DataFolderPath}/raw/{m.Path}";
+                                var normSongPath = $"{_mainViewModel.DataFolderPath}/normalized/{m.Path}";
 
-                            if (!File.Exists(normSongPath))
+
+                                if (m.Album != null)
+                                {
+                                    if (!_mainViewModel.Data.Albums.ContainsKey(m.Album))
+                                    {
+                                        // TODO
+                                    }
+                                    else if (!File.Exists(_mainViewModel.Data.Albums[m.Album].Path) && _mainViewModel.Data.Albums[m.Album].Source != null &&
+                                        (_mainViewModel.Data.Albums[m.Album].Source.StartsWith("http://") || _mainViewModel.Data.Albums[m.Album].Source.StartsWith("https://")))
+                                    {
+                                        await foreach (var prog in ProcessManager.DownloadImageAsync(_mainViewModel.Client, _mainViewModel.Data.Albums[m.Album].Source, $"{_mainViewModel.DataFolderPath}/icon/{_mainViewModel.Data.Albums[m.Album].Path}")) { }
+                                    }
+                                }
+
+                                if (!File.Exists(normSongPath))
+                                {
+                                    if (!File.Exists(rawSongPath))
+                                    {
+                                        await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
+                                        { }
+                                    }
+
+                                    if (DownloadMissingSongs && (m.Source.StartsWith("https://youtu.be/") || m.Source.StartsWith("https://youtube.com/") || m.Source.StartsWith("https://www.youtube.com/")))
+                                    {
+
+                                        await foreach (var prog in ProcessManager.YouTubeDownload(m.Source, rawSongPath))
+                                        { }
+                                        await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
+                                        { }
+                                    }
+                                }
+
+                                i++;
+                                VerifyProgress = i / (float)_mainViewModel.Data.Musics.Count;
+                            }
+                            catch (Exception ex)
                             {
-                                if (!File.Exists(rawSongPath))
+                                var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
+                                Dispatcher.UIThread.Post(async () =>
                                 {
-                                    await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
-                                    { }
-                                }
-
-                                if (DownloadMissingSongs && (m.Source.StartsWith("https://youtu.be/") || m.Source.StartsWith("https://youtube.com/") || m.Source.StartsWith("https://www.youtube.com/")))
-                                {
-
-                                    await foreach (var prog in ProcessManager.YouTubeDownload(m.Source, rawSongPath))
-                                    { }
-                                    await foreach (var prog in ProcessManager.Normalize(rawSongPath, normSongPath))
-                                    { }
-                                }
+                                    await MessageBoxManager.GetMessageBoxStandard("Error while verifying song", $"Error while verifying {m.Name} by {m.Artist}: {ex.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
+                                });
+                                return;
                             }
-
-                            i++;
-                            VerifyProgress = i / (float)_mainViewModel.Data.Musics.Count;
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        var mainWindow = Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop ? desktop.MainWindow : null;
-                        Dispatcher.UIThread.Post(async () =>
-                        {
-                            await MessageBoxManager.GetMessageBoxStandard("Error while verifying song", $"Error while verifying song: {ex.Message}", icon: Icon.Error).ShowAsPopupAsync(mainWindow);
-                        });
                     }
                     finally
                     {
