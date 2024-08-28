@@ -83,7 +83,6 @@ namespace Downloader.ViewModels
                                 });
                                 while (shouldReturnTrue == null) await Task.Delay(100);
                                 if (!shouldReturnTrue.Value) return;
-                                return;
                             }
                         }
                     }
