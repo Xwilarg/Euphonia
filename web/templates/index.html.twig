@@ -29,7 +29,7 @@
             <fieldset>
                 <legend>Readme</legend>
                 <div id="readme">
-                    {{ metadata.readme | join('<br>') | replace({'<': '\\<' }) | raw }}
+                    {{ metadata.readme | map(x => x | replace({'<': '&lt;' })) | join('<br>') | raw }}
                 </div>
             </fieldset>
             {% endif %}
