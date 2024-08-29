@@ -6,6 +6,15 @@
     /* Font used in the website */
     --font: 'Open Sans', sans-serif;
 
+    /* Global font weight */
+    --font-weight: normal;
+
+    /* Input & buttons font weights */
+    --button-font-weight: normal;
+
+    /* Background image */
+    --background-image: none;
+
     /* Main background color of the website */
     --background: #2d5c7a;
 

@@ -1,9 +1,16 @@
 html {
     font-family: var(--font);
+    font-weight: var(--font-weight);
     color: var(--text);
-    background-color: var(--background);
     background: linear-gradient(var(--background), var(--background-dark));
+    background-color: var(--background);
+    background-image: var(--background-image);
     min-height: 100%;
+    background-blend-mode: multiply;
+    background-attachment: fixed;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
 }
 
 #banner {
@@ -59,6 +66,16 @@ html {
     width: 500px;
 }
 
+@media (max-width: 500px) {
+    #settings {
+        width: 100%;
+    }
+
+    fieldset {
+        width: 85%;
+    }
+}
+
 #settings fieldset {
     max-height: 300px;
     overflow: auto;
@@ -112,6 +129,9 @@ input {
     border-radius: 5px;
     background-color: var(--search-input);
     border: 1px var(--search-input-border) solid;
+    margin-top: 10px;
+    font-family: var(--font);
+    font-weight: var(--button-font-weight);
 }
 
 button, .button:not(h2) {
@@ -125,6 +145,8 @@ button, .button:not(h2) {
     font-size: .8em;
     height: 40px;
     text-decoration: none;
+    font-family: var(--font);
+    font-weight: var(--button-font-weight);
 }
 
 h2.button:hover {
