@@ -28,15 +28,15 @@ jobs:
       with:
         name: front
         path: |
-          css/
-          img/
-          js/
-          node_modules/
-          php/
-          templates/
-          vendor/
-          favicon.ico
-          index.php
+          web/css/
+          web/img/
+          web/js/
+          web/node_modules/
+          web/php/
+          web/templates/
+          web/vendor/
+          web/favicon.ico
+          web/index.php
         if-no-files-found: error
 
   api:
@@ -61,5 +61,5 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: api
-        path: Release/
+        path: api/Release/
         if-no-files-found: error
