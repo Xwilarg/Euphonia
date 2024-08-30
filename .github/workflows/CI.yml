@@ -3,8 +3,7 @@ name: CI
 on: [ push, pull_request ]
 
 jobs:
-  build:
-
+  front:
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -24,13 +23,26 @@ jobs:
       run: composer i
     - name: Build scripts
       run: npm run build
-    - name: Deploy
-      uses: appleboy/scp-action@master
+
+    - uses: actions/upload-artifact@v3
       with:
-        host: ${{ secrets.DEPLOY_HOST }}
-        username: ${{ secrets.DEPLOY_USER }}
-        port: 22
-        key: ${{ secrets.DEPLOY_SSHKEY }}
-        source: "web/css/,web/img/,web/index.php,web/js/,web/node_modules/,web/package-lock.json,web/package.json,web/php/,web/templates/,web/vendor/"
-        target: ${{ secrets.DEPLOY_TARGET }}
-        strip_components: 1
+        name: front
+        path: css,img,js,node_modules,php,templates,vendor,favicon.ico,index.php
+
+  api:
+    needs: front
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./api
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Setup .NET Core
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: '8.0.x'
+    - name: Install dependencies
+      run: dotnet restore
+    - name: Build
+      run: dotnet build --configuration Release --no-restore
