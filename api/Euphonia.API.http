@@ -1,0 +1,11 @@
+@Euphonia.API_HostAddress = http://localhost:5045
+
+GET {{Euphonia.API_HostAddress}}/api/
+Accept: application/json
+
+###
+
+GET {{Euphonia.API_HostAddress}}/data/
+Accept: application/json
+
+###

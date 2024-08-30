@@ -12,4 +12,10 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Reference Include="Euphonia.Common">
+      <HintPath>..\..\common\bin\Debug\net8.0\Euphonia.Common.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

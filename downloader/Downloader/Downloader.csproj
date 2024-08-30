@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net7.0</TargetFramework>
+    <TargetFramework>net8.0</TargetFramework>
     <Nullable>enable</Nullable>
     <LangVersion>latest</LangVersion>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
@@ -28,5 +28,11 @@
 
   <ItemGroup>
     <UpToDateCheckInput Remove="Views\IntegrityView.axaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Euphonia.Common">
+      <HintPath>..\..\common\bin\Debug\net8.0\Euphonia.Common.dll</HintPath>
+    </Reference>
   </ItemGroup>
 </Project>

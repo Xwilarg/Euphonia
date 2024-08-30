@@ -22,9 +22,6 @@ You can then use the software inside downloader/ to either download from YouTube
 [!TODO]: To write
 Website, discord bot, android app
 
-## Some of my songs are missing/are corrupted!
-If you're missing some of your songs, you can run `integrity.py` who is located inside the scripts/ folder
-
 ## Website customization
 You can change some metadata of your website in `web/data/metadata.json` \
 You can also change its style on `web/css/customize.cs`

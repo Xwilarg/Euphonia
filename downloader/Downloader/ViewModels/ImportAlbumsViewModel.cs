@@ -2,12 +2,12 @@
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Threading;
 using Downloader.Models;
+using Euphonia.Common;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
 using System;
 using System.Linq;
-using System.Text.Json;
 using System.Threading.Tasks;
 using System.Web;
 using System.Windows.Input;
@@ -43,7 +43,7 @@ public class ImportAlbumsViewModel : ViewModelBase, ITabView
                     foreach (var s in songs)
                     {
                         reqUrl = $"https://ws.audioscrobbler.com/2.0/?method=track.getInfo&api_key={LastFmApiKey}&artist={HttpUtility.UrlEncode(s.Artist)}&track={HttpUtility.UrlEncode(s.Name)}&format=json";
-                        json = JsonSerializer.Deserialize<LastFmApi>(await _mainViewModel.Client.GetStringAsync(reqUrl), _mainViewModel.JsonOptions);
+                        json = Serialization.Deserialize<LastFmApi>(await _mainViewModel.Client.GetStringAsync(reqUrl));
 
                         if (json.Message == null && json.Track.Album != null && json.Track.Album.Image.Any())
                         {

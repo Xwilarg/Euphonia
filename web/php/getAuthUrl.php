@@ -21,7 +21,7 @@ else
     return;
 }
 
-$credentials = json_decode(file_get_contents("../data/credentials.json"), true);
+$credentials = json_decode(file_get_contents("../data/credentials.json"), true)['lastfm'];
 
 // TODO: last.fm auth is a massive pain and I don't want to spent 4 hours doing parsing for it
 $url = "";

@@ -1,19 +1,34 @@
-﻿using System.Collections.Generic;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
 
-namespace Downloader.Models;
+namespace Euphonia.Common;
 
-public class JsonExportData
+public static class Serialization
 {
-    public Metadata Metadata { set; get; } = new();
+    private static JsonSerializerOptions _option;
+    private static JsonSerializerOptions Option
+    {
+        get
+        {
+            _option ??= new()
+            {
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
+                Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
+            };
+            return _option;
+        }
+    }
+
+    public static T Deserialize<T>(string path) => JsonSerializer.Deserialize<T>(path, Option);
+    public static string Serialize<T>(T data) => JsonSerializer.Serialize(data, Option);
+}
+
+public class EuphoniaInfo
+{
     public List<string> Highlight { set; get; } = [];
     public Dictionary<string, Playlist> Playlists { set; get; } = [];
     public List<Song> Musics { set; get; } = [];
     public Dictionary<string, Album> Albums { set; get; } = [];
-}
-
-public class Metadata
-{
-    public string Title { set; get; } = "Euphonia";
 }
 
 public class Album

@@ -5,6 +5,7 @@ using Avalonia.Platform.Storage;
 using Avalonia.Threading;
 using Downloader.Models;
 using DynamicData;
+using Euphonia.Common;
 using MsBox.Avalonia;
 using MsBox.Avalonia.Enums;
 using ReactiveUI;
@@ -13,7 +14,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text.Encodings.Web;
 using System.Text.Json;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -24,12 +24,6 @@ public class MainViewModel : ViewModelBase
 {
     public MainViewModel()
     {
-        JsonOptions = new()
-        {
-            PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping
-        };
-
         Client = new();
 
         try
@@ -146,7 +140,7 @@ public class MainViewModel : ViewModelBase
 
     public void SaveData()
     {
-        File.WriteAllText(DataPath, JsonSerializer.Serialize(Data, JsonOptions));
+        File.WriteAllText(DataPath, Serialization.Serialize(Data));
     }
 
     public void SaveImage(string key, string name, string source)
@@ -242,24 +236,22 @@ public class MainViewModel : ViewModelBase
     public string GetSongName(string song, string? artist)
         => $"{CleanPath(song.Trim())}_{CleanPath(artist?.Trim() ?? "unknown")}";
 
-    private JsonExportData _data;
-    public JsonExportData Data
+    private EuphoniaInfo _data;
+    public EuphoniaInfo Data
     {
         private set
         {
             _data = value;
-            Title = _data?.Metadata?.Title ?? "Unknown";
         }
         get => _data;
     }
-    public JsonSerializerOptions JsonOptions { private set; get; }
     public HttpClient Client { private set; get; }
     public ICommand SelectDataPathCmd { get; }
     public ICommand CreateNewJson { get; }
 
     public void Init()
     {
-        Data = JsonSerializer.Deserialize<JsonExportData>(File.ReadAllText(DataPath), JsonOptions) ?? throw new NullReferenceException();
+        Data = Serialization.Deserialize<EuphoniaInfo>(File.ReadAllText(DataPath)) ?? throw new NullReferenceException();
 
         if (!Directory.Exists($"{DataFolderPath}/icon"))
         {

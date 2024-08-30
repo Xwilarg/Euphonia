@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using DiscordBot.Data;
 using DiscordBot.Player;
+using Euphonia.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Text.Json;
@@ -12,7 +13,7 @@ public sealed class Program
 {
     private IServiceProvider _serviceProvider;
 
-    private readonly Dictionary<string, JsonExportData> _sourceData = new();
+    private readonly Dictionary<string, EuphoniaInfo> _sourceData = new();
     private readonly Dictionary<ulong, ServerData> _guildData = new();
 
     public static async Task Main()
@@ -45,10 +46,6 @@ public sealed class Program
             .AddSingleton<HttpClient>()
             .AddSingleton<Random>()
             .AddSingleton(client)
-            .AddSingleton(new JsonSerializerOptions
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
-            })
             .BuildServiceProvider();
 
         await client.LoginAsync(TokenType.Bot, credentials.BotToken);
@@ -117,16 +114,14 @@ public sealed class Program
                 {
                     try
                     {
-                        jsonExportData = JsonSerializer.Deserialize<JsonExportData>(
-                            _serviceProvider.GetService<HttpClient>()!.GetStringAsync(jsonUri).Result,
-                            _serviceProvider.GetService<JsonSerializerOptions>())!;
+                        jsonExportData = Serialization.Deserialize<EuphoniaInfo>(_serviceProvider.GetService<HttpClient>()!.GetStringAsync(jsonUri).Result)!;
                     }
                     catch
                     {
                         await arg.FollowupAsync("Failed to get information from the source given", ephemeral: true);
                         return;
                     }
-                    if (jsonExportData.Musics.Length == 0)
+                    if (jsonExportData.Musics.Count == 0)
                     {
                         await arg.FollowupAsync("The target URL doesn't have any music", ephemeral: true);
                         return;

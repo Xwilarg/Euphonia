@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Audio;
 using DiscordBot.Data;
+using Euphonia.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System.Diagnostics;
 using System.Web;
@@ -9,7 +10,7 @@ namespace DiscordBot.Player
 {
     public static class MusicPlayer
     {
-        private static EmbedBuilder FormatSongInfo(JsonExportData data, Song song, Uri basePath, string? playlist)
+        private static EmbedBuilder FormatSongInfo(EuphoniaInfo data, Song song, Uri basePath, string? playlist)
         {
             var path = data.Albums.FirstOrDefault(x => x.Key == song.Album).Value?.Path;
             var embed = new EmbedBuilder()
@@ -22,15 +23,15 @@ namespace DiscordBot.Player
             return embed;
         }
 
-        public static async Task PlayMusicAsync(IServiceProvider serviceProvider, JsonExportData data, ServerData serverData)
+        public static async Task PlayMusicAsync(IServiceProvider serviceProvider, EuphoniaInfo data, ServerData serverData)
         {
-            var valdMusic = serverData.TargetPlaylist == null ? data.Musics : data.Musics.Where(x => x.Playlist == serverData.TargetPlaylist).ToArray();
+            var validMusic = serverData.TargetPlaylist == null ? data.Musics : data.Musics.Where(x => x.Playlist == serverData.TargetPlaylist).ToList();
             var audioClient = await serverData.VoiceChannel.ConnectAsync();
             while (serverData.VoiceChannel.ConnectedUsers.Count > 1)
             {
                 try
                 {
-                    var nextSong = valdMusic[serviceProvider.GetService<Random>()!.Next(valdMusic.Length)];
+                    var nextSong = validMusic[serviceProvider.GetService<Random>()!.Next(validMusic.Count)];
                     var musicUri = new Uri(serverData.BaseUri, $"/data/normalized/{nextSong.Path}");
 
                     // Download the song locally because sometimes for some reason else the song is skipped?
