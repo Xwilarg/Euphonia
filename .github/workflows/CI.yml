@@ -61,5 +61,5 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: api
-        path: api/Release/
+        path: api/bin/Release/net8.0/linux-x64/
         if-no-files-found: error
