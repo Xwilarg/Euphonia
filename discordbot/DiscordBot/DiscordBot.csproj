@@ -13,9 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Euphonia.Common">
-      <HintPath>..\..\common\bin\Debug\net8.0\Euphonia.Common.dll</HintPath>
-    </Reference>
+	  <ProjectReference Include="..\common\Euphonia.Common.csproj" />
   </ItemGroup>
 
 </Project>
