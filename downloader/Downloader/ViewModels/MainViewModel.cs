@@ -113,7 +113,7 @@ public class MainViewModel : ViewModelBase
     {
         if (Design.IsDesignMode) return;
 
-        string[] possiblePaths = ["../../../../../web/data/info.json", "Data/info.json"];
+        string[] possiblePaths = ["../../../../../data/info.json", "Data/info.json"];
         List<string> validData = new();
         foreach (var path in possiblePaths)
         {
