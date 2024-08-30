@@ -24,10 +24,20 @@ jobs:
     - name: Build scripts
       run: npm run build
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: front
-        path: css,img,js,node_modules,php,templates,vendor,favicon.ico,index.php
+        path: |
+          css/
+          img/
+          js/
+          node_modules/
+          php/
+          templates/
+          vendor/
+          favicon.ico
+          index.php
+        if-no-files-found: error
 
   api:
     runs-on: ubuntu-latest
@@ -48,7 +58,8 @@ jobs:
     - name: Publish Sanara
       run: dotnet publish -c Release -r linux-x64
 
-    - uses: actions/upload-artifact@v3
+    - uses: actions/upload-artifact@v4
       with:
         name: api
-        path: Release
+        path: Release/
+        if-no-files-found: error
