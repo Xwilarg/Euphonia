@@ -1,4 +1,3 @@
-
 namespace Euphonia.API
 {
     public class Program
@@ -14,6 +13,14 @@ namespace Euphonia.API
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
 
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("debug", p =>
+                {
+                    p.WithOrigins("http://localhost:5151");
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -21,6 +28,7 @@ namespace Euphonia.API
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+                app.UseCors("debug");
             }
 
             app.UseHttpsRedirection();
