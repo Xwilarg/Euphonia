@@ -1,10 +1,49 @@
 # Euphonia
 An easy way to store and listen to your music
 
-## How to use this project
-- Clone the repository
-- Inside the folder run `npm i` and `npm run build` then move its content to your web server
-- Add your songs
+## Installing Euphonia
+Download the backend and the frontend then follow these steps:
+
+### Installing the backend
+Install the backend somewhere on your server and keep it running, here is an example with systemctl:
+```
+[Unit]
+Description=Euphonia backend
+After=network-online.target
+
+[Service]
+ExecStart=dotnet [Path to backend]/Euphonia.API.dll
+WorkingDirectory=[Path to backend]
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Installing the frontend
+Just grab everything in the frontend folder and throw it in your web server
+
+### Configure
+Configure your webserver to have your website ready and the backend on /api/
+Example:
+
+#### Caddy
+```
+example.org {
+	reverse_proxy /api/* localhost:5000
+
+	root * base_folder_on_your_frontend
+	php_fastcgi unix//run/php/php8.1-fpm.sock
+	file_server {
+		hide node_modules/
+		hide vendor/
+	}
+	@blocked {
+		path *.json
+	}
+	respond @blocked 403
+}
+```
 
 ## How to add songs
 
