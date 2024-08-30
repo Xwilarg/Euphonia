@@ -2,9 +2,9 @@
 js/
 
 # Configuration and data
-/data/*
-!/data/README.md
-!/data/metadata.json
+web/data/*
+!web/data/README.md
+!web/data/metadata.json
 
 # Javascript
 node_modules/
