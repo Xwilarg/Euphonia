@@ -21,6 +21,8 @@ let timeStarted;
 let playlist = [];
 let playlistIndex;
 
+let replayMode = 0;
+
 // #region Music management
 
 // Start playing if audio player is paused, else pause it
@@ -54,7 +56,7 @@ function updateSongHighlightColor() {
         elems[0].classList.remove("current");
     }
     for (let c of document.getElementsByClassName("song")) {
-        if (c.dataset.name == sanitize(json.musics[playlist[playlistIndex - 1]].name)) {
+        if (c.dataset.name == sanitize(json.musics[playlist[playlistIndex]].name)) {
             c.classList.add("current");
         }
     }
@@ -82,6 +84,17 @@ function nextSong() {
     }
 
     // Select current song and move playlist forward
+    if (replayMode !== 2) { // We are not in "repeat current song" mode
+        playlistIndex++;
+        if (playlistIndex === playlist.length) { // Replay mode is in loop playlist mode
+            if (replayMode === 1) {
+                playlistIndex = 0;
+            } else {
+                player.pause();
+            }
+        }
+    }
+
     let elem = json.musics[playlist[playlistIndex]];
     console.log(`[Song] Playing ${elem.name} by ${elem.artist} from ${elem.album}`);
     currSong = elem;
@@ -89,7 +102,6 @@ function nextSong() {
     lastTimeUpdate = 0;
     trackDuration = 0;
     timeStarted = Math.floor(Date.now() / 1000);
-    playlistIndex++;
 
     // Load song and play it
     let player = document.getElementById("player");
@@ -115,7 +127,7 @@ function nextSong() {
 // Create a random playlist
 function prepareWholeShuffle() {
     playlist = [];
-    playlistIndex = 0;
+    playlistIndex = -1;
 
     playlist = Array.from(Array(json.musics.length).keys())
         .map((value) => ({ value, sort: Math.random() }))
@@ -128,7 +140,7 @@ function prepareWholeShuffle() {
 // Create a random playlist with the parameter as the first song
 function prepareShuffle(index) {
     playlist = [];
-    playlistIndex = 0;
+    playlistIndex = -1;
     playlist.push(index);
 
     let indexes = [...Array(json.musics.length).keys()];
@@ -147,7 +159,7 @@ function prepareShuffle(index) {
 // Play a single song, used when using the share function
 function playSingleSong(index) {
     playlist = [];
-    playlistIndex = 0;
+    playlistIndex = -1;
     playlist.push(index);
 
     nextSong();
@@ -342,6 +354,24 @@ function loadPage() {
     let player = document.getElementById("player");
 
     // Set player buttons
+    document.getElementById("repeat").addEventListener("click", (_) => {
+        replayMode++;
+        if (replayMode === 3) replayMode = 0;
+
+        let elem = document.getElementById("repeat");
+        if (replayMode === 0)
+        {
+            elem.innerHTML = `<span class="material-symbols-outlined unactive">repeat</span>`;
+        }
+        else if (replayMode === 1)
+        {
+            elem.innerHTML = `<span class="material-symbols-outlined">repeat</span>`;
+        }
+        else
+        {
+            elem.innerHTML = `<span class="material-symbols-outlined">repeat_one</span>`;
+        }
+    });
     document.getElementById("previous").addEventListener("click", previousSong);
     document.getElementById("skip").addEventListener("click", nextSong);
     document.getElementById("togglePlay").addEventListener("click", togglePlay);
