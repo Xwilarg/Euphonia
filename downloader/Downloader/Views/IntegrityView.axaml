@@ -19,6 +19,7 @@
         </Grid.RowDefinitions>
         <StackPanel Grid.Row="0" IsEnabled="{Binding !IsVerifying}">
             <CheckBox IsChecked="{Binding DownloadMissingSongs}">Download missing songs</CheckBox>
+            <CheckBox IsChecked="{Binding IgnoreErrors}">Don't warn on error</CheckBox>
             <Button Command="{Binding VerifyCmd}">Verify</Button>
         </StackPanel>
         <StackPanel Grid.Row="1" Margin="5,0,5,0">
