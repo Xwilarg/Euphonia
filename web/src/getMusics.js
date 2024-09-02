@@ -180,7 +180,7 @@ function sanitize(text) {
 // #region On page load
 
 function getAlbumImage(elem) {
-    if (elem.album === null || elem.album === undefined) {
+    if (elem.album === null || elem.album === undefined || !(elem.album in json.albums)) {
         return "/img/CD.png";
     }
     return "/data/icon/" + json.albums[elem.album].path;
