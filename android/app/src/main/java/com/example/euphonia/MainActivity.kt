@@ -94,6 +94,11 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
+        try {
+            data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
+        }
+        catch (e: Exception) { }
+
         executor.execute {
             // Update data from remove server
             val text: String
