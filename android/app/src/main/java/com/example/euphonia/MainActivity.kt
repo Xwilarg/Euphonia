@@ -39,7 +39,6 @@ class MainActivity : AppCompatActivity() {
     var downloaded: MutableList<Song> = mutableListOf()
 
     lateinit var data: MusicData
-    var loadingError: Exception? = null
 
     fun init() {
         // Ensure remote server is init
@@ -59,8 +58,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun loadData() {
-        loadingError = null
-
         val sharedPref = this.getSharedPreferences("settings", MODE_PRIVATE)
         val index = sharedPref.getInt("currentServer", -1)
 
@@ -107,7 +104,7 @@ class MainActivity : AppCompatActivity() {
                 File(filesDir, "${currUrl}info.json").writeText(text)
                 data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
             } catch (e: Exception) {
-                loadingError = e
+                // TODO: Handle exception
                 return@execute
             }
 
