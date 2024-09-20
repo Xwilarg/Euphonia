@@ -1,12 +1,8 @@
 // module "lastfm.js"
 
-let lastFmApiKey;
+import { setCookie, getCookie } from "./cookie"
 
-// https://stackoverflow.com/a/21125098
-function getCookie(name) {
-    var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
-    if (match) return match[2];
-}
+let lastFmApiKey;
 
 async function makeAuthCallAsync(method, params)
 {
@@ -118,8 +114,8 @@ export async function lastfm_initAsync()
             if (json.error !== undefined) {
                 console.error(`An error happened during last.fm authentification: ${json.message}`);
             }
-    
-            document.cookie = `lastfm_key=${json.session.key}; max-age=86400; path=/; SameSite=Strict`;
+
+            setCookie("lastfm_key", json.session.key);
         }
     }
 

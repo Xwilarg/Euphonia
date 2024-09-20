@@ -5,6 +5,9 @@ namespace Euphonia.API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+#if DEBUG
+            builder.Logging.AddConsole();
+#endif
 
             // Add services to the container.
 

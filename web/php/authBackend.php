@@ -1,0 +1,22 @@
+<?php
+$url = 'http://localhost:5045/api/register';
+$path = dirname(__FILE__) . "/../data/";
+
+$curl = curl_init();
+
+curl_setopt_array($curl, array(
+    CURLOPT_FOLLOWLOCATION => 1,
+    CURLOPT_URL => $url,
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_CUSTOMREQUEST => 'POST',
+    CURLOPT_POSTFIELDS => json_encode($path),
+    CURLOPT_HTTPHEADER => array('Content-Type: application/json')
+));
+curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
+curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
+
+$response = curl_exec($curl);
+
+curl_close($curl);
+header('Content-Type: application/json; charset=utf-8');
+echo $response;

@@ -4,6 +4,5 @@
     "readme": [],
     "showGitHub": true,
     "showLastfm": true,
-
-    "allowExternalApps": false
+    "showDebug": true
 }

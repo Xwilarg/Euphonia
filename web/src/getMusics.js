@@ -2,6 +2,8 @@
 
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
+import { setCookie, getCookie, deleteCookie } from "./cookie"
+import { getApiToken } from './api';
 
 let json;
 
@@ -22,6 +24,8 @@ let playlist = [];
 let playlistIndex;
 
 let replayMode = 0;
+
+let adminToken = null;
 
 // #region Music management
 
@@ -608,6 +612,22 @@ export async function musics_initAsync() {
     document.getElementById("refresh-btn").addEventListener("click", refresh);
     document.getElementById("random-btn").addEventListener("click", random);
     document.getElementById("minimalistMode")?.addEventListener("click", toggleMinimalistMode);
+
+    deleteCookie("sessionToken");
+    document.getElementById("toggleAdminOn").addEventListener("click", () => {
+        var pwd = window.prompt("Enter admin password");
+        getApiToken(pwd, () => {
+            document.getElementById("admin-on").classList.add("hidden");
+            document.getElementById("admin-off").classList.remove("hidden");
+        }, () => {    
+            document.getElementById("admin-on").classList.add("hidden");
+            document.getElementById("admin-off").classList.remove("hidden");
+        })
+    });
+    document.getElementById("toggleAdminOff").addEventListener("click", () => {
+        document.getElementById("admin-on").classList.add("hidden");
+        document.getElementById("admin-off").classList.remove("hidden");
+    });
 
     json = JSON.parse(document.getElementById("data").innerText);
 

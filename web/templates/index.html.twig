@@ -25,6 +25,15 @@
             <button id="back"><span class="material-symbols-outlined">arrow_back</span></button>
         </div>
         <div id="settings" hidden>
+            <fieldset>
+                <legend>Admin</legend>
+                <div id="admin-on">
+                    <button id="toggleAdminOn">Swich to admin mode</button>
+                </div>
+                <div id="admin-off" class="hidden">
+                    <button id="toggleAdminOff">Stop admin mode</button>
+                </div>
+            </fieldset>
             {% if metadata.readme is not empty %}
             <fieldset>
                 <legend>Readme</legend>
@@ -54,10 +63,12 @@
                 <a class="button" target="_blank" href="https://github.com/Xwilarg/Euphonia">GitHub</a>
             </fieldset>
             {% endif %}
+            {% if metadata.showDebug %}
             <fieldset>
                 <legend>Advanced Settings</legend>
                 API location: <span id="apiTarget"></span>
             </fieldset>
+            {% endif %}
         </div>
         <div id="volume-container" hidden>
             <input type="range" max="100" id="volume"/>
@@ -115,7 +126,7 @@
                         </div>
                     </div>
                     <div id="highlight" hidden>
-                        <h2 class="button" id="highlight-title">Highlight</h2>
+                        <h2 class="button" id="highlight-title">Favorites</h2>
                         <div class="list-wrapper">
                             <div id="highlightlist" class="list">
                             </div>
