@@ -31,7 +31,7 @@ export function logOff() {
 export async function getApiToken(pwd, onSuccess, onFailure) {
     if (pwd === null) return;
 
-    fetch(`${apiTarget}token`, {
+    fetch(`${apiTarget}auth/token`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

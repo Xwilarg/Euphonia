@@ -1,3 +1,5 @@
+using Euphonia.API.Services;
+
 namespace Euphonia.API
 {
     public class Program
@@ -8,6 +10,7 @@ namespace Euphonia.API
 #if DEBUG
             builder.Logging.AddConsole();
 #endif
+            builder.Services.AddSingleton<WebsiteManager>();
 
             // Add services to the container.
 

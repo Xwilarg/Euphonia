@@ -1,5 +1,5 @@
 <?php
-$url = 'http://localhost:5000/api/register';
+$url = 'http://localhost:5000/api/auth/register';
 $path = dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR;
 
 $curl = curl_init();
