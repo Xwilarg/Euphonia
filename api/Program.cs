@@ -20,7 +20,7 @@ namespace Euphonia.API
             {
                 options.AddPolicy("debug", p =>
                 {
-                    p.WithOrigins("http://localhost:5151");
+                    p.WithOrigins("http://localhost:5151").AllowAnyHeader();
                 });
             });
 

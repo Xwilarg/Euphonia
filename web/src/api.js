@@ -28,8 +28,12 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
     })
     .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
     .then(json => {
-        adminToken = json.token;
-        onSuccess();
+        if (json.success) {
+            adminToken = json.token;
+            onSuccess();
+        } else {
+            onFailure();
+        }
     })
     .catch((err) => {
         document.getElementById("error-log").innerHTML += `<div class="error">Login failed: ${err}</div>`;

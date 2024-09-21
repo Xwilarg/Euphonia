@@ -620,13 +620,13 @@ export async function musics_initAsync() {
             document.getElementById("admin-on").classList.add("hidden");
             document.getElementById("admin-off").classList.remove("hidden");
         }, () => {    
-            document.getElementById("admin-on").classList.add("hidden");
-            document.getElementById("admin-off").classList.remove("hidden");
+            document.getElementById("admin-off").classList.add("hidden");
+            document.getElementById("admin-on").classList.remove("hidden");
         })
     });
     document.getElementById("toggleAdminOff").addEventListener("click", () => {
-        document.getElementById("admin-on").classList.add("hidden");
-        document.getElementById("admin-off").classList.remove("hidden");
+        document.getElementById("admin-off").classList.add("hidden");
+        document.getElementById("admin-on").classList.remove("hidden");
     });
 
     json = JSON.parse(document.getElementById("data").innerText);
