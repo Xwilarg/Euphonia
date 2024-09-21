@@ -1,6 +1,7 @@
 using Euphonia.API.Models;
+using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 
 namespace Euphonia.API.Controllers
@@ -25,6 +26,15 @@ namespace Euphonia.API.Controllers
             _logger = logger;
         }
 
+        // Thanks Indra
+        private string HashPassword(string password, string salt)
+        {
+            var saltBytes = Encoding.ASCII.GetBytes(salt);
+            var hash = KeyDerivation.Pbkdf2(password, saltBytes, KeyDerivationPrf.HMACSHA512, 210000, 256 / 8);
+
+            return Convert.ToHexString(hash).ToLower();
+        }
+
         [HttpPost("register")]
         public Response RegisterEndpoint([FromBody]string path)
         {
@@ -46,14 +56,44 @@ namespace Euphonia.API.Controllers
             };
         }
 
-        [HttpGet(Name = "token")]
+        [HttpPost("token")]
         public TokenResponse GetToken([FromBody]string password)
         {
-            var hashed = new Rfc2898DeriveBytes(password, [], 5000);
+            var hashed = HashPassword(password, "Effy");
             var target = _endpoints.FirstOrDefault(x =>
             {
-                if (JsonSerializer.Deserialize<Credentials>(Path.Combine(x, "/data/credentials.json"), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }).AdminPwd)
+                return JsonSerializer.Deserialize<Credentials>(Path.Combine(x, "/data/credentials.json"), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }).AdminPwd == hashed;
             });
+            if (target == null)
+            {
+                return new()
+                {
+                    Success = false,
+                    Token = null
+                };
+            }
+            var id = Guid.NewGuid();
+            _tokens.Add(id.ToString(), new()
+            {
+                Expiration = DateTime.Now.AddDays(1),
+                Path = target
+            });
+            return new()
+            {
+                Success = true,
+                Token = id.ToString()
+            };
+        }
+
+        [HttpPost("hash")]
+        public TokenResponse GenerateHash([FromBody]string password)
+        {
+            var hashed = HashPassword(password, "Effy");
+            return new()
+            {
+                Success = true,
+                Token = hashed
+            };
         }
 
         [HttpGet(Name = "")]

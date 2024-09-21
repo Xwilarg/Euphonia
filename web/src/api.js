@@ -19,12 +19,20 @@ export async function api_initAsync() {
 
 export async function getApiToken(pwd, onSuccess, onFailure) {
 
-    fetch(`/api/token`)
+    fetch(`${apiTarget}token`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pwd)
+    })
     .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
     .then(json => {
         adminToken = json.token;
+        onSuccess();
     })
     .catch((err) => {
         document.getElementById("error-log").innerHTML += `<div class="error">Login failed: ${err}</div>`;
+        onFailure();
     });
 }
