@@ -42,7 +42,8 @@ namespace Euphonia.API.Controllers
             {
                 return new()
                 {
-                    Success = false
+                    Success = false,
+                    Reason = "Path doesn't exists"
                 };
             }
             if (!_endpoints.Contains(path))
@@ -52,7 +53,8 @@ namespace Euphonia.API.Controllers
             }
             return new()
             {
-                Success = true
+                Success = true,
+                Reason = null
             };
         }
 
@@ -79,6 +81,7 @@ namespace Euphonia.API.Controllers
                 return new()
                 {
                     Success = false,
+                    Reason = "No admin account match the given password",
                     Token = null
                 };
             }
@@ -91,6 +94,7 @@ namespace Euphonia.API.Controllers
             return new()
             {
                 Success = true,
+                Reason = null,
                 Token = id.ToString()
             };
         }
@@ -102,6 +106,7 @@ namespace Euphonia.API.Controllers
             return new()
             {
                 Success = true,
+                Reason = null,
                 Token = hashed
             };
         }
@@ -111,7 +116,8 @@ namespace Euphonia.API.Controllers
         {
             return new()
             {
-                Success = true
+                Success = true,
+                Reason = null
             };
         }
     }

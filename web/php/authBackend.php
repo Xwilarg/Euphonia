@@ -1,7 +1,6 @@
 <?php
-$url = 'http://localhost:5045/api/register';
+$url = 'http://localhost:5000/api/register';
 $path = dirname(__FILE__) . DIRECTORY_SEPARATOR . ".." . DIRECTORY_SEPARATOR . "data" . DIRECTORY_SEPARATOR;
-var_dump($path);
 
 $curl = curl_init();
 
