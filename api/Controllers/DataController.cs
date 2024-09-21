@@ -18,8 +18,8 @@ namespace Euphonia.API.Controllers
 
         private readonly ILogger<RootController> _logger;
 
-        private List<string> _endpoints = new();
-        private Dictionary<string, WebsiteToken> _tokens = new();
+        private static List<string> _endpoints = new();
+        private static Dictionary<string, WebsiteToken> _tokens = new();
 
         public RootController(ILogger<RootController> logger)
         {
@@ -45,7 +45,7 @@ namespace Euphonia.API.Controllers
                     Success = false
                 };
             }
-            if (!Directory.Exists(path))
+            if (!_endpoints.Contains(path))
             {
                 _endpoints.Add(path);
                 _logger.LogInformation($"Adding path {path}");
@@ -62,7 +62,17 @@ namespace Euphonia.API.Controllers
             var hashed = HashPassword(password, "Effy");
             var target = _endpoints.FirstOrDefault(x =>
             {
-                return JsonSerializer.Deserialize<Credentials>(Path.Combine(x, "/data/credentials.json"), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }).AdminPwd == hashed;
+                var path = Path.Combine(x, "/credentials.json");
+                Credentials r;
+                try
+                {
+                    r = JsonSerializer.Deserialize<Credentials>(System.IO.File.ReadAllText(x + "credentials.json"), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
+                }
+                catch
+                {
+                    return false;
+                }
+                return r?.AdminPwd == hashed;
             });
             if (target == null)
             {
