@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
 
         try {
             data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
+            downloaded = data.musics.toMutableList()
         }
         catch (e: Exception) { }
 
@@ -108,6 +109,7 @@ class MainActivity : AppCompatActivity() {
                 return@execute
             }
 
+            downloaded = mutableListOf<Song>()
             // Download missing songs
             data.musics.forEachIndexed{ index, song ->
                 if (!File(filesDir, "${currUrl}music/${song.path}").exists()) {
