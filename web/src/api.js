@@ -95,7 +95,7 @@ export async function uploadSong(data, onSuccess, onFailure) {
     .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
     .then(json => {
         if (json.success) {
-            alert(json);
+            alert(`Success`);
             onSuccess();
         } else {
             alert(`Failed to upload song: ${json.reason}`);
@@ -103,7 +103,31 @@ export async function uploadSong(data, onSuccess, onFailure) {
         }
     })
     .catch((err) => {
-        document.getElementById("error-log").innerHTML += `<div class="error">Upload failed: ${err}</div>`;
+        alert(`Failed to upload song: ${err}`);
+        onFailure();
+    });
+}
+
+export async function updateSong(data, onSuccess, onFailure) {
+    fetch(`${apiTarget}data/update`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        },
+        body: data
+    })
+    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(json => {
+        if (json.success) {
+            alert(`Success`);
+            onSuccess();
+        } else {
+            alert(`Failed to update song: ${json.reason}`);
+            onFailure();
+        }
+    })
+    .catch((err) => {
+        alert(`Failed to update song: ${err}`);
         onFailure();
     });
 }

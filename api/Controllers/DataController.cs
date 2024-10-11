@@ -28,6 +28,17 @@ public class DataController : ControllerBase
         _client = client;
     }
 
+    [HttpPost("update")]
+    [Authorize]
+    public Response UpdateSong([FromForm] SongForm data)
+    {
+        return new()
+        {
+            Success = true,
+            Reason = null
+        };
+    }
+
     [HttpPost("upload")]
     [Authorize]
     public Response UploadSong([FromForm]YoutubeForm data)

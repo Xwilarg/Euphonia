@@ -2,8 +2,8 @@
 
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
-import { setCookie, getCookie, deleteCookie } from "./cookie"
-import { getApiToken, isLoggedIn, logOff } from './api';
+import { deleteCookie } from "./cookie"
+import { getApiToken, isLoggedIn, logOff, updateSong } from './api';
 
 let json;
 
@@ -291,6 +291,16 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
         let indexs = [];
         for (let elem of musics) {
             let albumImg = getAlbumImage(elem);
+
+            let selectTags = "";
+            if (json.tags)
+            {
+                for (let tag of json.tags)
+                {
+                    selectTags += `<option value="${tag}">${tag}</option>`;
+                }
+            }
+
             html += `
             <div class="song" data-name="${sanitize(elem.name)}" id="song-${id}-${elem.id}">
                 <div class="song-img${isMinimalist ? " hidden" : ""}">
@@ -300,6 +310,15 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                     ${sanitize(elem.name)}<br/>
                     ${sanitize(elem.artist)}
                 </p>
+                <button id="song-edit-${id}-${elem.id}" class="requires-admin${(isLoggedIn()) ? "" : " hidden"}"><span class="material-symbols-outlined">edit</span></button>
+                <div id="song-edit-content-${id}-${elem.id}" hidden>
+                    <form class="song-edit-form" id="song-edit-form-${id}-${elem.id}">
+                        <select name="Tags" multiple>
+                            ${selectTags}
+                        </select>
+                        <input type="submit" />
+                    </form>
+                </div>
             </div>
             `;
             indexs.push(elem.id);
@@ -319,6 +338,34 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                     prepareShuffle(i);
                 }
             }
+            let target = document.getElementById(`song-edit-content-${id}-${i}`);
+            let form = document.getElementById(`song-edit-form-${id}-${i}`);
+            document.getElementById(`song-edit-${id}-${i}`).addEventListener("click", () => {
+                target.hidden = !target.hidden;
+                if (!target.hidden) {
+                    form.reset();
+                }
+            });
+            form.addEventListener("submit", (e) => {
+                e.preventDefault();
+                console.log(form);
+                
+                const data = new FormData(e.target);
+
+                for (var i = 0, len = form.elements.length; i < len; ++i) {
+                    form.elements[i].disabled = true;
+                }
+                updateSong(data, () => {
+                    for (var i = 0, len = form.elements.length; i < len; ++i) {
+                        form.elements[i].disabled = false;
+                    }
+                    form.reset();
+                }, () => {
+                    for (var i = 0, len = form.elements.length; i < len; ++i) {
+                        form.elements[i].disabled = false;
+                    }
+                });
+            });
         }
 
         // Playlist changed, maybe there is a song we should highlight now

@@ -138,7 +138,7 @@ input::placeholder {
     color: var(--placerholder-text);
 }
 
-button, .button:not(h2) {
+button, .button:not(h2), input[type='submit'] {
     padding: .8em;
     margin: .25em;
     border-radius: 5px;
@@ -153,11 +153,7 @@ button, .button:not(h2) {
     font-weight: var(--button-font-weight);
 }
 
-button:hover, .button:hover {
-    cursor: pointer;
-}
-
-h2.button:hover {
+h2.button:hover, input[type='submit']:hover {
     color: var(--button-hover);
 }
 
@@ -166,9 +162,11 @@ button:disabled, .button:disabled:not(h2) {
     background-color: var(--button-disabled);
 }
 
-button:hover:not(:disabled), .button:hover:not(h2):not(:disabled) {
+button:hover:not(:disabled), .button:hover:not(h2):not(:disabled), input[type='submit']:hover:not(:disabled) {
     box-shadow: .25em .25em var(--button-shadow);
     background-color: var(--button-hover);
+    cursor: pointer;
+    color: var(--text);
 }
 
 button:active {
@@ -272,4 +270,10 @@ img {
 
 .hidden {
     display: none;
+}
+
+.song-edit-form {
+    padding: 1em;
+    display: flex;
+    flex-direction: column;
 }
