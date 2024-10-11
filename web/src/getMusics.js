@@ -293,11 +293,19 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
             let albumImg = getAlbumImage(elem);
 
             let selectTags = "";
+            let currentTags = "";
             if (json.tags)
             {
                 for (let tag of json.tags)
                 {
                     selectTags += `<option value="${tag}">${tag}</option>`;
+                }
+            }
+            if (elem.tags)
+            {
+                for (let tag of elem.tags)
+                {
+                    currentTags += `<span class="tag">${tag}</span>`;
                 }
             }
 
@@ -310,11 +318,14 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                     ${sanitize(elem.name)}<br/>
                     ${sanitize(elem.artist)}
                 </p>
+                <div class="tags-container">
+                    ${currentTags}
+                </div>
                 <button id="song-edit-${id}-${elem.id}" class="requires-admin${(isLoggedIn()) ? "" : " hidden"}"><span class="material-symbols-outlined">edit</span></button>
                 <div id="song-edit-content-${id}-${elem.id}" hidden>
                     <form class="song-edit-form" id="song-edit-form-${id}-${elem.id}">
                         <select name="Tags" multiple>
-                            ${selectTags}
+                            ${currentTags}
                         </select>
                         <input type="submit" />
                     </form>
@@ -346,24 +357,25 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                     form.reset();
                 }
             });
+            const song = json.musics[i];
             form.addEventListener("submit", (e) => {
                 e.preventDefault();
-                console.log(form);
                 
                 const data = new FormData(e.target);
+                if (song.key) data.append("Key", key);
+                else data.append("Key", `${song.name}_${song.artist ?? ""}_${song.type ?? ""}`);
 
                 for (var i = 0, len = form.elements.length; i < len; ++i) {
                     form.elements[i].disabled = true;
                 }
                 updateSong(data, () => {
-                    for (var i = 0, len = form.elements.length; i < len; ++i) {
-                        form.elements[i].disabled = false;
-                    }
-                    form.reset();
+                    target.hidden = true;
+
+                    song.tags = data["Tags"];
+
+                    // TODO: refresh
                 }, () => {
-                    for (var i = 0, len = form.elements.length; i < len; ++i) {
-                        form.elements[i].disabled = false;
-                    }
+                    target.hidden = true;
                 });
             });
         }

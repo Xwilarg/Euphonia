@@ -27,6 +27,31 @@ public class DataController : ControllerBase
     [Authorize]
     public Response UpdateSong([FromForm] SongForm data)
     {
+        var folder = (User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value;
+        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
+
+        // ID Lookup
+        Song song = info.Musics.FirstOrDefault(x => x.Id == data.Key);
+
+        if (song == null)
+        {
+            // Key lookup
+            song = info.Musics.FirstOrDefault(x => $"{x.Name}_{x.Artist}_{x.Type}" == data.Key);
+        }
+
+        if (song == null)
+        {
+            return new()
+            {
+                Success = false,
+                Reason = "Can't find a song with the given key"
+            };
+        }
+
+        song.Tags = data.Tags;
+
+        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+
         return new()
         {
             Success = true,
