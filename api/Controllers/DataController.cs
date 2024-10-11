@@ -91,7 +91,7 @@ public class DataController : ControllerBase
             Artist = artist,
             Name = songName,
             Path = outMusicPath,
-            Playlist = "default",
+            Playlist = string.IsNullOrWhiteSpace(data.Playlist) ? "default" : data.Playlist.Trim(),
             Source = data.AlbumUrl,
             Type = songType
         };

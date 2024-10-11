@@ -12,4 +12,5 @@ public class YoutubeForm
     public string? AlbumName { set; get; } = string.Empty;
     public string? AlbumUrl { set; get; } = string.Empty;
     public string? SongType { set; get; } = string.Empty;
+    public string? Playlist { set; get; } = string.Empty;
 }

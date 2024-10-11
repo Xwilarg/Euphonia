@@ -3,7 +3,6 @@ let adminToken = null;
 
 export async function api_initAsync() {
     apiTarget = (window.location.hostname === "localhost" ? "http://localhost:5000" : window.location.origin) + "/api/";
-    console.log(apiTarget);
 
     const debugTarget = document.getElementById("apiTarget");
 
