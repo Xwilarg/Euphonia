@@ -29,6 +29,7 @@ public class EuphoniaInfo
     public Dictionary<string, Playlist> Playlists { set; get; } = [];
     public List<Song> Musics { set; get; } = [];
     public Dictionary<string, Album> Albums { set; get; } = [];
+    public string[] Tags { set; get; } = [];
 }
 
 public class Album
@@ -40,6 +41,7 @@ public class Album
 
 public class Song
 {
+    public string Id { set; get; }
     public string Name { set; get; }
     public string Path { set; get; }
     public string Artist { set; get; }
@@ -47,6 +49,7 @@ public class Song
     public string Playlist { set; get; }
     public string Source { set; get; }
     public string Type { set; get; }
+    public string[] Tags { set; get; } = [];
 }
 
 public class Playlist

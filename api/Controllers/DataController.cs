@@ -1,16 +1,11 @@
 ﻿using Euphonia.API.Models;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
 using SixLabors.ImageSharp;
-using System;
 using System.Diagnostics;
-using System.IO;
 using System.Security.Claims;
 using System.Text;
-using System.Xml.Linq;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Euphonia.API.Controllers;
 
@@ -100,6 +95,7 @@ public class DataController : ControllerBase
         // Create Song class
         var m = new Song
         {
+            Id = Guid.NewGuid().ToString(),
             Album = albumKey,
             Artist = artist,
             Name = songName,
