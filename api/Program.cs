@@ -14,6 +14,7 @@ namespace Euphonia.API
             builder.Logging.AddConsole();
 #endif
             builder.Services.AddSingleton<WebsiteManager>();
+            builder.Services.AddHttpClient();
 
             // Add services to the container.
 

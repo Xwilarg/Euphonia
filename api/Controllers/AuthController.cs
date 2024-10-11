@@ -34,6 +34,7 @@ public class AuthController : ControllerBase
     [HttpPost("register")]
     public Response RegisterEndpoint([FromBody]string path)
     {
+        if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
         if (!Path.Exists(path))
         {
             return new()
@@ -45,6 +46,11 @@ public class AuthController : ControllerBase
         if (!_manager.Endpoints.Contains(path))
         {
             _manager.Endpoints.Add(path);
+
+            if (!Directory.Exists($"{path}raw")) Directory.CreateDirectory($"{path}raw");
+            if (!Directory.Exists($"{path}normalized")) Directory.CreateDirectory($"{path}normalized");
+            if (!Directory.Exists($"{path}icon")) Directory.CreateDirectory($"{path}icon");
+
             _logger.LogInformation($"Adding path {path}");
         }
         return new()
