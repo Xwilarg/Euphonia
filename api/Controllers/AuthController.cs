@@ -31,6 +31,10 @@ public class AuthController : ControllerBase
         return Convert.ToHexString(hash).ToLower();
     }
 
+    /// <summary>
+    /// Register a path to a local website to be used later on by admins
+    /// </summary>
+    /// <param name="path">Path to the website</param>
     [HttpPost("register")]
     public Response RegisterEndpoint([FromBody]string path)
     {
@@ -60,6 +64,10 @@ public class AuthController : ControllerBase
         };
     }
 
+    /// <summary>
+    /// Authentification and return a session token
+    /// </summary>
+    /// <param name="password">Admin password</param>
     [HttpPost("token")]
     public TokenResponse GetToken([FromBody]string password)
     {
@@ -114,6 +122,10 @@ public class AuthController : ControllerBase
         };
     }
 
+    /// <summary>
+    /// Generate a password hash
+    /// </summary>
+    /// <param name="password">Password</param>
     [HttpPost("hash")]
     public TokenResponse GenerateHash([FromBody]string password)
     {
