@@ -3,6 +3,7 @@ using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.AspNetCore.Mvc;
+using SixLabors.ImageSharp;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -37,8 +38,9 @@ public class DataController : ControllerBase
         var albumName = data.AlbumName == null ? null : GetAlbumName(data.Artist, data.AlbumName);
         if (albumName != null && !string.IsNullOrWhiteSpace(data.AlbumUrl))
         {
-            var imagePath = GetImagePath(folder, albumName, Path.GetExtension(data.AlbumUrl).Split('?')[0]);
-            System.IO.File.WriteAllBytes(imagePath, _client.GetByteArrayAsync(imagePath).GetAwaiter().GetResult());
+            var img = Image.Load(_client.GetByteArrayAsync(data.AlbumUrl).GetAwaiter().GetResult());
+            var imagePath = GetImagePath(folder, albumName, "png");
+            img.SaveAsPng(imagePath);
         }
 
         // Prepare to download the rest
