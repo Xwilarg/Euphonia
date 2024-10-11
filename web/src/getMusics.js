@@ -270,7 +270,8 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
         res = []
         for (const elem of musics)
         {
-            if (elem.name.toLowerCase().includes(filter) ||
+            if ((elem.tags && elem.tags.some(x => x.toLowerCase().includes(filter))) ||
+            elem.name.toLowerCase().includes(filter) ||
             (elem.artist != null && elem.artist.toLowerCase().includes(filter)) ||
             wanakana.toRomaji(elem.name).toLowerCase().includes(filter) ||
             (elem.artist != null && wanakana.toRomaji(elem.artist).toLowerCase().includes(filter)))
@@ -325,7 +326,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                 <div id="song-edit-content-${id}-${elem.id}" hidden>
                     <form class="song-edit-form" id="song-edit-form-${id}-${elem.id}">
                         <select name="Tags" multiple>
-                            ${currentTags}
+                            ${selectTags}
                         </select>
                         <input type="submit" />
                     </form>
