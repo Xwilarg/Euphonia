@@ -60,3 +60,24 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
         adminToken = null;
     });
 }
+
+export async function uploadSong(data) {
+    fetch(`${apiTarget}data/upload`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        },
+        body: data
+    })
+    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(json => {
+        if (json.success) {
+            alert(json);
+        } else {
+            alert("Failure");
+        }
+    })
+    .catch((err) => {
+        document.getElementById("error-log").innerHTML += `<div class="error">Upload failed: ${err}</div>`;
+    });
+}
