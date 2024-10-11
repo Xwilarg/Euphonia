@@ -24,6 +24,9 @@
     /* Color of the text */
     --text: #ddd;
 
+    /* Color of the placeholder text in fields */
+    --placerholder-text: #bbb;
+
     /* Color of the song search field */
     --search-input: #347299;
 

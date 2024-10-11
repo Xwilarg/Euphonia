@@ -134,6 +134,10 @@ input {
     font-weight: var(--button-font-weight);
 }
 
+input::placeholder {
+    color: var(--placerholder-text);
+}
+
 button, .button:not(h2) {
     padding: .8em;
     margin: .25em;
@@ -149,8 +153,11 @@ button, .button:not(h2) {
     font-weight: var(--button-font-weight);
 }
 
-h2.button:hover {
+button:hover, .button:hover {
     cursor: pointer;
+}
+
+h2.button:hover {
     color: var(--button-hover);
 }
 

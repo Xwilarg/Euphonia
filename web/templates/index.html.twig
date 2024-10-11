@@ -14,6 +14,7 @@
         <link rel="stylesheet" href="/css/customize.css"/>
         <link rel="stylesheet" href="/css/index.css"/>
         <link rel="stylesheet" href="/css/player.css"/>
+        <link rel="stylesheet" href="/css/upload.css"/>
     </head>
     <body>
         <div id="banner">
@@ -21,8 +22,9 @@
         </div>
         <div id="banner-buttons">
             <button id="toggle-settings"><span class="material-symbols-outlined">menu</span></button>
-            <button id="toggle-volume"><span class="material-symbols-outlined">volume_up</span></button>
             <button id="back"><span class="material-symbols-outlined">arrow_back</span></button>
+            <button id="toggle-volume"><span class="material-symbols-outlined">volume_up</span></button>
+            <button id="upload" class="hidden requires-backend"><span class="material-symbols-outlined">upload</span></button>
         </div>
         <div id="settings" hidden>
             <fieldset>
@@ -64,6 +66,9 @@
                 API location: <span id="apiTarget"></span>
             </fieldset>
             {% endif %}
+        </div>
+        <div id="upload-window" hidden>
+            {% include 'upload.html.twig' %}
         </div>
         <div id="volume-container" hidden>
             <input type="range" max="100" id="volume"/>
