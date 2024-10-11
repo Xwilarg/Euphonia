@@ -28,8 +28,9 @@
         </div>
         <div id="settings" hidden>
             <fieldset>
-                <legend>Admin</legend>
-                <button id="toggleAdmin">Switch to admin mode</button>
+                <legend>Settings</legend>
+                <button id="toggleAdmin" disabled>Switch to admin mode</button><br>
+                <button id="minimalistMode">Toggle minimalist mode</button>
             </fieldset>
             {% if metadata.readme is not empty %}
             <fieldset>
@@ -43,8 +44,7 @@
             <fieldset>
                 <legend>last.fm</legend>
                 <div>
-                    <button id="minimalistMode">Toggle minimalist mode</button><br/>
-                    <button id="lastfmLogin">Login with last.fm</button><br/>
+                    <button id="lastfmLogin" disabled>Login with last.fm</button><br/>
                     <small>This will use cookies to store your token</small><br/>
                     last.fm status: <span id="lastfmStatus"></span><br/>
                 </div>

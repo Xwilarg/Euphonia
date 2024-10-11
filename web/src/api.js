@@ -2,7 +2,8 @@ let apiTarget;
 let adminToken = null;
 
 export async function api_initAsync() {
-    apiTarget = (window.location.hostname === "localhost" ? "https://localhost:7066" : window.location.origin) + "/api/";
+    apiTarget = (window.location.hostname === "localhost" ? "http://localhost:5000" : window.location.origin) + "/api/";
+    console.log(apiTarget);
 
     const debugTarget = document.getElementById("apiTarget");
 
@@ -11,18 +12,13 @@ export async function api_initAsync() {
     .then(json => {
         if (json.success) {
             if (debugTarget !== null) debugTarget.innerHTML = apiTarget;
-
-            for (let c of document.getElementsByClassName("requires-backend")) {
-                c.classList.remove("hidden");
-            }
+            document.getElementById("toggleAdmin").disabled = false;
         } else {
             if (debugTarget !== null) debugTarget.innerHTML = "Internal error";
-            document.getElementById("toggleAdmin").disabled = true;
         }
     })
     .catch((err) => {
         if (debugTarget !== null) debugTarget.innerHTML = err;
-        document.getElementById("toggleAdmin").disabled = true;
     });
 }
 
@@ -32,6 +28,9 @@ export function isLoggedIn() {
 
 export function logOff() {
     adminToken = null;
+    for (let c of document.getElementsByClassName("requires-backend")) {
+        c.classList.add("hidden");
+    }
 }
 
 export async function getApiToken(pwd, onSuccess, onFailure) {
@@ -49,6 +48,10 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
         if (json.success) {
             adminToken = json.token;
             onSuccess();
+
+            for (let c of document.getElementsByClassName("requires-backend")) {
+                c.classList.remove("hidden");
+            }
         } else {
             onFailure();
             adminToken = null;

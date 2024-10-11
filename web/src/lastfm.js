@@ -72,10 +72,10 @@ export async function lastfm_initAsync()
 
     if (!lastFmApiKey)
     {
-        document.getElementById("lastfmLogin").disabled = true;
         document.getElementById("lastfmStatus").innerHTML = "Unavailable";
         return;
     }
+    document.getElementById("lastfmLogin").disabled = false;
 
     document.getElementById("lastfmLogin").addEventListener("click", async () => {
         window.location.href = `https://www.last.fm/api/auth/?api_key=${lastFmApiKey}&cb=${window.location.origin}`;
