@@ -1,10 +1,12 @@
-<form>
+<form id="upload-form">
     <input type="text" name="name" placeholder="Song name"/>
     <input type="text" name="artist" placeholder="Artist name"/>
     <input type="text" name="youtube" placeholder="YouTube URL"/>
     <input type="text" name="album-name" placeholder="Album Name"/>
-    <input type="url" name="album-url" placeholder="Album URL"/>
+    <input type="url" name="album-url" placeholder="Album URL" id="upload-url"/>
     <input type="text" name="song-type" placeholder="Song type"/>
 
     <input type="submit"/>
 </form>
+
+<iframe id="upload-yt-player" src="" frameborder="0" allow="" referrerpolicy="strict-origin-when-cross-origin" ></iframe>
