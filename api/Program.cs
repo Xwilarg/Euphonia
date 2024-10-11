@@ -1,4 +1,7 @@
 using Euphonia.API.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
 
 namespace Euphonia.API
 {
@@ -25,6 +28,36 @@ namespace Euphonia.API
                 {
                     p.WithOrigins("http://localhost:5151").AllowAnyHeader();
                 });
+            });
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+            .AddJwtBearer(options =>
+            {
+                var data = Encoding.UTF8.GetBytes("EffyIsLoveYouButPleaseINeedABetterPassword");
+                var securityKey = new SymmetricSecurityKey(data);
+
+#if DEBUG
+                options.RequireHttpsMetadata = false;
+            #else
+                options.RequireHttpsMetadata = true;
+            #endif
+
+                options.SaveToken = true;
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ClockSkew = TimeSpan.Zero,
+
+                    ValidateLifetime = true,
+
+                    ValidateAudience = false,
+                    ValidateIssuer = false,
+
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = securityKey
+                };
             });
 
             var app = builder.Build();

@@ -2,6 +2,7 @@ using Euphonia.API.Models;
 using Euphonia.API.Services;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using System.Text;
 using System.Text.Json;
 
@@ -79,17 +80,31 @@ public class AuthController : ControllerBase
                 Token = null
             };
         }
-        var id = Guid.NewGuid();
-        _manager.Tokens.Add(id.ToString(), new()
+
+        var data = Encoding.UTF8.GetBytes("EffyIsLoveYouButPleaseINeedABetterPassword");
+        var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(data);
+
+        var claims = new List<Claim>
         {
-            Expiration = DateTime.Now.AddDays(1),
-            Path = target
-        });
+            new(ClaimTypes.UserData, target)
+        };
+
+        var algorithms = Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature;
+        var credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(securityKey, algorithms);
+
+        var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
+            claims: claims,
+            expires: DateTime.UtcNow.AddDays(1),
+            signingCredentials: credentials);
+
+        var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
+        var tokenString = tokenHandler.WriteToken(token);
+
         return new()
         {
             Success = true,
             Reason = null,
-            Token = id.ToString()
+            Token = tokenString
         };
     }
 
