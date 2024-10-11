@@ -63,7 +63,7 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
     });
 }
 
-export async function uploadSong(data) {
+export async function uploadSong(data, onSuccess, onFailure) {
     fetch(`${apiTarget}data/upload`, {
         method: 'POST',
         headers: {
@@ -75,11 +75,14 @@ export async function uploadSong(data) {
     .then(json => {
         if (json.success) {
             alert(json);
+            onSuccess();
         } else {
-            alert("Failure");
+            alert(`Failed to upload song: ${json.reason}`);
+            onFailure();
         }
     })
     .catch((err) => {
         document.getElementById("error-log").innerHTML += `<div class="error">Upload failed: ${err}</div>`;
+        onFailure();
     });
 }
