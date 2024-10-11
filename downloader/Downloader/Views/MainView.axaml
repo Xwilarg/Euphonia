@@ -33,9 +33,6 @@
                     SelectedIndex="{Binding DataImportIndex}" />
             </StackPanel>
         </TabItem>
-        <TabItem Header="Import YouTube">
-            <v:YoutubeDownloadView Name="YoutubeDownload" />
-        </TabItem>
         <TabItem Header="Import Folder">
             <v:ImportSongsView Name="ImportSongs" />
         </TabItem>
