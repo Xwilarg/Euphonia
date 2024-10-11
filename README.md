@@ -46,9 +46,9 @@ example.org {
 ```
 
 Then you will need to download the following and place them in your path:
- - [yt-dlp](https://github.com/yt-dlp/yt-dlp) (YouTube only)
- - [ffmpeg](https://www.ffmpeg.org/) (YouTube only)
- - [ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)
+ - [yt-dlp](https://github.com/yt-dlp/yt-dlp/wiki/Installation) (YouTube only)
+ - [ffmpeg](https://www.ffmpeg.org/download.html) (YouTube only)
+ - [ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize?tab=readme-ov-file#installation)
 
 Once this is done, go to [your website]/tools.php and enter your password, then write the value returned in data/credentials.json
 
