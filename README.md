@@ -50,7 +50,7 @@ Then you will need to download the following and place them in your path:
  - [ffmpeg](https://www.ffmpeg.org/) (YouTube only)
  - [ffmpeg-normalize](https://github.com/slhck/ffmpeg-normalize)
 
-Once this is done, send a POST request to [your website]/api/auth/hash with as body your password as JSON string, the API will return you your hashed password, write it inside data/credentials.json
+Once this is done, go to [your website]/tools.php and enter your password, then write the value returned in data/credentials.json
 
 ## How to add songs
 
