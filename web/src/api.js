@@ -27,7 +27,7 @@ export function isLoggedIn() {
 
 export function logOff() {
     adminToken = null;
-    for (let c of document.getElementsByClassName("requires-backend")) {
+    for (let c of document.getElementsByClassName("requires-admin")) {
         c.classList.add("hidden");
     }
 }
@@ -48,7 +48,7 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
             adminToken = json.token;
             onSuccess();
 
-            for (let c of document.getElementsByClassName("requires-backend")) {
+            for (let c of document.getElementsByClassName("requires-admin")) {
                 c.classList.remove("hidden");
             }
         } else {
@@ -60,6 +60,27 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
         document.getElementById("error-log").innerHTML += `<div class="error">Login failed: ${err}</div>`;
         onFailure();
         adminToken = null;
+    });
+}
+
+export async function generatePassword(pwd) {
+    fetch(`${apiTarget}auth/hash`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(pwd)
+    })
+    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(json => {
+        if (json.success) {
+            prompt("Hashed password, please paste it in your credentials file", json.token);
+        } else {
+            alert(`Request failed: ${json.reason}`);
+        }
+    })
+    .catch((err) => {
+        alert(`Request failed: ${err}`);
     });
 }
 
