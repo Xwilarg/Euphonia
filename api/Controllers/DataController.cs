@@ -83,18 +83,38 @@ public class DataController : ControllerBase
 
         if (System.IO.File.Exists(normSongPath) || System.IO.File.Exists(rawSongPath))
         {
+            if (info.Musics.Any(x => x.Name == data.Name.Trim() && x.Artist == data.Artist?.Trim() && data.SongType == data.SongType?.Trim()))
+            {
+                return new()
+                {
+                    Success = false,
+                    Reason = "There is already a music saved with the same filename"
+                };
+            }
             System.IO.File.Delete(rawSongPath);
             System.IO.File.Delete(normSongPath);
-            return new()
-            {
-                Success = false,
-                Reason = "There is already a music saved with the same filename"
-            };
         }
 
         // Download from YouTube and normalize
-        ExecuteProcess(new("yt-dlp", $"{data.Youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress"));
-        ExecuteProcess(new("ffmpeg-normalize", $"\"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame"));
+        int code; string err;
+        ExecuteProcess(new("yt-dlp", $"{data.Youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
+        if (code != 0)
+        {
+            return new()
+            {
+                Success = false,
+                Reason = $"yt-dlp failed:\n{err}"
+            };
+        }
+        ExecuteProcess(new("ffmpeg-normalize", $"\"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame"), out code, out err);
+        if (code != 0)
+        {
+            return new()
+            {
+                Success = false,
+                Reason = $"ffmpeg-normalize failed:\n{err}"
+            };
+        }
 
         // Save to json
 
@@ -102,7 +122,7 @@ public class DataController : ControllerBase
         var songName = data.Name.Trim();
         var artist = data.Artist?.Trim();
         var songType = data.SongType?.Trim();
-        var album = albumName;
+        var album = data.AlbumName?.Trim();
         var albumUrl = data.AlbumUrl?.Trim();
         if (string.IsNullOrWhiteSpace(songType)) songType = null;
 
@@ -136,7 +156,7 @@ public class DataController : ControllerBase
         {
             info.Albums.Add(albumKey, new()
             {
-                Name = albumKey,
+                Name = albumName,
                 Path = $"{albumKey}.png",
                 Source = albumUrl
             });
@@ -189,7 +209,7 @@ public class DataController : ControllerBase
     private string GetNormalizedMusicPath(string dataFolder, string musicKey)
         => $"{dataFolder}/normalized/{musicKey}";
 
-    private void ExecuteProcess(ProcessStartInfo startInfo)
+    private void ExecuteProcess(ProcessStartInfo startInfo, out int returnCode, out string errStr)
     {
         using CancellationTokenSource source = new();
 
@@ -220,9 +240,7 @@ public class DataController : ControllerBase
         p.WaitForExit();
         source.Cancel();
 
-        if (p.ExitCode != 0)
-        {
-            throw new Exception($"{startInfo.FileName} failed: {err}");
-        }
+        errStr = err.ToString();
+        returnCode = p.ExitCode;
     }
 }
