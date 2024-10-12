@@ -60,7 +60,7 @@ function updateSongHighlightColor() {
         elems[0].classList.remove("current");
     }
     for (let c of document.getElementsByClassName("song")) {
-        if (c.dataset.name == sanitize(json.musics[playlist[playlistIndex]].name)) {
+        if (c.dataset.name == json.musics[playlist[playlistIndex]].name) {
             c.classList.add("current");
         }
     }

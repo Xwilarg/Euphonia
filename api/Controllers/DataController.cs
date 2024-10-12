@@ -154,7 +154,7 @@ public class DataController : ControllerBase
         info.Musics.Add(m);
 
         // If album exists we add it to the JSON too
-        if (hasAlbum && !info.Albums.ContainsKey(album))
+        if (hasAlbum && !info.Albums.ContainsKey(albumKey))
         {
             info.Albums.Add(albumKey, new()
             {
