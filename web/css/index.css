@@ -89,7 +89,7 @@ html {
 #volume-container {
     position: fixed;
     top: 3em;
-    left: 4.6em;
+    left: 8.2em;
     background-color: var(--settings);
     padding: .5em;
     height: 305px;
