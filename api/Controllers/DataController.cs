@@ -158,7 +158,7 @@ public class DataController : ControllerBase
         {
             info.Albums.Add(albumKey, new()
             {
-                Name = albumName,
+                Name = album,
                 Path = $"{albumKey}.png",
                 Source = albumUrl
             });
