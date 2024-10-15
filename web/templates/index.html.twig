@@ -91,8 +91,8 @@
                         <button id="togglePlay"><span class="material-symbols-outlined">play_arrow</span></button>
                         <button id="previous"><span class="material-symbols-outlined">skip_previous</span></button>
                         <button id="skip"><span class="material-symbols-outlined">skip_next</span></button>
-                        <button id="share"><span class="material-symbols-outlined">share</span></button>
-                        <button id="download"><span class="material-symbols-outlined">download</span></button>
+                        {% if metadata.allowShare %}<button id="share"><span class="material-symbols-outlined">share</span></button>{% endif %}
+                        {% if metadata.allowDownload %}<button id="download"><span class="material-symbols-outlined">download</span></button>{% endif %}
                     </div>
                     <br/>
                     <span id="currDuration"></span> / <span id="maxDuration"></span>

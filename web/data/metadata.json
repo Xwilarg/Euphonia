@@ -4,5 +4,8 @@
     "readme": [],
     "showGitHub": true,
     "showLastfm": true,
-    "showDebug": false
+    "showDebug": false,
+
+    "allowDownload": true,
+    "allowShare": true
 }

@@ -451,7 +451,7 @@ function loadPage() {
     document.getElementById("previous").addEventListener("click", previousSong);
     document.getElementById("skip").addEventListener("click", nextSong);
     document.getElementById("togglePlay").addEventListener("click", togglePlay);
-    document.getElementById("share").addEventListener("click", (_) => {
+    document.getElementById("share")?.addEventListener("click", (_) => {
         const playlist = url.searchParams.get("playlist");
         const newUrl = window.location.origin + window.location.pathname + `?playlist=${playlist}&song=${encodeURIComponent(`${currSong.name}_${currSong.artist}`)}`;
         if (navigator.share)
@@ -463,7 +463,7 @@ function loadPage() {
             window.prompt("Copy to share", newUrl)
         }
     });
-    document.getElementById("download").addEventListener("click", (_) => {
+    document.getElementById("download")?.addEventListener("click", (_) => {
         let b = document.getElementById("download");
         b.disabled = true;
         fetch(`/data/normalized/${currSong.path}`)
