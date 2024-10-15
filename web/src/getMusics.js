@@ -74,7 +74,7 @@ function nextSong() {
     document.getElementById("fullPlayer").hidden = false;
 
     // Update playlist text
-    let playlistSize = playlist.length - playlistIndex;
+    let playlistSize = playlist.length - playlistIndex - 1;
     document.getElementById("playlist").classList.remove("hidden");
     document.getElementById("playlist-title").innerHTML =
     `<h3>${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:</h3>`;
