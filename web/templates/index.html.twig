@@ -104,6 +104,24 @@
                 </div>
                 <h3 id="currentSong"></h3>
             </div>
+            <template id="template-song">
+                <div class="song">
+                    <div class="song-img">
+                        <img/>
+                    </div>
+                    <p></p>
+                    <div class="tags-container">
+                    </div>
+                    <button class="requires-admin"><span class="material-symbols-outlined">edit</span></button>
+                    <div class="edit-content" hidden>
+                        <form class="song-edit-form">
+                            <select name="Tags" multiple>
+                            </select>
+                            <input type="submit" />
+                        </form>
+                    </div>
+                </div>
+            </template>
             <div id="playlists">
                 <hr/>
                 <div id="actions">

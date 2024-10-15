@@ -250,6 +250,50 @@ function displayPlaylists(playlists, id, filter) {
     document.getElementById(id).innerHTML = html;
 }
 
+/// Update the song HTML of the element given in parameter
+function updateSingleSongDisplay(node, elem) {
+    let selectTags = "";
+    let currentTags = "";
+    if (json.tags)
+    {
+        for (let tag of json.tags)
+        {
+            selectTags += `<option value="${tag}">${tag}</option>`;
+        }
+    }
+    if (elem.tags)
+    {
+        for (let tag of elem.tags)
+        {
+            currentTags += `<span class="tag">${tag}</span>`;
+        }
+    }
+
+    if (node.classList !== undefined && node.classList.contains("song")) node.dataset.name = elem.name;
+    else node.querySelector(".song").dataset.name = elem.name;
+    let albumImg = getAlbumImage(elem);
+    node.querySelector("img").src = albumImg;
+    node.querySelector("p").innerHTML = `${sanitize(elem.name)}<br/>${sanitize(elem.artist)}`;
+    node.querySelector(".tags-container").innerHTML = currentTags;
+    node.querySelector("select").innerHTML = selectTags;
+    if (isMinimalist)
+    {
+        node.querySelector(".song-img").classList.add("hidden");
+    }
+    else
+    {
+        node.querySelector(".song-img").classList.remove("hidden");
+    }
+    if (isLoggedIn())
+    {
+        node.querySelector("button").classList.remove("hidden");
+    }
+    else
+    {
+        node.querySelector("button").classList.add("hidden");
+    }
+}
+
 /// Update displayed songs
 /// @params musics: List of songs to take from
 /// @params id: id of the div to update in the HTML
@@ -257,7 +301,6 @@ function displayPlaylists(playlists, id, filter) {
 /// @params doesSort: do we sort the songs by character order
 /// @params doesShuffle: do we randomize the position of the songs BEFORE slicing them (meaning the n songs taken are random)
 function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
-    let html = "";
     if (filter === "") {
         if (doesShuffle) {
             musics = musics
@@ -289,82 +332,45 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     if (filter !== "" && musics.length == 0) {
         document.getElementById(id).innerHTML = "<b>No song name or artist is matching your search</b>";
     } else {
-        let indexs = [];
+        document.getElementById(id).innerHTML = "";
         for (let elem of musics) {
-            let albumImg = getAlbumImage(elem);
 
-            let selectTags = "";
-            let currentTags = "";
-            if (json.tags)
-            {
-                for (let tag of json.tags)
-                {
-                    selectTags += `<option value="${tag}">${tag}</option>`;
-                }
-            }
-            if (elem.tags)
-            {
-                for (let tag of elem.tags)
-                {
-                    currentTags += `<span class="tag">${tag}</span>`;
-                }
-            }
+            const curr = elem;
+            let template = document.getElementById("template-song");
+            const node = template.content.cloneNode(true);
 
-            html += `
-            <div class="song" data-name="${sanitize(elem.name)}" id="song-${id}-${elem.id}">
-                <div class="song-img${isMinimalist ? " hidden" : ""}">
-                    <img id="img-${id}-${elem.id}" src="${albumImg}"/>
-                </div>
-                <p>
-                    ${sanitize(elem.name)}<br/>
-                    ${sanitize(elem.artist)}
-                </p>
-                <div class="tags-container">
-                    ${currentTags}
-                </div>
-                <button id="song-edit-${id}-${elem.id}" class="requires-admin${(isLoggedIn()) ? "" : " hidden"}"><span class="material-symbols-outlined">edit</span></button>
-                <div id="song-edit-content-${id}-${elem.id}" hidden>
-                    <form class="song-edit-form" id="song-edit-form-${id}-${elem.id}">
-                        <select name="Tags" multiple>
-                            ${selectTags}
-                        </select>
-                        <input type="submit" />
-                    </form>
-                </div>
-            </div>
-            `;
-            indexs.push(elem.id);
-        }
-        document.getElementById(id).innerHTML = html;
-        for (let i of indexs) {
-            // Add listeners
+            let idContainer = `${curr.id}-${id}`;
+            node.querySelector(".song").id = idContainer;
             // If we are in minimalist mode, we allow click anywhere on the song since only the text part is displayed
-            // If we are not, we only allow click on the image so user can copy text without starting song
-            document.getElementById(`img-${id}-${i}`).onclick = () => {
+            node.querySelector(".song-img").onclick = () => {
                 if (!isMinimalist) {
-                    prepareShuffle(i);
+                    prepareShuffle(curr.id);
                 }
-            }
-            document.getElementById(`song-${id}-${i}`).onclick = () => {
+            };
+            // If we are not, we only allow click on the image so user can copy text without starting song
+            node.querySelector(".song").onclick = () => {
                 if (isMinimalist) {
-                    prepareShuffle(i);
+                    prepareShuffle(curr.id);
                 }
             }
-            let target = document.getElementById(`song-edit-content-${id}-${i}`);
-            let form = document.getElementById(`song-edit-form-${id}-${i}`);
-            document.getElementById(`song-edit-${id}-${i}`).addEventListener("click", () => {
+            let target = node.querySelector(".edit-content");
+            let form = node.querySelector("form");
+            node.querySelector("button").addEventListener("click", () => {
                 target.hidden = !target.hidden;
                 if (!target.hidden) {
                     form.reset();
+
+                    for (var i = 0, len = form.elements.length; i < len; ++i) {
+                        form.elements[i].disabled = false;
+                    }
                 }
             });
-            const song = json.musics[i];
             form.addEventListener("submit", (e) => {
                 e.preventDefault();
                 
                 const data = new FormData(e.target);
-                if (song.key) data.append("Key", key);
-                else data.append("Key", `${song.name}_${song.artist ?? ""}_${song.type ?? ""}`);
+                if (curr.key) data.append("Key", key);
+                else data.append("Key", `${curr.name}_${curr.artist ?? ""}_${curr.type ?? ""}`);
 
                 for (var i = 0, len = form.elements.length; i < len; ++i) {
                     form.elements[i].disabled = true;
@@ -372,13 +378,19 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                 updateSong(data, () => {
                     target.hidden = true;
 
-                    song.tags = data["Tags"];
+                    if (data["Tags"] !== undefined) {
+                        curr.tags = data["Tags"];
+                    }
 
-                    // TODO: refresh
+                    updateSingleSongDisplay(document.getElementById(idContainer), curr);
                 }, () => {
                     target.hidden = true;
                 });
             });
+
+            updateSingleSongDisplay(node, curr);
+            document.getElementById(id).appendChild(node);
+            updateSingleSongDisplay(document.getElementById(idContainer), curr);
         }
 
         // Playlist changed, maybe there is a song we should highlight now
