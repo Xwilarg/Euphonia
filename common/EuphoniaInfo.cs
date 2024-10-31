@@ -50,6 +50,7 @@ public class Song
     public string Source { set; get; }
     public string Type { set; get; }
     public string[] Tags { set; get; } = [];
+    public bool IsArchived { set; get; }
 }
 
 public class Playlist

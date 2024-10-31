@@ -108,6 +108,32 @@ export async function uploadSong(data, onSuccess, onFailure) {
     });
 }
 
+export async function archiveSong(key, onSuccess, onFailure) {
+    const data = new FormData();
+    data.append("Key", key);
+
+    fetch(`${apiTarget}data/archive`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        },
+        body: data
+    })
+    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(json => {
+        if (json.success) {
+            onSuccess();
+        } else {
+            alert(`Failed to archive song: ${json.reason}`);
+            onFailure();
+        }
+    })
+    .catch((err) => {
+        alert(`Failed to archive song: ${err}`);
+        onFailure();
+    });
+}
+
 export async function updateSong(data, onSuccess, onFailure) {
     fetch(`${apiTarget}data/update`, {
         method: 'POST',
@@ -119,7 +145,7 @@ export async function updateSong(data, onSuccess, onFailure) {
     .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
     .then(json => {
         if (json.success) {
-            alert(`Success`);
+            alert(`Your song was successfully uploaded`);
             onSuccess();
         } else {
             alert(`Failed to update song: ${json.reason}`);

@@ -3,7 +3,7 @@
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 import { deleteCookie } from "./cookie"
-import { getApiToken, isLoggedIn, logOff, updateSong } from './api';
+import { archiveSong, getApiToken, isLoggedIn, logOff, updateSong } from './api';
 
 let json;
 
@@ -294,6 +294,12 @@ function updateSingleSongDisplay(node, elem) {
     }
 }
 
+/// Return song unique identifier
+function getSongKey(song) {
+    if (song.key) return song.key;
+    return `${song.name}_${song.artist ?? ""}_${song.type ?? ""}`;
+}
+
 /// Update displayed songs
 /// @params musics: List of songs to take from
 /// @params id: id of the div to update in the HTML
@@ -369,8 +375,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                 e.preventDefault();
                 
                 const data = new FormData(e.target);
-                if (curr.key) data.append("Key", key);
-                else data.append("Key", `${curr.name}_${curr.artist ?? ""}_${curr.type ?? ""}`);
+                data.append("Key", getSongKey(curr));
 
                 for (var i = 0, len = form.elements.length; i < len; ++i) {
                     form.elements[i].disabled = true;
@@ -482,6 +487,15 @@ function loadPage() {
         .catch((err) => {
             document.getElementById("error-log").innerHTML += `<div class="error">Download "${currSong.name}" by "${currSong.artist}" failed: ${err}</div>`;
             b.disabled = false;
+        });
+    });
+    document.getElementById("archive")?.addEventListener("click", (_) => {
+        archiveSong(getSongKey(currSong), () => {
+            currSong.isArchived = true;
+            json.musics = json.musics.filter(x => !x.isArchived);
+            nextSong();
+        }, () => {
+
         });
     });
     document.getElementById("volume").addEventListener("change", (_) => {
@@ -703,6 +717,7 @@ export async function musics_initAsync() {
     });
 
     json = JSON.parse(document.getElementById("data").innerText);
+    json.musics = json.musics.filter(x => !x.isArchived);
 
     for (let [key, value] of Object.entries(json.playlists)) {
         document.getElementById("upload-playlist").innerHTML += `<option value="${key}">${value.name}</option>`;

@@ -6,6 +6,7 @@ using SixLabors.ImageSharp;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Euphonia.API.Controllers;
 
@@ -23,21 +24,45 @@ public class DataController : ControllerBase
         _client = client;
     }
 
-    [HttpPost("update")]
-    [Authorize]
-    public Response UpdateSong([FromForm] SongForm data)
+    private Song? LookupSong(string key, out string folder, out EuphoniaInfo info)
     {
-        var folder = (User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value;
-        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
+        folder = (User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value;
+        info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
         // ID Lookup
-        Song song = info.Musics.FirstOrDefault(x => x.Id == data.Key);
+        Song? song = info.Musics.FirstOrDefault(x => x.Id == key);
 
         if (song == null)
         {
             // Key lookup
-            song = info.Musics.FirstOrDefault(x => $"{x.Name}_{x.Artist}_{x.Type}" == data.Key);
+            song = info.Musics.FirstOrDefault(x => $"{x.Name}_{x.Artist}_{x.Type}" == key);
         }
+
+        return song;
+    }
+
+    [HttpPost("archive")]
+    [Authorize]
+    public Response ArchiveSong([FromForm] SongIdentifier data)
+    {
+        var song = LookupSong(data.Key, out var folder, out var info);
+
+        song.IsArchived = true;
+
+        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+
+        return new()
+        {
+            Success = true,
+            Reason = null
+        };
+    }
+
+    [HttpPost("update")]
+    [Authorize]
+    public Response UpdateSong([FromForm] SongForm data)
+    {
+        var song = LookupSong(data.Key, out var folder, out var info);
 
         if (song == null)
         {
