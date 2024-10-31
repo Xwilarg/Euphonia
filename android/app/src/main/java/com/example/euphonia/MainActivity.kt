@@ -93,6 +93,7 @@ class MainActivity : AppCompatActivity() {
 
         try {
             data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
+            data.musics = data.musics.filter { !it.isArchived }.toTypedArray()
             downloaded = data.musics.toMutableList()
         }
         catch (e: Exception) { }
@@ -104,6 +105,7 @@ class MainActivity : AppCompatActivity() {
                 text = URL("https://${currUrl}?json=1").readText()
                 File(filesDir, "${currUrl}info.json").writeText(text)
                 data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
+                data.musics = data.musics.filter { !it.isArchived }.toTypedArray()
             } catch (e: Exception) {
                 // TODO: Handle exception
                 return@execute

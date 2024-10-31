@@ -7,7 +7,8 @@ data class Song(
     val playlist: String,
     val album: String?,
     val source: String?,
-    val type: String?
+    val type: String?,
+    val isArchived: Boolean
 )
 
 data class ExtendedSong(
