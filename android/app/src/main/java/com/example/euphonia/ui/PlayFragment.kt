@@ -26,6 +26,7 @@ class PlayFragment : Fragment() {
         val player =  view.findViewById<ImageView>(R.id.playerImage)
         val desc = view.findViewById<TextView>(R.id.playerDescription)
         if (player != null) {
+            player.setImageBitmap(null)
             val bmp = BitmapFactory.decodeFile(metadata?.artworkUri?.path)
             if (bmp != null) {
                 player.setImageBitmap(bmp)
