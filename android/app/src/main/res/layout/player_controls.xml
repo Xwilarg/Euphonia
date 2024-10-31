@@ -2,6 +2,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/exo_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@color/cardview_light_background"/>
+
     <LinearLayout
         android:layout_gravity="center"
         android:gravity="center"
@@ -16,6 +22,5 @@
         <ImageButton android:id="@id/exo_next"
             style="@style/ExoStyledControls.Button.Center.Next"/>
     </LinearLayout>
-
 
 </FrameLayout>
