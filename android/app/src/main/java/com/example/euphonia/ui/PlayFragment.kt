@@ -2,12 +2,12 @@ package com.example.euphonia.ui
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
@@ -24,11 +24,17 @@ class PlayFragment : Fragment() {
 
     fun showAlbum(view: View, metadata: MediaMetadata?) {
         val player =  view.findViewById<ImageView>(R.id.playerImage)
+        val desc = view.findViewById<TextView>(R.id.playerDescription)
         if (player != null) {
-            player.setImageBitmap(null)
             val bmp = BitmapFactory.decodeFile(metadata?.artworkUri?.path)
             if (bmp != null) {
                 player.setImageBitmap(bmp)
+            }
+
+            if (metadata?.title != null) {
+                desc.text = "${metadata?.title} by ${metadata?.artist}"
+            } else {
+                desc.text = ""
             }
         }
     }
