@@ -8,8 +8,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import androidx.media3.common.MediaItem
+import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import com.example.euphonia.R
@@ -19,6 +19,17 @@ import com.google.common.util.concurrent.MoreExecutors
 class PlayFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+    }
+
+    fun showAlbum(pView: MainActivity, metadata: MediaMetadata?) {
+        val view =  pView.findViewById<ImageView>(R.id.playerImage)
+        if (view != null) {
+            view.setImageBitmap(null)
+            val bmp = BitmapFactory.decodeFile(metadata?.artworkUri?.path)
+            if (bmp != null) {
+                view.setImageBitmap(bmp)
+            }
+        }
     }
 
     @UnstableApi
@@ -37,17 +48,10 @@ class PlayFragment : Fragment() {
                 videoView.player = player
                 player.addListener(object : Player.Listener {
                     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                        val view =  pView.findViewById<ImageView>(R.id.exo_image)
-                        if (view != null) {
-                            view.setImageBitmap(null)
-                            val bmp = BitmapFactory.decodeFile(mediaItem!!.mediaMetadata.artworkUri!!.path)
-                            if (bmp != null) {
-                                view.setImageBitmap(bmp)
-                                Log.d("TEMPS", mediaItem!!.mediaMetadata.artworkUri!!.path.toString())
-                            }
-                        }
+                        showAlbum(pView, mediaItem?.mediaMetadata)
                     }
                 })
+                showAlbum(pView, pView.controllerFuture?.get()?.mediaMetadata)
             },
             MoreExecutors.directExecutor()
         )

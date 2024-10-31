@@ -3,16 +3,16 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/exo_image"
-        android:layout_width="100dp"
-        android:layout_height="100dp"
-        android:src="@color/cardview_light_background"/>
+        android:id="@+id/playerImage"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"/>
 
     <LinearLayout
         android:layout_gravity="center"
         android:gravity="center"
         android:layout_height="wrap_content"
-        android:layout_width="fill_parent">
+        android:layout_width="fill_parent"
+        android:background="@color/overlay">
         <ImageButton android:id="@id/exo_prev"
             style="@style/ExoStyledControls.Button.Center.Previous"/>
 
