@@ -2,6 +2,7 @@ package com.example.euphonia.ui
 
 import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -21,13 +22,13 @@ class PlayFragment : Fragment() {
         super.onCreate(savedInstanceState)
     }
 
-    fun showAlbum(pView: MainActivity, metadata: MediaMetadata?) {
-        val view =  pView.findViewById<ImageView>(R.id.playerImage)
-        if (view != null) {
-            view.setImageBitmap(null)
+    fun showAlbum(view: View, metadata: MediaMetadata?) {
+        val player =  view.findViewById<ImageView>(R.id.playerImage)
+        if (player != null) {
+            player.setImageBitmap(null)
             val bmp = BitmapFactory.decodeFile(metadata?.artworkUri?.path)
             if (bmp != null) {
-                view.setImageBitmap(bmp)
+                player.setImageBitmap(bmp)
             }
         }
     }
@@ -48,13 +49,14 @@ class PlayFragment : Fragment() {
                 videoView.player = player
                 player.addListener(object : Player.Listener {
                     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                        showAlbum(pView, mediaItem?.mediaMetadata)
+                        showAlbum(view, mediaItem?.mediaMetadata)
                     }
                 })
-                showAlbum(pView, pView.controllerFuture?.get()?.mediaMetadata)
+                showAlbum(view, pView.controllerFuture!!.get().mediaMetadata)
             },
             MoreExecutors.directExecutor()
         )
+
         videoView.showController()
 
         return view

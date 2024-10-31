@@ -105,7 +105,6 @@ class MusicFragment : Fragment() {
     }*/
 
     fun onRandomFromSong(position: Int) {
-
         val filteredData = getCurrentMusics()
         val song = displayedData[position]
 
