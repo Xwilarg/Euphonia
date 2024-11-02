@@ -14,7 +14,6 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ListView
-import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
@@ -144,7 +143,9 @@ class MusicFragment : Fragment() {
     }
 
     fun getCurrentMusics(): List<Song> {
-        return pView.downloaded.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }
+        val tmp = mutableListOf<Song>()
+        tmp.addAll(pView.downloaded)
+        return tmp.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }
     }
 
     fun updateList() {
