@@ -369,6 +369,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                     for (var i = 0, len = form.elements.length; i < len; ++i) {
                         form.elements[i].disabled = false;
                     }
+                    form.getElementsByClassName("edit-source")[0].value = elem.source;
                 }
             });
             form.addEventListener("submit", (e) => {
@@ -490,13 +491,14 @@ function loadPage() {
         });
     });
     document.getElementById("archive")?.addEventListener("click", (_) => {
-        archiveSong(getSongKey(currSong), () => {
-            currSong.isArchived = true;
-            json.musics = json.musics.filter(x => !x.isArchived);
-            nextSong();
-        }, () => {
-
-        });
+        let res = confirm("Are you sure you want to archive this song?");
+        if (res) {
+            archiveSong(getSongKey(currSong), () => {
+                currSong.isArchived = true;
+                json.musics = json.musics.filter(x => !x.isArchived);
+                nextSong();
+            }, () => { });
+        }
     });
     document.getElementById("volume").addEventListener("change", (_) => {
         player.volume = document.getElementById("volume").value / 100;

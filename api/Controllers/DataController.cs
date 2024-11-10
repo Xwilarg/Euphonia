@@ -74,6 +74,7 @@ public class DataController : ControllerBase
         }
 
         song.Tags = data.Tags;
+        song.Source = data.Source;
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
