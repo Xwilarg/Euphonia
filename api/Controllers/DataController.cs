@@ -218,7 +218,7 @@ public class DataController : ControllerBase
             Name = songName,
             Path = outMusicPath,
             Playlist = string.IsNullOrWhiteSpace(data.Playlist) ? "default" : data.Playlist.Trim(),
-            Source = data.AlbumUrl,
+            Source = data.Youtube,
             Type = songType
         };
         info.Musics.Add(m);

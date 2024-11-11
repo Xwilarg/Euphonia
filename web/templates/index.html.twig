@@ -93,7 +93,7 @@
                         <button id="skip"><span class="material-symbols-outlined">skip_next</span></button>
                         {% if metadata.allowShare %}<button id="share"><span class="material-symbols-outlined">share</span></button>{% endif %}
                         {% if metadata.allowDownload %}<button id="download"><span class="material-symbols-outlined">download</span></button>{% endif %}
-                        <button id="archive" class="requires-admin hidden"><span class="material-symbols-outlined">delete</span></button>
+                        <button id="archive" class="requires-admin"><span class="material-symbols-outlined">delete</span></button>
                     </div>
                     <br/>
                     <span id="currDuration"></span> / <span id="maxDuration"></span>
@@ -114,8 +114,8 @@
                     <div class="tags-container">
                     </div>
                     <div class="flex">
-                        <button class="requires-admin song-edit"><span class="material-symbols-outlined">edit</span></button>
-                        <button class="requires-admin song-repair"><span class="material-symbols-outlined">construction</span></button>
+                        <button class="requires-admin song-edit hidden"><span class="material-symbols-outlined">edit</span></button>
+                        <button class="requires-admin song-repair hidden"><span class="material-symbols-outlined">construction</span></button>
                     </div>
                     <div class="edit-content" hidden>
                         <form class="song-edit-form">

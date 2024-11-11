@@ -3,7 +3,7 @@
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 import { deleteCookie } from "./cookie"
-import { archiveSong, getApiToken, isLoggedIn, logOff, updateSong } from './api';
+import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong } from './api';
 
 let json;
 
@@ -374,14 +374,14 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                     form.getElementsByClassName("edit-source")[0].value = elem.source;
                 }
             });
-            NodeIterator.querySelector(".songg-repair").addEventListener("click", () => {
+            node.querySelector(".song-repair").addEventListener("click", () => {
                 if (isRepairOngoing) {
                     alert("A repair is already ongoing")
                 } else {
                     let res = confirm("Are you sure you want to repair this song?");
                     if (res) {
                         isRepairOngoing = true;
-                        archiveSong(getSongKey(currSong), () => {
+                        repairSong(getSongKey(elem), () => {
                             isRepairOngoing = false;
                         }, () => {
                             isRepairOngoing = false;
