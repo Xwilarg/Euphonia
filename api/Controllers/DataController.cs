@@ -85,6 +85,62 @@ public class DataController : ControllerBase
         };
     }
 
+    private string DownloadSong(string youtube, string rawSongPath, string normSongPath)
+    {
+        int code; string err;
+        ExecuteProcess(new("yt-dlp", $"{youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
+        if (code != 0)
+        {
+            System.IO.File.WriteAllText("error.log", err);
+            return $"yt-dlp {youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress failed:\n{string.Join("", err.TakeLast(1000))}";
+        }
+        ExecuteProcess(new("ffmpeg-normalize", $"\"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame"), out code, out err);
+        if (code != 0)
+        {
+            System.IO.File.WriteAllText("error.log", err);
+            return $"ffmpeg-normalize \"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame failed:\n{string.Join("", err.TakeLast(1000))}";
+        }
+        return null;
+    }
+
+    [HttpPost("repair")]
+    [Authorize]
+    public Response RepairSong([FromForm] SongIdentifier data)
+    {
+        var song = LookupSong(data.Key, out var folder, out var info);
+
+        if (song == null)
+        {
+            return new()
+            {
+                Success = false,
+                Reason = "Can't find a song with the given key"
+            };
+        }
+
+        if (!song.Source.StartsWith("http"))
+        {
+            return new()
+            {
+                Success = false,
+                Reason = "Song doens't have a valid source"
+            };
+        }
+
+        var rawPath = GetRawMusicPath(folder, song.Path);
+        var normPath = GetNormalizedMusicPath(folder, song.Path);
+        System.IO.File.Delete(rawPath);
+        System.IO.File.Delete(normPath);
+
+        var err = DownloadSong(song.Source, rawPath, normPath);
+
+        return new()
+        {
+            Success = err == null,
+            Reason = err
+        };
+    }
+
     [HttpPost("upload")]
     [Authorize]
     public Response UploadSong([FromForm]YoutubeForm data)
@@ -122,25 +178,13 @@ public class DataController : ControllerBase
         }
 
         // Download from YouTube and normalize
-        int code; string err;
-        ExecuteProcess(new("yt-dlp", $"{data.Youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
-        if (code != 0)
+        var err = DownloadSong(data.Youtube, rawSongPath, normSongPath);
+        if (err != null)
         {
-            System.IO.File.WriteAllText("error.log", err);
             return new()
             {
                 Success = false,
-                Reason = $"yt-dlp {data.Youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress failed:\n{string.Join("", err.TakeLast(1000))}"
-            };
-        }
-        ExecuteProcess(new("ffmpeg-normalize", $"\"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame"), out code, out err);
-        if (code != 0)
-        {
-            System.IO.File.WriteAllText("error.log", err);
-            return new()
-            {
-                Success = false,
-                Reason = $"ffmpeg-normalize \"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame failed:\n{string.Join("", err.TakeLast(1000))}"
+                Reason = err
             };
         }
 

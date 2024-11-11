@@ -134,6 +134,33 @@ export async function archiveSong(key, onSuccess, onFailure) {
     });
 }
 
+export async function repairSong(key, onSuccess, onFailure) {
+    const data = new FormData();
+    data.append("Key", key);
+
+    fetch(`${apiTarget}data/repair`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        },
+        body: data
+    })
+    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(json => {
+        if (json.success) {
+            onSuccess();
+            alert("Your song was successfully repaired");
+        } else {
+            alert(`Failed to repair song: ${json.reason}`);
+            onFailure();
+        }
+    })
+    .catch((err) => {
+        alert(`Failed to repair song: ${err}`);
+        onFailure();
+    });
+}
+
 export async function updateSong(data, onSuccess, onFailure) {
     fetch(`${apiTarget}data/update`, {
         method: 'POST',

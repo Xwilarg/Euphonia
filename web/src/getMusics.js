@@ -19,6 +19,8 @@ let lastTimeUpdate = 0;
 let trackDuration = 0;
 let timeStarted;
 
+let isRepairOngoing;
+
 // Next songs to play
 let playlist = [];
 let playlistIndex;
@@ -361,7 +363,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
             }
             let target = node.querySelector(".edit-content");
             let form = node.querySelector("form");
-            node.querySelector("button").addEventListener("click", () => {
+            node.querySelector(".song-edit").addEventListener("click", () => {
                 target.hidden = !target.hidden;
                 if (!target.hidden) {
                     form.reset();
@@ -372,6 +374,21 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
                     form.getElementsByClassName("edit-source")[0].value = elem.source;
                 }
             });
+            NodeIterator.querySelector(".songg-repair").addEventListener("click", () => {
+                if (isRepairOngoing) {
+                    alert("A repair is already ongoing")
+                } else {
+                    let res = confirm("Are you sure you want to repair this song?");
+                    if (res) {
+                        isRepairOngoing = true;
+                        archiveSong(getSongKey(currSong), () => {
+                            isRepairOngoing = false;
+                        }, () => {
+                            isRepairOngoing = false;
+                        });
+                    }
+                }
+            })
             form.addEventListener("submit", (e) => {
                 e.preventDefault();
                 
