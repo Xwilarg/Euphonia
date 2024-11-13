@@ -1,6 +1,5 @@
 package com.example.euphonia.ui
 
-import android.R.attr.onClick
 import android.app.AlertDialog
 import android.content.Context.MODE_PRIVATE
 import android.content.DialogInterface
@@ -12,12 +11,12 @@ import androidx.preference.PreferenceFragmentCompat
 import com.example.euphonia.MainActivity
 import com.example.euphonia.R
 import com.example.euphonia.SetupActivity
+import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
-
 
         findPreference<Preference>("website")!!.setOnPreferenceClickListener {
             val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
@@ -27,7 +26,12 @@ class SettingsFragment : PreferenceFragmentCompat() {
             true
         }
 
-        findPreference<Preference>("source")!!.setOnPreferenceClickListener {
+        findPreference<Preference>("github")!!.setOnPreferenceClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Xwilarg/Euphonia")))
+            true
+        }
+
+        findPreference<Preference>("source_add")!!.setOnPreferenceClickListener {
             val builder = AlertDialog.Builder(activity)
             builder.setTitle(R.string.pref_source_set)
 
@@ -56,6 +60,21 @@ class SettingsFragment : PreferenceFragmentCompat() {
             }
             builder.show()
 
+            true
+        }
+
+        findPreference<Preference>("source_remove")!!.setOnPreferenceClickListener {
+            val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
+            val index = sharedPref.getInt("currentServer", -1)
+
+            val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
+            val currUrl = servers.elementAt(index)
+            File(requireContext().filesDir, currUrl).deleteRecursively()
+
+            val intent = Intent(requireContext(), MainActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            startActivity(intent)
+            Runtime.getRuntime().exit(0)
             true
         }
     }

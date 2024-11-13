@@ -1,15 +1,48 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
-    <Preference
-        android:key="website"
-        app:title="@string/pref_website" />
-    <ListPreference
-        android:defaultValue="DATE"
-        android:entries="@array/sort_mode_key"
-        android:entryValues="@array/sort_mode_value"
-        android:key="sort_mode"
-        android:title="@string/pref_sort" />
-    <Preference
-        android:key="source"
-        android:title="@string/pref_source_set" />
+    <PreferenceCategory android:title="@string/pref_display">
+
+        <ListPreference
+            android:defaultValue="DATE"
+            android:entries="@array/sort_mode_key"
+            android:entryValues="@array/sort_mode_value"
+            android:key="sort_mode"
+            android:title="@string/pref_sort"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </ListPreference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_data_source">
+
+        <Preference
+            android:key="source_add"
+            android:title="@string/pref_source_set"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Preference>
+
+        <Preference
+            android:key="source_remove"
+            app:title="@string/pref_source_remove"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Preference>
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_links">
+
+        <Preference
+            android:key="website"
+            app:title="@string/pref_website"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Preference>
+        <Preference
+            android:key="github"
+            app:title="@string/pref_github"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Preference>
+    </PreferenceCategory>
 </PreferenceScreen>

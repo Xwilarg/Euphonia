@@ -2,7 +2,13 @@ import { uploadSong } from "../common/api";
 
 export async function upload_initAsync() {
     document.getElementById("upload").addEventListener("click", () => {
-        document.getElementById("upload-window").hidden = !document.getElementById("upload-window").hidden;
+        const popup = document.getElementById("upload-window");
+        popup.classList.remove("is-hidden");
+    });
+
+    document.getElementById("close-upload").addEventListener("click", () => {
+        const popup = document.getElementById("upload-window");
+        popup.classList.add("is-hidden");
     });
 
     document.getElementById("upload-form").addEventListener("submit", (e) => {

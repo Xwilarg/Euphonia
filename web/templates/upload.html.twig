@@ -1,16 +1,58 @@
-<form id="upload-form">
-    <input type="text" name="Name" placeholder="Song name"/>
-    <input type="text" name="Artist" placeholder="Artist name"/>
-    <input type="text" name="Youtube" placeholder="YouTube URL"/>
-    <input type="text" name="AlbumName" placeholder="Album Name"/>
-    <input type="url" name="AlbumUrl" placeholder="Album URL" id="upload-url"/>
-    <input type="text" name="SongType" placeholder="Song type"/>
-    <label for="upload-playlist">Playlist:</label>
-    <select id="upload-playlist" name="Playlist">
-        <option value="default">Default</option>
-    </select>
+<div class="modal-background"></div>
+<div class="modal-card">
+    <header class="modal-card-head">
+        <p class="modal-card-title">Upload new song</p>
+        <button id="close-upload" class="delete" aria-label="close"></button>
+    </header>
+    <section class="modal-card-body">
+        <form id="upload-form">
+            <div class="field">
+                <label class="label">Name</label>
+                <div class="control">
+                    <input class="input" type="text" name="Name" placeholder="Name of the song"/>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Artist name</label>
+                <div class="control">
+                    <input class="input" type="text" name="Artist" placeholder="Name of the artists"/>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Youtube URL</label>
+                <div class="control">
+                    <input class="input" type="url" name="Artist" placeholder="Youtube URL to the song" id="upload-url"/>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Album name</label>
+                <div class="control">
+                    <input class="input" type="text" name="AlbumName" placeholder="Name of the album"/>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Album URL</label>
+                <div class="control">
+                    <input class="input" type="url" name="AlbumUrl" placeholder="URL to an image of the album"/>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Song type</label>
+                <div class="control">
+                    <input class="input" type="text" name="SongType" placeholder="Is it a cover, live, alternative version..."/>
+                </div>
+            </div>
+            <div class="field">
+                <label class="label">Playlist</label>
+                <select id="upload-playlist" name="Playlist">
+                    <option value="default">Default</option>
+                </select>
+            </div>
+            <div class="field">
+                <input class="button is-link" type="submit"/>
+            </div>
+        </form>
 
-    <input type="submit"/>
-</form>
-
-<iframe id="upload-yt-player" src="" frameborder="0" allow="" referrerpolicy="strict-origin-when-cross-origin" ></iframe>
+        <iframe id="upload-yt-player" src="" frameborder="0" allow="" referrerpolicy="strict-origin-when-cross-origin" ></iframe>
+    </section>    
+</div>
