@@ -1,9 +1,9 @@
 <div class="navbar-brand">
-    <div class="navbar-item has-dropdown is-hoverable" id="settings">
+    <div class="navbar-item has-dropdown is-active" id="settings">
         <button class="navbar-link" id="toggle-settings">
             <span class="material-symbols-outlined">menu</span>
         </button>
-        <div class="navbar-dropdown">
+        <div id="settings-dropdown" class="navbar-dropdown is-hidden">
             <fieldset class="box">
                 <legend class="label has-text-centered">Settings</legend>
                 <button class="button" id="toggleAdmin" disabled>Switch to admin mode</button><br>
@@ -48,11 +48,11 @@
     <button class="navbar-item" id="back">
         <span class="material-symbols-outlined">arrow_back</span>
     </button>
-    <div class="navbar-item has-dropdown is-hoverable" id="volume-container">
+    <div class="navbar-item has-dropdown is-active" id="volume-container">
         <button class="navbar-item" id="toggle-volume">
             <span class="material-symbols-outlined">volume_up</span>
         </button>
-        <div class="navbar-dropdown has-text-centered">
+        <div id="volume-container-dropdown" class="navbar-dropdown has-text-centered is-hidden">
             <input type="range" max="100" id="volume"/>
         </div>
     </div>
