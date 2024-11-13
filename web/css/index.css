@@ -1,254 +1,79 @@
-html {
-    font-family: var(--font);
-    font-weight: var(--font-weight);
-    color: var(--text);
-    background: linear-gradient(var(--background), var(--background-dark));
-    background-color: var(--background);
-    background-image: var(--background-image);
-    min-height: 100%;
-    background-blend-mode: multiply;
-    background-attachment: fixed;
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
-}
-
-#banner {
-    margin: 0;
-    padding: 0;
-    top: 0;
-    width: 100%;
-    height: calc(40px + .25em * 2 + 5px);
-    left: 0;
-    z-index: 2;
-    position: fixed;
-    background-color: var(--banner);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: var(--banner-text);
-}
-
-#banner h1 {
-    font-size: xx-large;
-}
-
-@media (max-width: 600px) {
-    #banner {
-        justify-content: right;
-    }
-
-    #banner h1 {
-        margin-right: 20px;
-    }
-}
-
-#banner-buttons {
-    position: fixed;
-    top: .2em;
-    left: .5em;
-    z-index: 2;
-}
-
-#banner-buttons .material-symbols-outlined {
-    position: relative;
-    top: -4px;
-}
-
-#settings {
-    position: fixed;
-    top: calc(40px + .25em * 2 + 5px);
-    left: 0;
-    background-color: var(--settings);
-    padding: .5em;
-    height: 100%;
-    z-index: 2;
-    width: 500px;
-}
-
-@media (max-width: 500px) {
-    #settings {
-        width: 100%;
-    }
-
-    fieldset {
-        width: 85%;
-    }
-}
-
-#settings fieldset {
-    max-height: 300px;
-    overflow: auto;
-}
-
-#settings .error {
-    max-width: 450px;
-    white-space: nowrap;
-}
-
-#volume-container {
-    position: fixed;
-    top: 3em;
-    left: 8.2em;
-    background-color: var(--settings);
-    padding: .5em;
-    height: 305px;
-    z-index: 3;
+/* Volume slider need to be vertical */
+#volume-container > .navbar-dropdown {
     writing-mode: vertical-lr;
-    width: 20px;
-    border-radius: 5px;
+    padding-left: 1em;
+    padding-top: 20em;
     direction: rtl;
 }
-
-#volume {
-    height: 90%;
-    margin-left: -10px;
+#volume-container > .navbar-dropdown > input {
+    height: 20em;
 }
 
-fieldset {
-    border-color: var(--fieldset);
-    margin-top: 1em;
-    padding: 1em;
-}
-
-h2 {
-    text-align: center;
-}
-
-#canvas {
-    margin-top: 4em;
-}
-
-#actions {
-    text-align: center;
-    margin-bottom: 2em;
-}
-
-input {
-    padding: .8em;
-    border-radius: 5px;
-    background-color: var(--search-input);
-    border: 1px var(--search-input-border) solid;
-    margin-top: 10px;
-    font-family: var(--font);
-    font-weight: var(--button-font-weight);
-}
-
-input::placeholder {
-    color: var(--placerholder-text);
-}
-
-button, .button:not(h2), input[type='submit'] {
-    padding: .8em;
-    margin: .25em;
-    border-radius: 5px;
-    background-color: var(--button);
-    box-shadow: .15em .15em var(--button-shadow);
-    border: 1px var(--button-border) solid;
-    color: var(--button-text);
-    font-size: .8em;
-    height: 40px;
-    text-decoration: none;
-    font-family: var(--font);
-    font-weight: var(--button-font-weight);
-}
-
-h2.button:hover, input[type='submit']:hover {
-    color: var(--button-hover);
-}
-
-button:disabled, .button:disabled:not(h2) {
-    box-shadow: none;
-    background-color: var(--button-disabled);
-}
-
-button:hover:not(:disabled), .button:hover:not(h2):not(:disabled), input[type='submit']:hover:not(:disabled) {
-    box-shadow: .25em .25em var(--button-shadow);
-    background-color: var(--button-hover);
-    cursor: pointer;
-    color: var(--text);
-}
-
-button:active {
-    box-shadow: none;
-}
-
+/* Song container image is always 256x256 */
 .song {
-    margin: .5em;
-    width: 250px;
-    background-color: var(--song);
-    border-radius: 5px;
-    color: var(--song-text);
-    border: var(--song-border-size) solid var(--song-border);
+    width: 256px;
 }
 
-.song > p {
-    max-width: 250px;
+/* Elements we can click */
+.song-img, h2 {
+    cursor: pointer;
+}
+
+/* Fixed song description size, overflow is hidden with an ellipsis */
+.song p {
+    height: 3em;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
-    padding: 0 5px;
 }
 
-.song img {
-    cursor: pointer;
-    object-fit: cover;
-    object-position: 50% 0;
-    border-radius: 5px;
+/* https://github.com/jgthms/bulma/issues/2398 */
+.card:last-child {
+    margin-bottom: 1.5rem;
 }
 
-.current {
-    background-color: var(--current);
-    color: var(--current-text);
+/* Used by "repeat" button of the player */
+.unactive {
+    color: rgb(131, 131, 131);
 }
 
-img {
-    width: 250px;
-    height: 250px;
+/* Default navbar are uh */
+.navbar-dropdown {
+    z-index: 20;
+    background-color: var(--bulma-scheme-main);
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
-.playlist-display-container img {
-    width: 125px;
-    height: 125px;
+/* Audio player */
+#full-player {
+    max-width: 450px;
 }
 
-@media (max-width: 600px) {
-    .song {
-        width: 150px;
-    }
-
-    img {
-        width: 150px;
-        height: 150px;
-    }
-
-    .playlist-display-container img {
-        width: 75px;
-        height: 75px;
-    }
+#full-player img {
+    width: 100%;
+    border-radius: 25px;
+    margin-bottom: 10px;
 }
 
-.list-wrapper, .list {
-    display: flex;
-    flex-flow: wrap;
-    justify-content: center;
-    text-align: center;
+#full-player input[type=range] {
+    width: 100%;
 }
 
-.list {
-    max-width: calc(300px * 5);
-}
-
+/* Playlist */
 #playlist {
     bottom: 0;
     right: 0;
+    width: 20em;
     position: fixed;
-    background-color: var(--playlist);
-    border: 1px var(--playlist-border) solid;
-    width: 25em;
-    border-radius: 5px;
-    color: var(--playlist-text);
     z-index: 2;
+    margin-bottom: 0;
+}
+
+#playlist .next-song {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 @media (max-width: 50em) {
@@ -257,38 +82,17 @@ img {
     }
 }
 
-#playlist-title {
-    text-align: center;
+/* Playlist display */
+.playlist-img-container {
+    height: calc(124px * 2);
 }
 
-.next-song {
-    padding: .4em 10px;
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
+#playlistlist img {
+    width: 125px;
+    height: 125px;
 }
 
-.hidden {
-    display: none;
-}
-
-.song-edit-form {
-    padding: 1em;
-    display: flex;
-    flex-direction: column;
-}
-
-.tags-container {
-    display: flex;
-    gap: 10px;
-    flex-flow: wrap;
-    justify-content: center;
-    margin-bottom: 5px;
-}
-
-.tag {
-    border: grey solid 1px;
-    background-color: gray;
-    padding: 2px 10px;
-    border-radius: 25px;
+/* Clean spaces a bit */
+#actions {
+    margin-bottom: 10px;
 }

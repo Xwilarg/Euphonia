@@ -6,17 +6,24 @@
         <meta property="og:description" content="Setup tools for Euphonia"/>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
         <script src="/js/tools.js"></script>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"/>
         <link rel="stylesheet" href="/css/customize.css"/>
-        <link rel="stylesheet" href="/css/index.css"/>
     </head>
-    <body>
-        <fieldset>
-            <legend>Password generator</legend>
+    <body class="container">
+        <fieldset class="box">
+            <legend class="label has-text-centered">Password generator</legend>
             <form id="password-form">
-                <input type="password" id="password" placeholder="Your password"/>
-                <input type="submit"/>
+                <div class="field">
+                    <label class="label">Password</label>
+                    <div class="control">
+                        <input class="input" type="password" id="password" placeholder="Your password"/>
+                    </div>
+                </div>
+                <div class="field">
+                    <input class="button is-link" type="submit"/>
+                </div>
             </form>
         </fieldset>
     </body>

@@ -1,0 +1,21 @@
+<audio id="player"></audio>
+<img class="image" id="currentImage" src=""/>
+<div>
+    <div id="controls">
+        <button class="button" id="repeat"><span class="material-symbols-outlined unactive">repeat</span></button>
+        <button class="button" id="togglePlay"><span class="material-symbols-outlined">play_arrow</span></button>
+        <button class="button" id="previous"><span class="material-symbols-outlined">skip_previous</span></button>
+        <button class="button" id="skip"><span class="material-symbols-outlined">skip_next</span></button>
+        {% if metadata.allowShare %}<button class="button" id="share"><span class="material-symbols-outlined">share</span></button>{% endif %}
+        {% if metadata.allowDownload %}<button class="button" id="download"><span class="material-symbols-outlined">download</span></button>{% endif %}
+        <button id="archive" class="button" class="requires-admin"><span class="material-symbols-outlined">delete</span></button>
+    </div>
+    <br/>
+    <span id="currDuration"></span> / <span id="maxDuration"></span>
+    <div id="progresses">
+        <div id="durationSliderBackground"></div>
+        <input type="range" id="durationSlider">
+        <div id="progressRanges"></div>
+    </div>
+    <h3 id="currentSong" class="has-text-weight-semibold"></h3>
+</div>

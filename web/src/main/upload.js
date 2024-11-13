@@ -1,4 +1,4 @@
-import { uploadSong } from "./api";
+import { uploadSong } from "../common/api";
 
 export async function upload_initAsync() {
     document.getElementById("upload").addEventListener("click", () => {

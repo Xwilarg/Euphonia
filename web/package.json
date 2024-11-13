@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "An easy way to store and listen to your music",
   "scripts": {
-    "build": "esbuild src/index.js --bundle --minify --sourcemap --outfile=js/index.js && esbuild src/tools.js --bundle --minify --sourcemap --outfile=js/tools.js"
+    "build": "esbuild src/main/index.js --bundle --minify --sourcemap --outfile=js/index.js && esbuild src/tools/tools.js --bundle --minify --sourcemap --outfile=js/tools.js",
+    "init": "npm i && composer i",
+    "start": "php -S localhost:5151"
   },
   "repository": {
     "type": "git",

@@ -1,4 +1,4 @@
-import { api_initAsync, generatePassword } from "./api";
+import { api_initAsync, generatePassword } from "../common/api";
 
 window.onload = function() {
     api_initAsync();

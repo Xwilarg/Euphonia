@@ -3,7 +3,7 @@
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 import { deleteCookie } from "./cookie"
-import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong } from './api';
+import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong } from '../common/api';
 
 let json;
 
@@ -26,8 +26,6 @@ let playlist = [];
 let playlistIndex;
 
 let replayMode = 0;
-
-let adminToken = null;
 
 // #region Music management
 
@@ -73,11 +71,11 @@ function nextSong() {
     updateScrobblerAsync();
 
     // Displayer player if not here
-    document.getElementById("fullPlayer").hidden = false;
+    document.getElementById("full-player").classList.remove("is-hidden");
 
     // Update playlist text
     let playlistSize = playlist.length - playlistIndex - 1;
-    document.getElementById("playlist").classList.remove("hidden");
+    document.getElementById("playlist").classList.remove("is-hidden");
     document.getElementById("playlist-title").innerHTML =
     `<h3>${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:</h3>`;
     let playlistElems = document.getElementsByClassName("next-song");
@@ -218,22 +216,24 @@ function getPlaylistHtml(id, name) {
 
     let htmlImgs = "";
     if (imgs.length === 0) {
-        htmlImgs = `<img src="/img/CD.png"/ draggable="false">`;
+        htmlImgs = `<img class="image" src="/img/CD.png"/ draggable="false">`;
     } else {
         for (let img of imgs) {
-            htmlImgs += `<img src="${img[0]}"/ draggable="false">`;
+            htmlImgs += `<img class="image" src="${img[0]}"/ draggable="false">`;
         }
     }
 
     return `
-    <div class="song playlist-display-container" onclick="window.location=window.location.origin + window.location.pathname + '?playlist=${id}';">
-        <div class="list">
+    <div class="song card" onclick="window.location=window.location.origin + window.location.pathname + '?playlist=${id}';">
+        <div class="is-flex is-flex-wrap-wrap is-gap-0 playlist-img-container card-image">
         ${htmlImgs}
         </div>
-        <p>
-            ${sanitize(name)}<br/>
-            ${count} songs
-        </p>
+        <div class="card-content has-text-centered">
+            <p>
+                ${sanitize(name)}<br/>
+                ${count} songs
+            </p>
+        </div>
     </div>
     `;
 }
@@ -280,19 +280,19 @@ function updateSingleSongDisplay(node, elem) {
     node.querySelector("select").innerHTML = selectTags;
     if (isMinimalist)
     {
-        node.querySelector(".song-img").classList.add("hidden");
+        node.querySelector(".song-img").classList.add("is-hidden");
     }
     else
     {
-        node.querySelector(".song-img").classList.remove("hidden");
+        node.querySelector(".song-img").classList.remove("is-hidden");
     }
     if (isLoggedIn())
     {
-        node.querySelector("button").classList.remove("hidden");
+        node.querySelector("button").classList.remove("is-hidden");
     }
     else
     {
-        node.querySelector("button").classList.add("hidden");
+        node.querySelector("button").classList.add("is-hidden");
     }
 }
 
@@ -525,13 +525,13 @@ function loadPage() {
     });
 
     function toggleHide(id) {
-        if (document.getElementById(id).classList.contains("hidden"))
+        if (document.getElementById(id).classList.contains("is-hidden"))
         {
-            document.getElementById(id).classList.remove("hidden");
+            document.getElementById(id).classList.remove("is-hidden");
         }
         else
         {
-            document.getElementById(id).classList.add("hidden");
+            document.getElementById(id).classList.add("is-hidden");
         }
     }
     document.getElementById("random-title").addEventListener("click", _ => {
@@ -605,9 +605,9 @@ function loadPage() {
     {
         if (json.musics.length > 5) {
             displaySongs(json.musics, "songlist", "", false, true, 5);
-            document.getElementById("random").classList.remove("hidden");
+            document.getElementById("random").classList.remove("is-hidden");
         } else {
-            document.getElementById("random").classList.add("hidden");
+            document.getElementById("random").classList.add("is-hidden");
         }
         if (json.highlight !== undefined && json.highlight.length > 0) {
             document.getElementById("highlight").hidden = false;
@@ -656,16 +656,16 @@ function toggleMinimalistMode() {
     isMinimalist = !isMinimalist;
 
     if (isMinimalist) {
-        document.getElementById("currentImage").classList.add("hidden");
+        document.getElementById("currentImage").classList.add("is-hidden");
         for (let e of document.querySelectorAll(".song-img"))
         {
-            e.classList.add("hidden");
+            e.classList.add("is-hidden");
         }
     } else {
-        document.getElementById("currentImage").classList.remove("hidden");
+        document.getElementById("currentImage").classList.remove("is-hidden");
         for (let e of document.querySelectorAll(".song-img"))
         {
-            e.classList.remove("hidden");
+            e.classList.remove("is-hidden");
         }
     }
 }
@@ -712,8 +712,6 @@ function chooseDisplay() {
 
 export async function musics_initAsync() {
     // Buttons
-    document.getElementById("toggle-settings").addEventListener("click", () => { document.getElementById("settings").hidden = !document.getElementById("settings").hidden; });
-    document.getElementById("toggle-volume").addEventListener("click", () => { document.getElementById("volume-container").hidden = !document.getElementById("volume-container").hidden; });
     document.getElementById("refresh-btn").addEventListener("click", refresh);
     document.getElementById("random-btn").addEventListener("click", random);
     document.getElementById("minimalistMode")?.addEventListener("click", toggleMinimalistMode);
