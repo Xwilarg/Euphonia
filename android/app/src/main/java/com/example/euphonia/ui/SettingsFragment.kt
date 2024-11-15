@@ -15,6 +15,8 @@ import java.io.File
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
+    var deleteConfirm = false
+
     override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
         setPreferencesFromResource(R.xml.root_preferences, rootKey)
 
@@ -22,12 +24,22 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
             val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
             val index = sharedPref.getInt("currentServer", -1)
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://${servers.elementAt(index)}")))
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://${servers.elementAt(index)}")
+                )
+            )
             true
         }
 
         findPreference<Preference>("github")!!.setOnPreferenceClickListener {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/Xwilarg/Euphonia")))
+            startActivity(
+                Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://github.com/Xwilarg/Euphonia")
+                )
+            )
             true
         }
 
@@ -44,13 +56,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
             val cleanOptions = options.toTypedArray()
 
             builder.setItems(cleanOptions) { _: DialogInterface, which: Int ->
-                if (which == servers.count())
-                {
+                if (which == servers.count()) {
                     val intent = Intent(requireContext(), SetupActivity::class.java)
                     startActivity(intent)
-                }
-                else
-                {
+                } else {
                     with(sharedPref.edit()) {
                         putInt("currentServer", which)
                         apply()
@@ -64,17 +73,25 @@ class SettingsFragment : PreferenceFragmentCompat() {
         }
 
         findPreference<Preference>("source_remove")!!.setOnPreferenceClickListener {
-            val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
-            val index = sharedPref.getInt("currentServer", -1)
+            if (deleteConfirm) {
+                val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
+                val index = sharedPref.getInt("currentServer", -1)
 
-            val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
-            val currUrl = servers.elementAt(index)
-            File(requireContext().filesDir, currUrl).deleteRecursively()
+                val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
+                val currUrl = servers.elementAt(index)
+                File(requireContext().filesDir, currUrl).deleteRecursively()
 
-            val intent = Intent(requireContext(), MainActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            startActivity(intent)
-            Runtime.getRuntime().exit(0)
+                val intent = Intent(requireContext(), MainActivity::class.java)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                startActivity(intent)
+                Runtime.getRuntime().exit(0)
+
+            } else {
+                findPreference<Preference>("source_remove")!!.title =
+                    resources.getString(R.string.pref_deletion_confirm)
+
+                deleteConfirm = true
+            }
             true
         }
     }

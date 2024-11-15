@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             builder
-                .setContentText("${data.musics.size} / ${data.musics.size}")
+                .setContentText(resources.getString(R.string.music_updated))
                 .setSilent(false)
                 .setOngoing(false)
             notificationManager.notify(1, builder.build())

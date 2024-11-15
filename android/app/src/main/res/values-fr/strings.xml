@@ -20,4 +20,6 @@
     <string name="pref_github">Ouvrir le GitHub</string>
     <string name="pref_source_remove">Enlever la source de données actuelle</string>
     <string name="pref_source_remove_confirm">Êtes-vous sûr de vouloir supprimer la source de données actuelle ?</string>
+    <string name="pref_deletion_confirm">Appuyez encore un fois pour confirmer la suppression</string>
+    <string name="music_updated">Toutes les musiques sont maintenant à jour</string>
 </resources>
