@@ -1,5 +1,6 @@
 using Euphonia.API.Models;
 using Euphonia.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -136,5 +137,16 @@ public class AuthController : ControllerBase
             Reason = null,
             Token = hashed
         };
+    }
+
+    [Authorize]
+    [HttpPost("validate")]
+    public Response ValidateToken()
+    {
+        return new Response
+        {
+            Success = true,
+            Reason = null
+        }
     }
 }

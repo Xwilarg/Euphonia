@@ -1,3 +1,5 @@
+import { setCookie } from "../main/cookie";
+
 let apiTarget;
 let adminToken = null;
 
@@ -46,6 +48,7 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
     .then(json => {
         if (json.success) {
             adminToken = json.token;
+            setCookie("admin", json.token);
             onSuccess();
 
             for (let c of document.getElementsByClassName("requires-admin")) {
