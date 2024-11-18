@@ -30,7 +30,7 @@ export function isLoggedIn() {
 export function logOff() {
     adminToken = null;
     for (let c of document.getElementsByClassName("requires-admin")) {
-        c.classList.add("hidden");
+        c.classList.add("is-hidden");
     }
 }
 
@@ -52,7 +52,7 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
             onSuccess();
 
             for (let c of document.getElementsByClassName("requires-admin")) {
-                c.classList.remove("hidden");
+                c.classList.remove("is-hidden");
             }
         } else {
             onFailure();

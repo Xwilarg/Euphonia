@@ -3,12 +3,12 @@ import { uploadSong } from "../common/api";
 export async function upload_initAsync() {
     document.getElementById("upload").addEventListener("click", () => {
         const popup = document.getElementById("upload-window");
-        popup.classList.remove("is-hidden");
+        popup.classList.add("is-active");
     });
 
     document.getElementById("close-upload").addEventListener("click", () => {
         const popup = document.getElementById("upload-window");
-        popup.classList.add("is-hidden");
+        popup.classList.remove("is-active");
     });
 
     document.getElementById("upload-form").addEventListener("submit", (e) => {
