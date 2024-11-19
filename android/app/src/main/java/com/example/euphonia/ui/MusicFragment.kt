@@ -164,7 +164,7 @@ class MusicFragment : Fragment() {
                     else if (sort == "MUSICNAME") displayedData = displayedData.sortedBy { it.name }
                     else if (sort == "ARTISTNAME") displayedData = displayedData.sortedBy { it.artist }
 
-                    displayedData = displayedData.filter { it.name.uppercase().contains(searchFilter) || it.artist.uppercase().contains(searchFilter) }
+                    displayedData = displayedData.filter { it.name.uppercase().contains(searchFilter) || (it.artist != null && it.artist.uppercase().contains(searchFilter)) }
 
                     SongAdapter(requireContext(), displayedData.map { ExtendedSong(it, pView.data.albums[it.album]) }, pView.currUrl!!)
                 } else {
