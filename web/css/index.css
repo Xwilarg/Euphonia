@@ -136,3 +136,8 @@
         max-width: 100%;
     }
 }
+
+/* Selected song */
+.current {
+    box-shadow: 0 0.5em 1em -0.125em rgba(50, 110, 167, 0.2), 0 0px 0 1px rgba(50, 110, 167, 0.05) !important;
+}
