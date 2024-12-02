@@ -731,7 +731,9 @@ export async function musics_initAsync() {
     });
 
     json = JSON.parse(document.getElementById("data").innerText);
-    json.musics = json.musics.filter(x => !x.isArchived);
+    if (json.musics) {
+        json.musics = json.musics.filter(x => !x.isArchived);
+    }
 
     for (let [key, value] of Object.entries(json.playlists)) {
         document.getElementById("upload-playlist").innerHTML += `<option value="${key}">${value.name}</option>`;
