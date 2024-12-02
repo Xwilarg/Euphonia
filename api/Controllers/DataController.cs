@@ -159,9 +159,7 @@ public class DataController : ControllerBase
         var albumName = data.AlbumName == null ? null : GetAlbumName(data.Artist, data.AlbumName);
         if (albumName != null && !string.IsNullOrWhiteSpace(data.AlbumUrl))
         {
-            var img = Image.Load(_client.GetByteArrayAsync(data.AlbumUrl).GetAwaiter().GetResult());
-            var imagePath = GetImagePath(folder, albumName, "png");
-            img.SaveAsPng(imagePath);
+            Utils.SaveUrlAsImage(_client, data.AlbumUrl, GetImagePath(folder, albumName, "webp"));
         }
 
         // Prepare to download the rest
@@ -253,16 +251,6 @@ public class DataController : ControllerBase
 
     private const string AudioFormat = "mp3";
 
-    private string CleanPath(string name)
-    {
-        var forbidden = new[] { '<', '>', ':', '\\', '/', '"', '|', '?', '*', '#', '&', '%' };
-        foreach (var c in forbidden)
-        {
-            name = name.Replace(c.ToString(), string.Empty);
-        }
-        return name;
-    }
-
     private string GetMusicKey(string songName, string artist, string songType)
     {
         var outMusicPath = GetSongName(songName, artist);
@@ -275,10 +263,10 @@ public class DataController : ControllerBase
     }
 
     private string GetAlbumName(string? artist, string album)
-        => $"{CleanPath(artist?.Trim() ?? "unknown")}_{CleanPath(album.Trim())}";
+        => $"{Utils.CleanPath(artist?.Trim() ?? "unknown")}_{Utils.CleanPath(album.Trim())}";
 
     private string GetSongName(string song, string? artist)
-        => $"{CleanPath(song.Trim())}_{CleanPath(artist?.Trim() ?? "unknown")}";
+        => $"{Utils.CleanPath(song.Trim())}_{Utils.CleanPath(artist?.Trim() ?? "unknown")}";
 
     private string GetImagePath(string dataFolder, string albumName, string ext)
         => $"{dataFolder}icon/{albumName}.{ext}";

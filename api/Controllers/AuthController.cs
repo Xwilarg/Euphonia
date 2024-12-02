@@ -55,6 +55,7 @@ public class AuthController : ControllerBase
             if (!Directory.Exists($"{path}raw")) Directory.CreateDirectory($"{path}raw");
             if (!Directory.Exists($"{path}normalized")) Directory.CreateDirectory($"{path}normalized");
             if (!Directory.Exists($"{path}icon")) Directory.CreateDirectory($"{path}icon");
+            if (!Directory.Exists($"{path}icon/playlist")) Directory.CreateDirectory($"{path}icon/playlist");
 
             _logger.LogInformation($"Adding path {path}");
         }

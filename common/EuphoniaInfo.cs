@@ -57,4 +57,5 @@ public class Playlist
 {
     public string Name { set; get; }
     public string Description { set; get; }
+    public string ImageUrl { set; get; }
 }
