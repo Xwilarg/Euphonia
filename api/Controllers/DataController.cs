@@ -6,7 +6,6 @@ using SixLabors.ImageSharp;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace Euphonia.API.Controllers;
 
@@ -43,34 +42,43 @@ public class DataController : ControllerBase
 
     [HttpPost("archive")]
     [Authorize]
-    public Response ArchiveSong([FromForm] SongIdentifier data)
-    {
-        var song = LookupSong(data.Key, out var folder, out var info);
-
-        song.IsArchived = true;
-
-        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
-
-        return new()
-        {
-            Success = true,
-            Reason = null
-        };
-    }
-
-    [HttpPost("update")]
-    [Authorize]
-    public Response UpdateSong([FromForm] SongForm data)
+    public IActionResult ArchiveSong([FromForm] SongIdentifier data)
     {
         var song = LookupSong(data.Key, out var folder, out var info);
 
         if (song == null)
         {
-            return new()
+            return StatusCode(StatusCodes.Status400BadRequest, new Response()
             {
                 Success = false,
                 Reason = "Can't find a song with the given key"
-            };
+            });
+        }
+
+        song.IsArchived = true;
+
+        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+
+        return StatusCode(StatusCodes.Status200OK, new Response()
+        {
+            Success = true,
+            Reason = null
+        });
+    }
+
+    [HttpPost("update")]
+    [Authorize]
+    public IActionResult UpdateSong([FromForm] SongForm data)
+    {
+        var song = LookupSong(data.Key, out var folder, out var info);
+
+        if (song == null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            {
+                Success = false,
+                Reason = "Can't find a song with the given key"
+            });
         }
 
         song.Tags = data.Tags;
@@ -78,11 +86,11 @@ public class DataController : ControllerBase
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
-        return new()
+        return StatusCode(StatusCodes.Status200OK, new Response()
         {
             Success = true,
             Reason = null
-        };
+        });
     }
 
     private string DownloadSong(string youtube, string rawSongPath, string normSongPath)
@@ -105,26 +113,26 @@ public class DataController : ControllerBase
 
     [HttpPost("repair")]
     [Authorize]
-    public Response RepairSong([FromForm] SongIdentifier data)
+    public IActionResult RepairSong([FromForm] SongIdentifier data)
     {
         var song = LookupSong(data.Key, out var folder, out var info);
 
         if (song == null)
         {
-            return new()
+            return StatusCode(StatusCodes.Status400BadRequest, new Response()
             {
                 Success = false,
                 Reason = "Can't find a song with the given key"
-            };
+            });
         }
 
         if (!song.Source.StartsWith("http"))
         {
-            return new()
+            return StatusCode(StatusCodes.Status400BadRequest, new Response()
             {
                 Success = false,
                 Reason = "Song doens't have a valid source"
-            };
+            });
         }
 
         var rawPath = GetRawMusicPath(folder, song.Path);
@@ -134,16 +142,16 @@ public class DataController : ControllerBase
 
         var err = DownloadSong(song.Source, rawPath, normPath);
 
-        return new()
+        return StatusCode(err == null ? StatusCodes.Status200OK : StatusCodes.Status500InternalServerError, new Response()
         {
             Success = err == null,
             Reason = err
-        };
+        });
     }
 
     [HttpPost("upload")]
     [Authorize]
-    public Response UploadSong([FromForm]YoutubeForm data)
+    public IActionResult UploadSong([FromForm]YoutubeForm data)
     {
         var folder = (User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value;
 
@@ -167,11 +175,11 @@ public class DataController : ControllerBase
         {
             if (info.Musics.Any(x => x.Name == data.Name.Trim() && x.Artist == data.Artist?.Trim() && data.SongType == data.SongType?.Trim()))
             {
-                return new()
+                return StatusCode(StatusCodes.Status400BadRequest, new Response()
                 {
                     Success = false,
                     Reason = "There is already a music saved with the same filename"
-                };
+                });
             }
             System.IO.File.Delete(rawSongPath);
             System.IO.File.Delete(normSongPath);
@@ -181,11 +189,11 @@ public class DataController : ControllerBase
         var err = DownloadSong(data.Youtube, rawSongPath, normSongPath);
         if (err != null)
         {
-            return new()
+            return StatusCode(StatusCodes.Status500InternalServerError, new Response()
             {
                 Success = false,
                 Reason = err
-            };
+            });
         }
 
         // Save to json
@@ -236,11 +244,11 @@ public class DataController : ControllerBase
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
-        return new()
+        return StatusCode(StatusCodes.Status200OK, new Response()
         {
             Success = true,
             Reason = null
-        };
+        });
     }
 
     private const string AudioFormat = "mp3";

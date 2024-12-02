@@ -16,12 +16,12 @@ public class RootController : ControllerBase
     }
 
     [HttpGet(Name = "")]
-    public Response Get()
+    public IActionResult Get()
     {
-        return new()
+        return StatusCode(StatusCodes.Status200OK, new Response()
         {
             Success = true,
             Reason = null
-        };
+        });
     }
 }

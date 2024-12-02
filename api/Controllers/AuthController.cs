@@ -37,16 +37,16 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="path">Path to the website</param>
     [HttpPost("register")]
-    public Response RegisterEndpoint([FromBody]string path)
+    public IActionResult RegisterEndpoint([FromBody]string path)
     {
         if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
         if (!Path.Exists(path))
         {
-            return new()
+            return StatusCode(StatusCodes.Status400BadRequest, new Response()
             {
                 Success = false,
                 Reason = "Path doesn't exists"
-            };
+            });
         }
         if (!_manager.Endpoints.Contains(path))
         {
@@ -58,11 +58,11 @@ public class AuthController : ControllerBase
 
             _logger.LogInformation($"Adding path {path}");
         }
-        return new()
+        return StatusCode(StatusCodes.Status200OK, new Response()
         {
             Success = true,
             Reason = null
-        };
+        });
     }
 
     /// <summary>
@@ -70,7 +70,7 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="password">Admin password</param>
     [HttpPost("token")]
-    public TokenResponse GetToken([FromBody]string password)
+    public IActionResult GetToken([FromBody]string password)
     {
         var hashed = HashPassword(password, "Effy");
         var target = _manager.Endpoints.FirstOrDefault(x =>
@@ -88,12 +88,11 @@ public class AuthController : ControllerBase
         });
         if (target == null)
         {
-            return new()
+            return StatusCode(StatusCodes.Status401Unauthorized, new Response()
             {
                 Success = false,
-                Reason = "No admin account match the given password",
-                Token = null
-            };
+                Reason = "No admin account match the given password"
+            });
         }
 
         var data = Encoding.UTF8.GetBytes("EffyIsLoveYouButPleaseINeedABetterPassword");
@@ -115,12 +114,13 @@ public class AuthController : ControllerBase
         var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
         var tokenString = tokenHandler.WriteToken(token);
 
-        return new()
+
+        return StatusCode(StatusCodes.Status200OK, new TokenResponse()
         {
             Success = true,
             Reason = null,
             Token = tokenString
-        };
+        });
     }
 
     /// <summary>
@@ -128,25 +128,26 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="password">Password</param>
     [HttpPost("hash")]
-    public TokenResponse GenerateHash([FromBody]string password)
+    public IActionResult GenerateHash([FromBody]string password)
     {
         var hashed = HashPassword(password, "Effy");
-        return new()
+
+        return StatusCode(StatusCodes.Status200OK, new TokenResponse()
         {
             Success = true,
             Reason = null,
             Token = hashed
-        };
+        });
     }
 
     [Authorize]
     [HttpPost("validate")]
-    public Response ValidateToken()
+    public IActionResult ValidateToken()
     {
-        return new Response
+        return StatusCode(StatusCodes.Status200OK, new Response()
         {
             Success = true,
             Reason = null
-        }
+        });
     }
 }
