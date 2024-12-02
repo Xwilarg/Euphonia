@@ -720,14 +720,11 @@ export async function musics_initAsync() {
     document.getElementById("toggleAdmin").addEventListener("click", () => {
         if (isLoggedIn()) {
             logOff();
-            document.getElementById("toggleAdmin").innerHTML = "Switch to admin mode";
         } else {
             var pwd = window.prompt("Enter admin password");
             getApiToken(pwd, () => {
-                document.getElementById("toggleAdmin").innerHTML = "Turn off admin mode";
                 alert("You are now logged as an admin");
             }, () => {
-                document.getElementById("toggleAdmin").innerHTML = "Switch to admin mode";
                 alert("Login failed");
             })
         }

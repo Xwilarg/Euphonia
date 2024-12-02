@@ -1,4 +1,4 @@
-import { setCookie } from "../main/cookie";
+import { deleteCookie, getCookie, setCookie } from "../main/cookie";
 
 let apiTarget;
 let adminToken = null;
@@ -14,6 +14,34 @@ export async function api_initAsync() {
         if (json.success) {
             if (debugTarget !== null) debugTarget.innerHTML = apiTarget;
             document.getElementById("toggleAdmin").disabled = false;
+
+            const cookieAdmin = getCookie("admin");
+            if (cookieAdmin)
+            {
+                fetch(`${apiTarget}auth/validate`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${cookieAdmin}`
+                    }
+                })
+                .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+                .then(json => {
+                    if (json.success) {
+                        adminToken = cookieAdmin;
+                        for (let c of document.getElementsByClassName("requires-admin")) {
+                            c.classList.remove("is-hidden");
+                        }
+                        document.getElementById("toggleAdmin").innerHTML = "Turn off admin mode";
+                    } else {
+                        alert(`Admin token vertification failed: ${json.reason}`);
+                        logOff();
+                    }
+                })
+                .catch((err) => {
+                    alert(`Admin token vertification failed: ${err}`);
+                    logOff();
+                });
+            }
         } else {
             if (debugTarget !== null) debugTarget.innerHTML = "Internal error";
         }
@@ -28,10 +56,12 @@ export function isLoggedIn() {
 }
 
 export function logOff() {
+    deleteCookie("admin");
     adminToken = null;
     for (let c of document.getElementsByClassName("requires-admin")) {
         c.classList.add("is-hidden");
     }
+    document.getElementById("toggleAdmin").innerHTML = "Switch to admin mode";
 }
 
 export async function getApiToken(pwd, onSuccess, onFailure) {
@@ -54,15 +84,16 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
             for (let c of document.getElementsByClassName("requires-admin")) {
                 c.classList.remove("is-hidden");
             }
+            document.getElementById("toggleAdmin").innerHTML = "Turn off admin mode";
         } else {
             onFailure();
-            adminToken = null;
+            logOff();
         }
     })
     .catch((err) => {
         document.getElementById("error-log").innerHTML += `<div class="error">Login failed: ${err}</div>`;
         onFailure();
-        adminToken = null;
+        logOff();
     });
 }
 
