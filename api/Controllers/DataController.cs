@@ -2,7 +2,6 @@
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SixLabors.ImageSharp;
 using System.Diagnostics;
 using System.Security.Claims;
 using System.Text;
