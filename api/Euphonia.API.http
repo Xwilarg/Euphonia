@@ -1,11 +1,6 @@
-@Euphonia.API_HostAddress = http://localhost:5045
+@Euphonia.API_HostAddress = http://localhost:5174
 
-GET {{Euphonia.API_HostAddress}}/api/
-Accept: application/json
-
-###
-
-GET {{Euphonia.API_HostAddress}}/data/
+GET {{Euphonia.API_HostAddress}}/weatherforecast/
 Accept: application/json
 
 ###
