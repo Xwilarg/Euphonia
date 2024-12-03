@@ -195,6 +195,8 @@ public class DataController : ControllerBase
 
         // Save to json
 
+        info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json")); // Load again for concurency issues
+
         // We sanitize user inputs just in case
         var songName = data.Name.Trim();
         var artist = data.Artist?.Trim();
