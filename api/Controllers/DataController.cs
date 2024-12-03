@@ -234,7 +234,7 @@ public class DataController : ControllerBase
             info.Albums.Add(albumKey, new()
             {
                 Name = album,
-                Path = $"{albumKey}.png",
+                Path = $"{albumKey}.webp",
                 Source = albumUrl
             });
         }
