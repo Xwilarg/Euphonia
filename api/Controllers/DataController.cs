@@ -95,13 +95,13 @@ public class DataController : ControllerBase
     private string DownloadSong(string youtube, string rawSongPath, string normSongPath)
     {
         int code; string err;
-        ExecuteProcess(new("yt-dlp", $"{youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
+        Utils.ExecuteProcess(new("yt-dlp", $"{youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
         if (code != 0)
         {
             System.IO.File.WriteAllText("error.log", err);
             return $"yt-dlp {youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress failed:\n{string.Join("", err.TakeLast(1000))}";
         }
-        ExecuteProcess(new("ffmpeg-normalize", $"\"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame"), out code, out err);
+        Utils.ExecuteProcess(new("ffmpeg-normalize", $"\"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame"), out code, out err);
         if (code != 0)
         {
             System.IO.File.WriteAllText("error.log", err);
@@ -275,45 +275,4 @@ public class DataController : ControllerBase
 
     private string GetNormalizedMusicPath(string dataFolder, string musicKey)
         => $"{dataFolder}normalized/{musicKey}";
-
-    private void ExecuteProcess(ProcessStartInfo startInfo, out int returnCode, out string errStr)
-    {
-        using CancellationTokenSource source = new();
-
-        startInfo.CreateNoWindow = true;
-        startInfo.RedirectStandardError = true;
-        startInfo.RedirectStandardOutput = true;
-        startInfo.UseShellExecute = false;
-
-        var p = Process.Start(startInfo);
-        Task t = Task.Run(async () =>
-        {
-            for (int i = 0; i < 600000; i += 1000)
-            {
-                if (source.Token.IsCancellationRequested) return;
-                await Task.Delay(1000);
-            }
-            p.Kill();
-        });
-        p.Start();
-
-        StringBuilder err = new();
-        StringBuilder stdOut = new();
-
-        p.ErrorDataReceived += (_, e) =>
-        {
-            if (!string.IsNullOrWhiteSpace(e.Data)) err.AppendLine(e.Data);
-        };
-        p.OutputDataReceived += (_, e) =>
-        {
-            if (!string.IsNullOrWhiteSpace(e.Data)) stdOut.AppendLine(e.Data);
-        };
-        p.BeginErrorReadLine();
-        p.BeginOutputReadLine();
-        p.WaitForExit();
-        source.Cancel();
-
-        errStr = $"Out: {stdOut.ToString()}\n\nErr: {err.ToString()}";
-        returnCode = p.ExitCode;
-    }
 }
