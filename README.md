@@ -25,14 +25,40 @@ Just grab everything in the frontend folder and throw it in your web server
 
 ### Configure
 Configure your webserver to have your website ready and the backend on /api/
-Example:
+Example (replace "/home/web/example" and "example.org"):
 
+#### Nginx
+```
+server {
+	root /home/web/example;
+
+	index index.php;
+
+	server_name example.org;
+
+	location / {
+		try_files $uri $uri/ =404;
+	}
+	location /api/ {
+        	proxy_pass http://localhost:5000;
+	}
+
+	location ~ \.php$ {
+		include snippets/fastcgi-php.conf;
+		fastcgi_pass unix:/run/php/php8.3-fpm.sock;
+	}
+
+	location ~ (/(vendor|node_module)/|\.json$) {
+		deny all;
+	}
+}
+```
 #### Caddy
 ```
 example.org {
 	reverse_proxy /api/* localhost:5000
 
-	root * base_folder_on_your_frontend
+	root * /home/web/example
 	php_fastcgi unix//run/php/php8.1-fpm.sock
 	file_server {
 		hide node_modules/
