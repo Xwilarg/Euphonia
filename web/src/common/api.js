@@ -33,12 +33,12 @@ export async function api_initAsync() {
                         }
                         document.getElementById("toggleAdmin").innerHTML = "Turn off admin mode";
                     } else {
-                        alert(`Admin token vertification failed: ${json.reason}`);
+                        console.warn(`Admin token vertification failed: ${json.reason}`);
                         logOff();
                     }
                 })
                 .catch((err) => {
-                    alert(`Admin token vertification failed: ${err}`);
+                    console.warn(`Admin token vertification failed: ${err}`);
                     logOff();
                 });
             }

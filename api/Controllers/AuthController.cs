@@ -40,7 +40,7 @@ public class AuthController : ControllerBase
     public IActionResult RegisterEndpoint([FromBody]string path)
     {
         if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
-        if (!Path.Exists(path))
+        if (!Directory.Exists(path))
         {
             return StatusCode(StatusCodes.Status400BadRequest, new Response()
             {
