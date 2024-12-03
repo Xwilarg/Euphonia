@@ -12,14 +12,15 @@ EXPOSE 8081
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
-COPY ["Euphonia.API.csproj", "."]
-RUN dotnet restore "./Euphonia.API.csproj"
+COPY ["api/Euphonia.API.csproj", "api/"]
+COPY ["common/Euphonia.Common.csproj", "common/"]
+RUN dotnet restore "./api/Euphonia.API.csproj"
 COPY . .
-WORKDIR "/src/."
+WORKDIR "/src/api"
 RUN dotnet build "./Euphonia.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
 RUN apt-get update
-RUN apt-get install -t ./app -y python3 python3-pip
-RUN pip3 install --break-system-packages ffmpeg-python yt-dlp ffmpeg-normalize
+RUN apt-get install -y python3 python3-pip ffmpeg yt-dlp
+RUN pip3 install --break-system-packages ffmpeg-normalize
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
