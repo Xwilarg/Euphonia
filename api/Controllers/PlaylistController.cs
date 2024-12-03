@@ -48,7 +48,7 @@ public class PlaylistController : ControllerBase
         {
             Name = data.FullName ?? data.Name,
             Description = data.Description,
-            ImageUrl = $"{Utils.CleanPath(data.Name)}.webp"
+            ImageUrl = data.ImageUrl == null ? null : $"{Utils.CleanPath(data.Name)}.webp"
         });
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
