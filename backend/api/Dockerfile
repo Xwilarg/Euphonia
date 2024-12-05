@@ -18,9 +18,6 @@ RUN dotnet restore "./api/Euphonia.API.csproj"
 COPY . .
 WORKDIR "/src/api"
 RUN dotnet build "./Euphonia.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
-RUN apt-get update
-RUN apt-get install -y python3 python3-pip ffmpeg yt-dlp
-RUN pip3 install --break-system-packages ffmpeg-normalize
 
 # This stage is used to publish the service project to be copied to the final stage
 FROM build AS publish
@@ -31,4 +28,11 @@ RUN dotnet publish "./Euphonia.API.csproj" -c $BUILD_CONFIGURATION -o /app/publi
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+
+USER root
+RUN apt-get update
+RUN apt-get install -y python3 python3-pip ffmpeg yt-dlp
+RUN pip3 install --break-system-packages ffmpeg-normalize
+USER 1001
+
 ENTRYPOINT ["dotnet", "Euphonia.API.dll"]
