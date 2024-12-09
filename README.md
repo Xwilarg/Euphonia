@@ -5,7 +5,17 @@ An easy way to store and listen to your music
 Download the backend and the frontend then follow these steps:
 
 ### Installing the backend
-Install the backend somewhere on your server and keep it running, here is an example with systemctl:
+
+#### Docker
+Start by installing docker dependencies (example with Ubuntu):
+```
+sudo apt-get install docker
+sudo apt-get install docker-compose
+```
+
+
+#### Systemctl
+Throw your backend somewhere and create a systemctl file to keep it running:
 ```
 [Unit]
 Description=Euphonia backend

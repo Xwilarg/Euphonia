@@ -25,6 +25,7 @@ public class RootController : ControllerBase
         });
     }
 
+    /*
     [HttpGet("integrity")]
     public IActionResult Integrity()
     {
@@ -43,4 +44,5 @@ public class RootController : ControllerBase
             Reason = null
         });
     }
+    */
 }
