@@ -43,7 +43,7 @@ export async function api_initAsync() {
                 });
             }
         } else {
-            if (debugTarget !== null) debugTarget.innerHTML = "Internal error";
+            if (debugTarget !== null) debugTarget.innerHTML = json.reason;
         }
     })
     .catch((err) => {

@@ -7,16 +7,16 @@ namespace Euphonia.API
 {
     public class Program
     {
-        public static void InitPath(WebsiteManager manager, string path)
+        public static void InitPath(WebsiteManager manager, string key, string path)
         {
-            if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
-            manager.Endpoints.Add(path);
+            manager.Add(key, path);
 
+            if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
             if (!Directory.Exists($"{path}raw")) Directory.CreateDirectory($"{path}raw");
             if (!Directory.Exists($"{path}normalized")) Directory.CreateDirectory($"{path}normalized");
             if (!Directory.Exists($"{path}icon")) Directory.CreateDirectory($"{path}icon");
             if (!Directory.Exists($"{path}icon/playlist")) Directory.CreateDirectory($"{path}icon/playlist");
-            if (!Directory.Exists($"{path}info.json")) File.WriteAllText($"{path}info.json", "{}");
+            if (!File.Exists($"{path}info.json")) File.WriteAllText($"{path}info.json", "{}");
         }
 
         public static void Main(string[] args)
@@ -26,7 +26,8 @@ namespace Euphonia.API
             {
                 foreach (var dir in Directory.GetDirectories("/euphonia/data"))
                 {
-                    InitPath(manager, dir);
+                    var di = new DirectoryInfo(dir);
+                    InitPath(manager, di.Name, dir);
                 }
             }
 

@@ -1,4 +1,5 @@
 ﻿using Euphonia.API.Models;
+using Euphonia.API.Services;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,27 +13,26 @@ public class DataController : ControllerBase
 {
 
     private readonly ILogger<RootController> _logger;
+    private WebsiteManager _manager;
     private HttpClient _client;
 
-    public DataController(ILogger<RootController> logger, HttpClient client)
+    public DataController(ILogger<RootController> logger, WebsiteManager manager, HttpClient client)
     {
         _logger = logger;
+        _manager = manager;
         _client = client;
     }
 
     private Song? LookupSong(string key, out string folder, out EuphoniaInfo info)
     {
-        folder = (User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value;
+        folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
         info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
         // ID Lookup
         Song? song = info.Musics.FirstOrDefault(x => x.Id == key);
 
-        if (song == null)
-        {
-            // Key lookup
-            song = info.Musics.FirstOrDefault(x => $"{x.Name}_{x.Artist}_{x.Type}" == key);
-        }
+        // Key lookup
+        song ??= info.Musics.FirstOrDefault(x => $"{x.Name}_{x.Artist}_{x.Type}" == key);
 
         return song;
     }
@@ -150,7 +150,7 @@ public class DataController : ControllerBase
     [Authorize]
     public IActionResult UploadSong([FromForm]YoutubeForm data)
     {
-        var folder = (User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value;
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
 
         // Download album image
         var albumName = data.AlbumName == null ? null : GetAlbumName(data.Artist, data.AlbumName);

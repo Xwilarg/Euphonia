@@ -1,4 +1,5 @@
 ﻿using Euphonia.API.Models;
+using Euphonia.API.Services;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -13,11 +14,13 @@ public class PlaylistController : ControllerBase
 {
 
     private readonly ILogger<RootController> _logger;
+    private WebsiteManager _manager;
     private HttpClient _client;
 
-    public PlaylistController(ILogger<RootController> logger, HttpClient client)
+    public PlaylistController(ILogger<RootController> logger, WebsiteManager manager, HttpClient client)
     {
         _logger = logger;
+        _manager = manager;
         _client = client;
     }
 
@@ -25,7 +28,7 @@ public class PlaylistController : ControllerBase
     [Authorize]
     public IActionResult ArchiveSong([FromForm] PlaylistForm data)
     {
-        var folder = (User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value;
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
         var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
         var key = HttpUtility.UrlEncode(data.Name);

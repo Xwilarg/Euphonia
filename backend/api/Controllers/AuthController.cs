@@ -37,10 +37,9 @@ public class AuthController : ControllerBase
     /// </summary>
     /// <param name="path">Path to the website</param>
     [HttpPost("register")]
-    public IActionResult RegisterEndpoint([FromBody]string path)
+    public IActionResult RegisterEndpoint([FromBody]RegisterData data)
     {
-        if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
-        if (_manager.Endpoints.Contains(path)) // Was endpoint already added
+        if (_manager.GetPath(data.Key) != null) // Was endpoint already added
         {
             return StatusCode(StatusCodes.Status200OK, new Response()
             {
@@ -49,15 +48,15 @@ public class AuthController : ControllerBase
             });
         }
 
-        if (!Directory.Exists(path))
+        if (!Directory.Exists(data.Path))
         {
             return StatusCode(StatusCodes.Status400BadRequest, new Response()
             {
                 Success = false,
-                Reason = "Path doesn't exists"
+                Reason = $"Path doesn't exists"
             });
         }
-        Program.InitPath(_manager, path);
+        Program.InitPath(_manager, data.Key, data.Path);
         return StatusCode(StatusCodes.Status200OK, new Response()
         {
             Success = true,
@@ -73,20 +72,8 @@ public class AuthController : ControllerBase
     public IActionResult GetToken([FromBody]string password)
     {
         var hashed = HashPassword(password, "Effy");
-        var target = _manager.Endpoints.FirstOrDefault(x =>
-        {
-            Credentials r;
-            try
-            {
-                r = JsonSerializer.Deserialize<Credentials>(System.IO.File.ReadAllText(x + "credentials.json"), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase });
-            }
-            catch
-            {
-                return false;
-            }
-            return r?.AdminPwd == hashed;
-        });
-        if (target == null)
+        var key = _manager.AdminTokenLookup(hashed);
+        if (key == null)
         {
             return StatusCode(StatusCodes.Status401Unauthorized, new Response()
             {
@@ -100,7 +87,7 @@ public class AuthController : ControllerBase
 
         var claims = new List<Claim>
         {
-            new(ClaimTypes.UserData, target)
+            new(ClaimTypes.UserData, key)
         };
 
         var algorithms = Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature;
