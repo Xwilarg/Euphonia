@@ -50,7 +50,6 @@ You'll then need to create a link between the data folder in your web folder, to
 ```
 location /data/ {
 	alias /home/backend/example/data/example.org/;
-	autoindex on;
 }
 ```
 Run `docker compose up -d`

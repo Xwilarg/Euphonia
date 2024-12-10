@@ -9,9 +9,9 @@ $loader = new FilesystemLoader(["templates"]);
 $twig = new Environment($loader);
 $json = isset($_GET["json"]) && $_GET["json"] === "1";
 
-$rawInfo = file_get_contents("https://$_SERVER[HTTP_HOST]/data/info.json");
+$rawInfo = file_get_contents((empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/data/info.json");
 $info = json_decode($rawInfo, true);
-$metadata = json_decode(file_get_contents("https://$_SERVER[HTTP_HOST]/data/metadata.json"), true);
+$metadata = json_decode(file_get_contents((empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/data/metadata.json"), true);
 
 $name = $metadata["name"];
 $description = "";
