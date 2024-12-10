@@ -1,4 +1,5 @@
 ﻿using Euphonia.API.Models;
+using Euphonia.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
@@ -11,10 +12,12 @@ public class RootController : ControllerBase
 {
 
     private readonly ILogger<RootController> _logger;
+    private WebsiteManager _manager;
 
-    public RootController(ILogger<RootController> logger)
+    public RootController(ILogger<RootController> logger, WebsiteManager manager)
     {
         _logger = logger;
+        _manager = manager;
     }
 
     [HttpGet("")]
@@ -31,7 +34,7 @@ public class RootController : ControllerBase
     [Authorize]
     public IActionResult Integrity()
     {
-        var folder = (User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value;
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
         if (!System.IO.File.Exists($"{folder}/info.json"))
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new Response()

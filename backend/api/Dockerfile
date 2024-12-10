@@ -31,8 +31,8 @@ COPY --from=publish /app/publish .
 
 USER root
 RUN apt-get update
-RUN apt-get install -y python3 python3-pip ffmpeg yt-dlp
-RUN pip3 install --break-system-packages ffmpeg-normalize
+RUN apt-get install -y python3 python3-pip ffmpeg
+RUN pip3 install --break-system-packages ffmpeg-normalize yt-dlp
 USER 1001
 
 ENTRYPOINT ["dotnet", "Euphonia.API.dll"]

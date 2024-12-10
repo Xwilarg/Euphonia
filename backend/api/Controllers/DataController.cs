@@ -96,13 +96,11 @@ public class DataController : ControllerBase
         Utils.ExecuteProcess(new("yt-dlp", $"{youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
         if (code != 0)
         {
-            System.IO.File.WriteAllText("error.log", err);
             return $"yt-dlp {youtube} -o \"{rawSongPath}\" -x --audio-format {AudioFormat} -q --progress failed:\n{string.Join("", err.TakeLast(1000))}";
         }
         Utils.ExecuteProcess(new("ffmpeg-normalize", $"\"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame"), out code, out err);
         if (code != 0)
         {
-            System.IO.File.WriteAllText("error.log", err);
             return $"ffmpeg-normalize \"{rawSongPath}\" -pr -ext {AudioFormat} -o \"{normSongPath}\" -c:a libmp3lame failed:\n{string.Join("", err.TakeLast(1000))}";
         }
         return null;
