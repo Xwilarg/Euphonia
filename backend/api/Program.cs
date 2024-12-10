@@ -7,13 +7,34 @@ namespace Euphonia.API
 {
     public class Program
     {
+        public static void InitPath(WebsiteManager manager, string path)
+        {
+            if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
+            manager.Endpoints.Add(path);
+
+            if (!Directory.Exists($"{path}raw")) Directory.CreateDirectory($"{path}raw");
+            if (!Directory.Exists($"{path}normalized")) Directory.CreateDirectory($"{path}normalized");
+            if (!Directory.Exists($"{path}icon")) Directory.CreateDirectory($"{path}icon");
+            if (!Directory.Exists($"{path}icon/playlist")) Directory.CreateDirectory($"{path}icon/playlist");
+            if (!Directory.Exists($"{path}info.json")) File.WriteAllText($"{path}info.json", "{}");
+        }
+
         public static void Main(string[] args)
         {
+            var manager = new WebsiteManager();
+            if (Directory.Exists("/euphonia/data"))
+            {
+                foreach (var dir in Directory.GetDirectories("/euphonia/data"))
+                {
+                    InitPath(manager, dir);
+                }
+            }
+
             var builder = WebApplication.CreateBuilder(args);
 #if DEBUG
             builder.Logging.AddConsole();
 #endif
-            builder.Services.AddSingleton<WebsiteManager>();
+            builder.Services.AddSingleton(manager);
             builder.Services.AddHttpClient();
 
             // Add services to the container.
@@ -42,9 +63,9 @@ namespace Euphonia.API
 
 #if DEBUG
                 options.RequireHttpsMetadata = false;
-            #else
+#else
                 options.RequireHttpsMetadata = true;
-            #endif
+#endif
 
                 options.SaveToken = true;
                 options.TokenValidationParameters = new TokenValidationParameters

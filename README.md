@@ -4,32 +4,6 @@ An easy way to store and listen to your music
 ## Installing Euphonia
 Download the backend and the frontend then follow these steps:
 
-### Installing the backend
-
-#### Docker
-Start by installing docker dependencies (example with Ubuntu):
-```
-sudo apt-get install docker
-sudo apt-get install docker-compose
-```
-
-
-#### Systemctl
-Throw your backend somewhere and create a systemctl file to keep it running:
-```
-[Unit]
-Description=Euphonia backend
-After=network-online.target
-
-[Service]
-ExecStart=dotnet [Path to backend]/Euphonia.API.dll
-WorkingDirectory=[Path to backend]
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-```
-
 ### Installing the frontend
 Just grab everything in the frontend folder and throw it in your web server
 
@@ -63,22 +37,40 @@ server {
 	}
 }
 ```
-#### Caddy
-```
-example.org {
-	reverse_proxy /api/* localhost:5000
 
-	root * /home/web/example
-	php_fastcgi unix//run/php/php8.1-fpm.sock
-	file_server {
-		hide node_modules/
-		hide vendor/
-	}
-	@blocked {
-		path *.json
-	}
-	respond @blocked 403
+If you use docker you need to add the following
+
+
+
+### Installing the backend
+
+#### Docker
+Move the content of backend in a folder
+
+You'll then need to create a link between the data folder in your web folder, to the folder that will contains data in your backend (default is backend/data/website):
+
+```
+location /data/ {
+	alias /home/backend/example/data/example.org/;
+	autoindex on;
 }
+```
+Run `docker compose up`
+
+#### Systemctl
+Throw your backend somewhere and create a systemctl file to keep it running:
+```
+[Unit]
+Description=Euphonia backend
+After=network-online.target
+
+[Service]
+ExecStart=dotnet [Path to backend]/Euphonia.API.dll
+WorkingDirectory=[Path to backend]
+Restart=on-failure
+
+[Install]
+WantedBy=multi-user.target
 ```
 
 Then you will need to download the following and place them in your path:

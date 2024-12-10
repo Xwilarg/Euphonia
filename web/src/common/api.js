@@ -218,3 +218,23 @@ export async function updateSong(data, onSuccess, onFailure) {
         onFailure();
     });
 }
+
+export async function validateIntegrity() {
+    fetch(`${apiTarget}integrity`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        }
+    })
+    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(json => {
+        if (json.success) {
+            alert(`Integrity succeeded`);
+        } else {
+            alert(`Integrity failed: ${json.reason}`);
+        }
+    })
+    .catch((err) => {
+        alert(`Unexpected error: ${err}`);
+    });
+}

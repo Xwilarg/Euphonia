@@ -40,6 +40,15 @@ public class AuthController : ControllerBase
     public IActionResult RegisterEndpoint([FromBody]string path)
     {
         if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
+        if (_manager.Endpoints.Contains(path)) // Was endpoint already added
+        {
+            return StatusCode(StatusCodes.Status200OK, new Response()
+            {
+                Success = true,
+                Reason = null
+            });
+        }
+
         if (!Directory.Exists(path))
         {
             return StatusCode(StatusCodes.Status400BadRequest, new Response()
@@ -48,18 +57,7 @@ public class AuthController : ControllerBase
                 Reason = "Path doesn't exists"
             });
         }
-        if (!_manager.Endpoints.Contains(path))
-        {
-            _manager.Endpoints.Add(path);
-
-            if (!Directory.Exists($"{path}raw")) Directory.CreateDirectory($"{path}raw");
-            if (!Directory.Exists($"{path}normalized")) Directory.CreateDirectory($"{path}normalized");
-            if (!Directory.Exists($"{path}icon")) Directory.CreateDirectory($"{path}icon");
-            if (!Directory.Exists($"{path}icon/playlist")) Directory.CreateDirectory($"{path}icon/playlist");
-            if (!Directory.Exists($"{path}info.json")) System.IO.File.WriteAllText($"{path}info.json", "{}");
-
-            _logger.LogInformation($"Adding path {path}");
-        }
+        Program.InitPath(_manager, path);
         return StatusCode(StatusCodes.Status200OK, new Response()
         {
             Success = true,

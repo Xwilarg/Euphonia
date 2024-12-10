@@ -3,7 +3,7 @@
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 import { deleteCookie } from "./cookie"
-import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong } from '../common/api';
+import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong, validateIntegrity } from '../common/api';
 
 let json;
 
@@ -542,6 +542,10 @@ function loadPage() {
     });
     document.getElementById("latest-title").addEventListener("click", _ => {
         toggleHide("latestlist");
+    });
+
+    document.getElementById("check-integrity").addEventListener("click", _ => {
+        validateIntegrity();
     });
 
     // Player callbacks

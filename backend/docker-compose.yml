@@ -1,10 +1,9 @@
-version: "3"
-
 services:
   backend:
     build:
       context: .
       dockerfile: api/Dockerfile
     ports:
-      - "8000:5000"
-      - "8001:5001"
+      - "5000:8080"
+    volumes:
+      - ./data:/euphonia/data

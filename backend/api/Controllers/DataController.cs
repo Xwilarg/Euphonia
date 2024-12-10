@@ -2,9 +2,7 @@
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
 using System.Security.Claims;
-using System.Text;
 
 namespace Euphonia.API.Controllers;
 

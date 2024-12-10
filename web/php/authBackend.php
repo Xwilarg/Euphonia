@@ -16,7 +16,9 @@ curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, FALSE);
 curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, FALSE);
 
 $response = curl_exec($curl);
+$httpcode = curl_getinfo($curl, CURLINFO_HTTP_CODE);
 
 curl_close($curl);
 header('Content-Type: application/json; charset=utf-8');
+echo $httpcode;
 echo $response;
