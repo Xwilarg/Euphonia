@@ -544,7 +544,7 @@ function loadPage() {
         toggleHide("latestlist");
     });
 
-    document.getElementById("check-integrity").addEventListener("click", _ => {
+    document.getElementById("check-integrity")?.addEventListener("click", _ => {
         validateIntegrity();
     });
 
