@@ -7,5 +7,7 @@
     "showDebug": false,
 
     "allowDownload": true,
-    "allowShare": true
+    "allowShare": true,
+
+    "showAllPlaylist": true
 }

@@ -9,9 +9,12 @@ $loader = new FilesystemLoader(["templates"]);
 $twig = new Environment($loader);
 $json = isset($_GET["json"]) && $_GET["json"] === "1";
 
-$rawInfo = file_get_contents((empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/data/info.json");
+$basePath = (str_starts_with($_SERVER['HTTP_HOST'], 'localhost') ? "" : (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/") . "data";
+
+$rawInfo = file_get_contents("$basePath/info.json");
 $info = json_decode($rawInfo, true);
-$metadata = json_decode(file_get_contents((empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/data/metadata.json"), true);
+$rawMetadata = file_get_contents("$basePath/metadata.json");
+$metadata = json_decode($rawMetadata, true);
 
 $name = $metadata["name"];
 $description = "";
@@ -37,6 +40,7 @@ else
 {
     echo $twig->render("index.html.twig", [
         "json" => $rawInfo,
+        "rawMetadata" => $rawMetadata,
         "metadata" => $metadata,
         "og" => [
             "name" => $name,

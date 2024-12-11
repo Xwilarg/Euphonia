@@ -9,6 +9,9 @@
         <script id="data" type="application/json">
             {{ json | replace({'<': '&lt;' }) | raw }}
         </script>
+        <script id="metadata" type="application/json">
+            {{ rawMetadata | replace({'<': '&lt;' }) | raw }}
+        </script>
         <script src="/js/index.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"/>

@@ -6,6 +6,7 @@ import { deleteCookie } from "./cookie"
 import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong, validateIntegrity } from '../common/api';
 
 let json;
+let metadataJson;
 
 // ID of the current playlist
 let currentPlaylist = null;
@@ -194,7 +195,7 @@ function getPlaylistHtml(id, name) {
     let mostPresents = {};
     let count = 0;
     for (let elem of json.musics) {
-        if (elem.playlist !== id) {
+        if (elem.playlist !== id && id !== "all") { // We filter by playlist (except if current playlist is "all")
             continue;
         }
         count++;
@@ -240,6 +241,9 @@ function getPlaylistHtml(id, name) {
 
 function displayPlaylists(playlists, id, filter) {
     let html = "";
+    if (metadataJson.showAllPlaylist && json.musics.length > 0) {
+        html += getPlaylistHtml("all", "All");
+    }
     for (let elem in playlists) {
         const p = playlists[elem];
         if (filter === "" || sanitize(p.name).toLowerCase().includes(filter)) {
@@ -680,7 +684,7 @@ function chooseDisplay() {
     let playlist = url.searchParams.get("playlist");
 
     // If parameter is not set or set to a wrong value
-    if (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined) {
+    if ((!metadataJson.showAllPlaylist || playlist !== "all") && (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined)) {
         // If there is no playlist we just display the default one
         if (json.musics !== undefined && json.musics.some(x => x.playlist !== "default" && x.playlist !== null && x.playlist !== undefined)) {
             if (playlist === "default") {
@@ -705,7 +709,7 @@ function chooseDisplay() {
         document.getElementById("back").hidden = false;
         if (json.musics !== undefined)
         {
-            json.musics = json.musics.filter(x => x.playlist === playlist || (playlist === "default" && (x.playlist === undefined || x.playlist === null)));
+            json.musics = json.musics.filter(x => playlist === "all" || x.playlist === playlist || (playlist === "default" && (x.playlist === undefined || x.playlist === null)));
             for (let id in json.musics) {
                 json.musics[id].id = id;
             }
@@ -735,6 +739,7 @@ export async function musics_initAsync() {
     });
 
     json = JSON.parse(document.getElementById("data").innerText);
+    metadataJson = JSON.parse(document.getElementById("metadata").innerText);
     if (json.musics) {
         json.musics = json.musics.filter(x => !x.isArchived);
     }
