@@ -22,4 +22,7 @@
     <string name="pref_source_remove_confirm">Êtes-vous sûr de vouloir supprimer la source de données actuelle ?</string>
     <string name="pref_deletion_confirm">Appuyez encore un fois pour confirmer la suppression</string>
     <string name="music_updated">Toutes les musiques sont maintenant à jour</string>
+    <string name="admin_login">Se connecter en administrateur</string>
+    <string name="admin_logoff">Se déconnecter d\'administrateur</string>
+    <string name="admin_enter_password">Entrez votre mot de passe</string>
 </resources>

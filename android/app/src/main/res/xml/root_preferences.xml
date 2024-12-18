@@ -1,6 +1,12 @@
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <PreferenceCategory android:title="@string/pref_display">
+        <Preference
+            android:key="admin"
+            app:title="placeholder_admin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </Preference>
 
         <ListPreference
             android:defaultValue="DATE"
