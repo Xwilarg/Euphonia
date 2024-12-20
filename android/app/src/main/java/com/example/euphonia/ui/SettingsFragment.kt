@@ -6,6 +6,7 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Looper
 import android.util.Log
 import android.widget.EditText
 import androidx.preference.Preference
@@ -47,12 +48,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
             } else {
                 val builder = AlertDialog.Builder(activity)
                 builder.setTitle(R.string.admin_enter_password)
+                builder.setCancelable(false)
 
-                val et = EditText(context)
+                val et = EditText(activity)
                 builder.setView(et)
 
                 builder.setPositiveButton(android.R.string.ok) {
-                    _, _ -> {
+                    _, _ ->
                         val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
                         val index = sharedPref.getInt("currentServer", -1)
                         val okHttpClient = OkHttpClient()
@@ -61,19 +63,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val requestBody = RequestBody.create("application/json".toMediaType(), et.text.toString())
                         val request = Request.Builder()
                             .post(requestBody)
-                            .url("https://${servers.elementAt(index)}api/token")
+                            .url("https://${servers.elementAt(index)}api/auth/token")
                             .build()
-                        Log.d("ADMIN", "test")
                         okHttpClient.newCall(request).enqueue(object : Callback {
                             override fun onFailure(call: Call, e: IOException) {
-                                Log.d("ADMIN", "failed")
+                                Log.e("Admin login", "Failed")
                             }
 
                             override fun onResponse(call: Call, response: Response) {
-                                Log.d("ADMIN", "success")
+                                if (response.code != 200) {
+                                }
+                                Log.d("ADMIN", response.toString())
                             }
                         })
-                    }
                 }
                 builder.setNegativeButton(android.R.string.cancel) {
                         _, _ -> { }
