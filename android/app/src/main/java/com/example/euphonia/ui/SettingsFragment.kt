@@ -9,11 +9,15 @@ import android.os.Bundle
 import android.os.Looper
 import android.util.Log
 import android.widget.EditText
+import android.widget.Toast
+import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
 import com.example.euphonia.MainActivity
 import com.example.euphonia.R
 import com.example.euphonia.SetupActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaType
@@ -72,6 +76,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
                             override fun onResponse(call: Call, response: Response) {
                                 if (response.code != 200) {
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        if (response.message == "") {
+                                            Toast.makeText(activity, "Unexpected error " + response.code, Toast.LENGTH_SHORT).show()
+                                        } else {
+                                            Toast.makeText(activity, response.message, Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
                                 }
                                 Log.d("ADMIN", response.toString())
                             }
