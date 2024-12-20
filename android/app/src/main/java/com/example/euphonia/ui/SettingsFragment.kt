@@ -62,9 +62,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
                         val index = sharedPref.getInt("currentServer", -1)
                         val okHttpClient = OkHttpClient()
-                        val token = "";
 
-                        val requestBody = RequestBody.create("application/json".toMediaType(), et.text.toString())
+                        Log.d("ADMIN", et.text.toString())
+                        val requestBody = RequestBody.create("application/json".toMediaType(), "\"${et.text}\"")
                         val request = Request.Builder()
                             .post(requestBody)
                             .url("https://${servers.elementAt(index)}api/auth/token")
@@ -77,14 +77,19 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             override fun onResponse(call: Call, response: Response) {
                                 if (response.code != 200) {
                                     lifecycleScope.launch(Dispatchers.Main) {
-                                        if (response.message == "") {
-                                            Toast.makeText(activity, "Unexpected error " + response.code, Toast.LENGTH_SHORT).show()
+                                        if (response.code == 401) {
+                                            Toast.makeText(activity, resources.getString(R.string.admin_login_wrong_password), Toast.LENGTH_LONG).show()
                                         } else {
-                                            Toast.makeText(activity, response.message, Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(activity, "Unexpected error ${response.code}", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 }
-                                Log.d("ADMIN", response.toString())
+                                else
+                                {
+                                    lifecycleScope.launch(Dispatchers.Main) {
+                                        Toast.makeText(activity, response.body.string(), Toast.LENGTH_LONG).show()
+                                    }
+                                }
                             }
                         })
                 }

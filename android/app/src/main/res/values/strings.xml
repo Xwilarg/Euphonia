@@ -25,4 +25,6 @@
     <string name="admin_login">Login as admin</string>
     <string name="admin_logoff">Logoff from admin</string>
     <string name="admin_enter_password">Enter admin password</string>
+    <string name="admin_login_success">You are now logged as admin</string>
+    <string name="admin_login_wrong_password">Invalid password</string>
 </resources>
