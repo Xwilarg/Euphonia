@@ -6,8 +6,6 @@ import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Looper
-import android.util.Log
 import android.widget.EditText
 import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
@@ -16,6 +14,8 @@ import androidx.preference.PreferenceFragmentCompat
 import com.example.euphonia.MainActivity
 import com.example.euphonia.R
 import com.example.euphonia.SetupActivity
+import com.example.euphonia.data.TokenApiResp
+import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Call
@@ -37,18 +37,20 @@ class SettingsFragment : PreferenceFragmentCompat() {
 
         val admin = findPreference<Preference>("admin")!!
         val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
-        val adminToken = sharedPref.getString("adminToken", null)
+        var adminToken = sharedPref.getString("adminToken", null)
         admin.title = resources.getString(if (adminToken == null) {
             R.string.admin_login
         } else {
             R.string.admin_logoff
         })
         admin.setOnPreferenceClickListener {
+            adminToken = sharedPref.getString("adminToken", null)
             if (adminToken != null) {
                 with(sharedPref.edit()) {
                     putString("adminToken", null)
                     apply()
                 }
+                admin.title = resources.getString(R.string.admin_login)
             } else {
                 val builder = AlertDialog.Builder(activity)
                 builder.setTitle(R.string.admin_enter_password)
@@ -63,7 +65,6 @@ class SettingsFragment : PreferenceFragmentCompat() {
                         val index = sharedPref.getInt("currentServer", -1)
                         val okHttpClient = OkHttpClient()
 
-                        Log.d("ADMIN", et.text.toString())
                         val requestBody = RequestBody.create("application/json".toMediaType(), "\"${et.text}\"")
                         val request = Request.Builder()
                             .post(requestBody)
@@ -71,7 +72,9 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             .build()
                         okHttpClient.newCall(request).enqueue(object : Callback {
                             override fun onFailure(call: Call, e: IOException) {
-                                Log.e("Admin login", "Failed")
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    Toast.makeText(activity, "Unexpected error", Toast.LENGTH_SHORT).show()
+                                }
                             }
 
                             override fun onResponse(call: Call, response: Response) {
@@ -87,7 +90,14 @@ class SettingsFragment : PreferenceFragmentCompat() {
                                 else
                                 {
                                     lifecycleScope.launch(Dispatchers.Main) {
-                                        Toast.makeText(activity, response.body.string(), Toast.LENGTH_LONG).show()
+                                        val token = Gson().fromJson(response.body.string(), TokenApiResp::class.java).token
+                                        Toast.makeText(activity, resources.getString(R.string.admin_login_success), Toast.LENGTH_LONG).show()
+                                        admin.title = resources.getString(R.string.admin_logoff)
+
+                                        with(sharedPref.edit()) {
+                                            putString("adminToken", token)
+                                            apply()
+                                        }
                                     }
                                 }
                             }
