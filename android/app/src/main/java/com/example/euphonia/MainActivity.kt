@@ -23,8 +23,15 @@ import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
 import com.google.gson.Gson
 import kotlinx.coroutines.sync.Mutex
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
 import java.io.File
 import java.io.FileOutputStream
+import java.io.IOException
 import java.net.URL
 
 class MainActivity : AppCompatActivity() {
@@ -98,6 +105,32 @@ class MainActivity : AppCompatActivity() {
             downloaded = data.musics.toMutableList()
         }
         catch (e: Exception) { }
+
+        var adminToken = sharedPref.getString("adminToken", null)
+        if (adminToken != null) {
+            executor.execute {
+                val okHttpClient = OkHttpClient()
+
+                val requestBody = RequestBody.create(null, ByteArray(0))
+                val request = Request.Builder()
+                    .post(requestBody)
+                    .addHeader("Authorization", "Bearer ${adminToken}")
+                    .url("https://${servers.elementAt(index)}api/auth/token")
+                    .build()
+                okHttpClient.newCall(request).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) { }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.code != 200) {
+                            with(sharedPref.edit()) {
+                                putString("adminToken", null)
+                                apply()
+                            }
+                        }
+                    }
+                })
+            }
+        }
 
         executor.execute {
             // Update data from remove server
