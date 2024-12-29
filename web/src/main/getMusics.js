@@ -2,7 +2,6 @@
 
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
-import { deleteCookie } from "./cookie"
 import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong, validateIntegrity } from '../common/api';
 
 let json;
@@ -724,7 +723,6 @@ export async function musics_initAsync() {
     document.getElementById("random-btn").addEventListener("click", random);
     document.getElementById("minimalistMode")?.addEventListener("click", toggleMinimalistMode);
 
-    deleteCookie("sessionToken");
     document.getElementById("toggleAdmin").addEventListener("click", () => {
         if (isLoggedIn()) {
             logOff();

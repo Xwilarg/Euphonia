@@ -10,25 +10,72 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.annotation.OptIn
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
-import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
+import androidx.media3.session.MediaController
 import androidx.media3.ui.PlayerView
 import com.example.euphonia.R
 import com.example.euphonia.MainActivity
 import com.google.common.util.concurrent.MoreExecutors
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.OkHttpClient
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.Request
+import okhttp3.RequestBody
+import okhttp3.Response
+import java.io.IOException
 
 class PlayFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
     }
 
-    fun showAlbum(view: View, metadata: MediaMetadata?) {
+    @OptIn(UnstableApi::class)
+    fun showMedia(view: View, metadata: MediaMetadata?, med: MediaController?) {
         val player =  view.findViewById<ImageView>(R.id.playerImage)
         val desc = view.findViewById<TextView>(R.id.playerDescription)
         if (player != null) {
+            view.findViewById<ImageButton>(R.id.delete).setOnClickListener {
+                val key = metadata?.displayTitle
+                if (key != null) {
+                    val okHttpClient = OkHttpClient()
+
+                    val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
+                    val adminToken = sharedPref.getString("adminToken", null)
+                    val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
+                    val index = sharedPref.getInt("currentServer", -1)
+
+                    val requestBody = RequestBody.create("application/json".toMediaType(), "\"${key}\"")
+                    val request = Request.Builder()
+                        .post(requestBody)
+                        .addHeader("Authorization", "Bearer ${adminToken}")
+                        .url("https://${servers.elementAt(index)}api/data/archive")
+                        .build()
+                    okHttpClient.newCall(request).enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) { }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            if (response.code != 200) {
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    Toast.makeText(requireContext(), "Failed to archive song: ${response.code}", Toast.LENGTH_SHORT).show()
+                                }
+                            } else {
+                                med?.next()
+                                // TODO: Update list and stuff
+                            }
+                        }
+                    })
+                }
+            }
+
             player.setImageBitmap(null)
             val bmp = BitmapFactory.decodeFile(metadata?.artworkUri?.path)
             if (bmp != null) {
@@ -36,7 +83,7 @@ class PlayFragment : Fragment() {
             }
 
             if (metadata?.title != null) {
-                desc.text = "${metadata?.title} by ${metadata?.artist}"
+                desc.text = "${metadata?.title} ${resources.getString(R.string.by)} ${metadata?.artist}"
             } else {
                 desc.text = ""
             }
@@ -68,13 +115,10 @@ class PlayFragment : Fragment() {
                 videoView.player = player
                 player.addListener(object : Player.Listener {
                     override fun onMediaItemTransition(mediaItem: MediaItem?, reason: Int) {
-                        showAlbum(view, mediaItem?.mediaMetadata)
+                        showMedia(view, mediaItem?.mediaMetadata, player)
                     }
                 })
-                view.findViewById<ImageButton>(R.id.delete).setOnClickListener {
-                    Log.d("DEBUG", "WAS CLICKED")
-                }
-                showAlbum(view, pView.controllerFuture!!.get().mediaMetadata)
+                showMedia(view, player.mediaMetadata, player)
             },
             MoreExecutors.directExecutor()
         )

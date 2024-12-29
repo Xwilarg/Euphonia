@@ -125,12 +125,17 @@ class MusicFragment : Fragment() {
         } else {
             builder.setArtworkUri(Uri.parse("https://${pView.currUrl}img/CD.png"))
         }
-        builder.setArtist(song.artist)
         return MediaItem.Builder()
             .setMediaId("${requireContext().filesDir}/${pView.currUrl}music/${song.path}")
             .setMediaMetadata(
                 builder
                     .setTitle(song.name)
+                    .setDisplayTitle(if (song.key != null) {
+                        song.key
+                    } else {
+                        "${song.name}_${song.artist ?: ""}_${song.type ?: ""}"
+                    })
+                    .setArtist(song.artist)
                     .setAlbumTitle(song.album)
                     .build()
             )
@@ -145,7 +150,7 @@ class MusicFragment : Fragment() {
     fun getCurrentMusics(): List<Song> {
         val tmp = mutableListOf<Song>()
         tmp.addAll(pView.downloaded)
-        return tmp.filter { pView.currentPlaylist == null || it.playlist == pView.currentPlaylist }
+        return tmp.filter { !it.isArchived && (pView.currentPlaylist == null || it.playlist == pView.currentPlaylist) }
     }
 
     fun updateList() {
