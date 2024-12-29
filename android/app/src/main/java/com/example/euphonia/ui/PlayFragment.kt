@@ -26,6 +26,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import okhttp3.Call
 import okhttp3.Callback
+import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.Request
@@ -53,9 +54,10 @@ class PlayFragment : Fragment() {
                     val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
                     val index = sharedPref.getInt("currentServer", -1)
 
-                    val requestBody = RequestBody.create("application/json".toMediaType(), "\"${key}\"")
+                    val requestBody = FormBody.Builder()
+                    requestBody.add("Key", key.toString())
                     val request = Request.Builder()
-                        .post(requestBody)
+                        .post(requestBody.build())
                         .addHeader("Authorization", "Bearer ${adminToken}")
                         .url("https://${servers.elementAt(index)}api/data/archive")
                         .build()
@@ -68,7 +70,9 @@ class PlayFragment : Fragment() {
                                     Toast.makeText(requireContext(), "Failed to archive song: ${response.code}", Toast.LENGTH_SHORT).show()
                                 }
                             } else {
-                                med?.next()
+                                lifecycleScope.launch(Dispatchers.Main) {
+                                    med?.next()
+                                }
                                 // TODO: Update list and stuff
                             }
                         }
