@@ -18,10 +18,14 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.core.app.NotificationCompat
 import android.app.NotificationChannel
+import android.widget.Toast
 import androidx.core.content.getSystemService
+import androidx.lifecycle.lifecycleScope
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
 import com.google.gson.Gson
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import okhttp3.Call
 import okhttp3.Callback
@@ -115,7 +119,7 @@ class MainActivity : AppCompatActivity() {
                 val request = Request.Builder()
                     .post(requestBody)
                     .addHeader("Authorization", "Bearer ${adminToken}")
-                    .url("https://${servers.elementAt(index)}api/auth/token")
+                    .url("https://${servers.elementAt(index)}api/auth/validate")
                     .build()
                 okHttpClient.newCall(request).enqueue(object : Callback {
                     override fun onFailure(call: Call, e: IOException) { }
@@ -125,6 +129,9 @@ class MainActivity : AppCompatActivity() {
                             with(sharedPref.edit()) {
                                 putString("adminToken", null)
                                 apply()
+                            }
+                            lifecycleScope.launch(Dispatchers.Main) {
+                                Toast.makeText(applicationContext, "Admin token had expired", Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
@@ -141,7 +148,9 @@ class MainActivity : AppCompatActivity() {
                 data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
                 data.musics = data.musics.filter { !it.isArchived }.toTypedArray()
             } catch (e: Exception) {
-                // TODO: Handle exception
+                lifecycleScope.launch(Dispatchers.Main) {
+                    Toast.makeText(applicationContext, "Failed to update JSON", Toast.LENGTH_SHORT).show()
+                }
                 return@execute
             }
 
