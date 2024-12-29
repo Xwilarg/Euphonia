@@ -1,16 +1,19 @@
 package com.example.euphonia.ui
 
+import android.content.Context.MODE_PRIVATE
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.media3.common.Player
+import androidx.media3.common.util.Log
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.ui.PlayerView
 import com.example.euphonia.R
@@ -50,6 +53,15 @@ class PlayFragment : Fragment() {
 
         val pView = requireActivity() as MainActivity
 
+        val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
+        val adminToken = sharedPref.getString("adminToken", null)
+
+        view.findViewById<ImageButton>(R.id.delete).visibility = if (adminToken == null) {
+            View.GONE
+        } else {
+            View.VISIBLE
+        }
+
         pView.controllerFuture?.addListener(
             {
                 val player = pView.controllerFuture!!.get()
@@ -59,6 +71,9 @@ class PlayFragment : Fragment() {
                         showAlbum(view, mediaItem?.mediaMetadata)
                     }
                 })
+                view.findViewById<ImageButton>(R.id.delete).setOnClickListener {
+                    Log.d("DEBUG", "WAS CLICKED")
+                }
                 showAlbum(view, pView.controllerFuture!!.get().mediaMetadata)
             },
             MoreExecutors.directExecutor()

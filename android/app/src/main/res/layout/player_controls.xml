@@ -28,6 +28,14 @@
 
         <ImageButton android:id="@id/exo_next"
             style="@style/ExoStyledControls.Button.Center.Next"/>
+
+        <ImageButton
+            android:id="@+id/delete"
+            android:layout_width="50dp"
+            android:layout_height="match_parent"
+            android:background="#00FFFFFF"
+            android:src="@drawable/baseline_delete_24"
+            android:visibility="gone" />
     </LinearLayout>
 
 </FrameLayout>
