@@ -1,4 +1,5 @@
 ﻿using Euphonia.API.Models;
+using Euphonia.API.Models.Request;
 using Euphonia.API.Services;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -35,7 +36,7 @@ public class PlaylistController : ControllerBase
 
         if (info.Playlists.Any(x => x.Key == key))
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
             {
                 Success = false,
                 Reason = "There is already a playlist with that name"
@@ -56,7 +57,7 @@ public class PlaylistController : ControllerBase
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null

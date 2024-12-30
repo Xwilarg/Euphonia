@@ -23,7 +23,7 @@ public class RootController : ControllerBase
     [HttpGet("")]
     public IActionResult Get()
     {
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null
@@ -37,7 +37,7 @@ public class RootController : ControllerBase
         var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
         if (!System.IO.File.Exists($"{folder}/info.json"))
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response()
+            return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse()
             {
                 Success = false,
                 Reason = "info.json not found"
@@ -46,7 +46,7 @@ public class RootController : ControllerBase
         Utils.ExecuteProcess(new("yt-dlp", $"--version"), out var code, out _);
         if (code != 0)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response()
+            return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse()
             {
                 Success = false,
                 Reason = "yt-dlp not found"
@@ -55,13 +55,13 @@ public class RootController : ControllerBase
         Utils.ExecuteProcess(new("ffmpeg-normalize", $"--version"), out code, out _);
         if (code != 0)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response()
+            return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse()
             {
                 Success = false,
                 Reason = "ffmpeg-normalize not found"
             });
         }
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null

@@ -1,4 +1,4 @@
-﻿namespace Euphonia.API.Models;
+﻿namespace Euphonia.API.Models.Data;
 
 public class Credentials
 {

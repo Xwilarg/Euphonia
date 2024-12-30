@@ -1,4 +1,5 @@
 using Euphonia.API.Models;
+using Euphonia.API.Models.Request;
 using Euphonia.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
@@ -41,7 +42,7 @@ public class AuthController : ControllerBase
     {
         if (_manager.GetPath(data.Key) != null) // Was endpoint already added
         {
-            return StatusCode(StatusCodes.Status200OK, new Response()
+            return StatusCode(StatusCodes.Status200OK, new BaseResponse()
             {
                 Success = true,
                 Reason = null
@@ -50,14 +51,14 @@ public class AuthController : ControllerBase
 
         if (!Directory.Exists(data.Path))
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
             {
                 Success = false,
                 Reason = $"Path doesn't exists"
             });
         }
         Program.InitPath(_manager, data.Key, data.Path);
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null
@@ -75,7 +76,7 @@ public class AuthController : ControllerBase
         var key = _manager.AdminTokenLookup(hashed);
         if (key == null)
         {
-            return StatusCode(StatusCodes.Status401Unauthorized, new Response()
+            return StatusCode(StatusCodes.Status401Unauthorized, new BaseResponse()
             {
                 Success = false,
                 Reason = "No admin account match the given password"
@@ -131,7 +132,7 @@ public class AuthController : ControllerBase
     [HttpPost("validate")]
     public IActionResult ValidateToken()
     {
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null
