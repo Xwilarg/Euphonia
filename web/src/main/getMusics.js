@@ -6,7 +6,7 @@
 
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
-import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong, validateIntegrity } from '../common/api';
+import { archiveSong, getApiToken, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 
 let json;
@@ -23,8 +23,6 @@ let lastTimeUpdate = 0;
 // Actual song duration, updated when metadata are loaded
 let trackDuration = 0;
 let timeStarted;
-
-let isRepairOngoing;
 
 // Next songs to play
 let playlist = [];
@@ -305,7 +303,7 @@ export function updateSingleSongDisplay(node, elem) {
 }
 
 /// Return song unique identifier
-function getSongKey(song) {
+export function getSongKey(song) {
     if (song.key) return song.key;
     return `${song.name}_${song.artist ?? ""}_${song.type ?? ""}`;
 }

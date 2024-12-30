@@ -1,6 +1,9 @@
 // module "song.js"
 
-import { prepareShuffle, updateSingleSongDisplay } from "./getMusics";
+import { repairSong, updateSong } from "../common/api";
+import { getSongKey, prepareShuffle, updateSingleSongDisplay } from "./getMusics";
+
+let isRepairOngoing;
 
 export function spawnSongNode(curr, id, isMinimalist) {
     let template = document.getElementById("template-song");
@@ -66,7 +69,7 @@ export function spawnSongNode(curr, id, isMinimalist) {
                 curr.tags = data["Tags"];
             }
 
-                updateSingleSongDisplay(document.getElementById(idContainer), curr);
+            updateSingleSongDisplay(document.getElementById(idContainer), curr);
         }, () => {
             target.hidden = true;
         });

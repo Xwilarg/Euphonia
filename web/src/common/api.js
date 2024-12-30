@@ -206,7 +206,7 @@ export async function updateSong(data, onSuccess, onFailure) {
     .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
     .then(json => {
         if (json.success) {
-            alert(`Your song was successfully uploaded`);
+            alert(`Your song was successfully updated`);
             onSuccess();
         } else {
             alert(`Failed to update song: ${json.reason}`);
