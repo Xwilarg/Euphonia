@@ -1,4 +1,5 @@
-﻿using Euphonia.API.Models;
+﻿using Euphonia.API.Models.Request;
+using Euphonia.API.Models.Response;
 using Euphonia.API.Services;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
@@ -45,7 +46,7 @@ public class DataController : ControllerBase
 
         if (song == null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
             {
                 Success = false,
                 Reason = "Can't find a song with the given key"
@@ -56,7 +57,7 @@ public class DataController : ControllerBase
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null
@@ -71,7 +72,7 @@ public class DataController : ControllerBase
 
         if (song == null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
             {
                 Success = false,
                 Reason = "Can't find a song with the given key"
@@ -82,7 +83,7 @@ public class DataController : ControllerBase
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null
@@ -97,7 +98,7 @@ public class DataController : ControllerBase
 
         if (song == null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
             {
                 Success = false,
                 Reason = "Can't find a song with the given key"
@@ -147,7 +148,7 @@ public class DataController : ControllerBase
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null
@@ -178,7 +179,7 @@ public class DataController : ControllerBase
 
         if (song == null)
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
             {
                 Success = false,
                 Reason = "Can't find a song with the given key"
@@ -187,7 +188,7 @@ public class DataController : ControllerBase
 
         if (!song.Source.StartsWith("http"))
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
             {
                 Success = false,
                 Reason = "Song doens't have a valid source"
@@ -201,7 +202,7 @@ public class DataController : ControllerBase
 
         var err = DownloadSong(song.Source, rawPath, normPath);
 
-        return StatusCode(err == null ? StatusCodes.Status200OK : StatusCodes.Status500InternalServerError, new Response()
+        return StatusCode(err == null ? StatusCodes.Status200OK : StatusCodes.Status500InternalServerError, new BaseResponse()
         {
             Success = err == null,
             Reason = err
@@ -232,7 +233,7 @@ public class DataController : ControllerBase
         {
             if (info.Musics.Any(x => x.Name == data.Name.Trim() && x.Artist == data.Artist?.Trim() && data.SongType == data.SongType?.Trim()))
             {
-                return StatusCode(StatusCodes.Status400BadRequest, new Response()
+                return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                 {
                     Success = false,
                     Reason = "There is already a music saved with the same filename"
@@ -246,7 +247,7 @@ public class DataController : ControllerBase
         var err = DownloadSong(data.Youtube, rawSongPath, normSongPath);
         if (err != null)
         {
-            return StatusCode(StatusCodes.Status500InternalServerError, new Response()
+            return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse()
             {
                 Success = false,
                 Reason = err
@@ -269,7 +270,7 @@ public class DataController : ControllerBase
         var outMusicPath = GetMusicKey(songName, artist, songType);
 
         // Format album data
-        string albumKey = null;
+        string? albumKey = null;
         var hasAlbum = !string.IsNullOrWhiteSpace(albumUrl);
         if (hasAlbum)
         {
@@ -303,7 +304,7 @@ public class DataController : ControllerBase
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
-        return StatusCode(StatusCodes.Status200OK, new Response()
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
             Reason = null

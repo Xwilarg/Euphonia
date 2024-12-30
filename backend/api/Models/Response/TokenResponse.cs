@@ -1,6 +1,4 @@
-﻿using Euphonia.API.Models.Response;
-
-namespace Euphonia.API.Models;
+﻿namespace Euphonia.API.Models.Response;
 
 public class TokenResponse : BaseResponse
 {

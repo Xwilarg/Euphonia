@@ -1,4 +1,4 @@
-﻿using Euphonia.API.Models;
+﻿using Euphonia.API.Models.Data;
 using System.Text.Json;
 
 namespace Euphonia.API.Services

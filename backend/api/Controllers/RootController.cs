@@ -1,4 +1,4 @@
-﻿using Euphonia.API.Models;
+﻿using Euphonia.API.Models.Response;
 using Euphonia.API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
