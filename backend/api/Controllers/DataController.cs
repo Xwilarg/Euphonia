@@ -109,6 +109,42 @@ public class DataController : ControllerBase
         song.Name = data.Name;
         song.Artist = data.Artist;
 
+        if (string.IsNullOrWhiteSpace(data.AlbumUrl) && string.IsNullOrWhiteSpace(data.AlbumName)) // No album name, no URL, we have no album
+        {
+            song.Album = null;
+        }
+        else
+        {
+            var albName = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName;
+            var key = Utils.CleanPath(string.IsNullOrWhiteSpace(data.AlbumKey) ? GetAlbumName(song.Artist, albName ?? Guid.NewGuid().ToString()) : data.AlbumKey);
+            song.Album = key;
+
+            var source = string.IsNullOrWhiteSpace(data.AlbumUrl) ? null : data.AlbumUrl;
+            if (!info.Albums.ContainsKey(key))
+            {
+                info.Albums.Add(key, new()
+                {
+                    Name = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName,
+                    Path = source == null ? null : $"{key}.webp",
+                    Source = source
+                });
+                if (source != null)
+                {
+                    Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp"));
+                }
+            }
+            else
+            {
+                if (source != null && info.Albums[key].Source != source)
+                {
+                    Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp"));
+                }
+                info.Albums[key].Name = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName;
+                info.Albums[key].Path = source == null ? null : $"{key}.webp";
+                info.Albums[key].Source = source;
+            }
+        }
+
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
         return StatusCode(StatusCodes.Status200OK, new Response()
