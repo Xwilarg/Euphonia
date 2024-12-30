@@ -147,7 +147,7 @@ function prepareWholeShuffle() {
 }
 
 // Create a random playlist with the parameter as the first song
-function prepareShuffle(index) {
+export function prepareShuffle(index) {
     playlist = [];
     playlistIndex = -1;
     playlist.push(index);
@@ -261,7 +261,7 @@ function displayPlaylists(playlists, id, filter) {
 }
 
 /// Update the song HTML of the element given in parameter
-function updateSingleSongDisplay(node, elem) {
+export function updateSingleSongDisplay(node, elem) {
     let selectTags = "";
     let currentTags = "";
     if (json.tags)
@@ -350,7 +350,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     } else {
         document.getElementById(id).innerHTML = "";
         for (let elem of musics) {
-            spawnSongNode(elem);
+            spawnSongNode(elem, id, isMinimalist);
         }
 
         // Playlist changed, maybe there is a song we should highlight now

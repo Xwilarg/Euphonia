@@ -1,6 +1,8 @@
 // module "song.js"
 
-export function spawnSongNode(curr) {
+import { prepareShuffle, updateSingleSongDisplay } from "./getMusics";
+
+export function spawnSongNode(curr, id, isMinimalist) {
     let template = document.getElementById("template-song");
     const node = template.content.cloneNode(true);
 
@@ -28,7 +30,9 @@ export function spawnSongNode(curr) {
             for (var i = 0, len = form.elements.length; i < len; ++i) {
                 form.elements[i].disabled = false;
             }
-            form.getElementsByClassName("edit-source")[0].value = elem.source;
+            form.getElementsByClassName("edit-source")[0].value = curr.source;
+            form.getElementsByClassName("edit-name")[0].value = curr.name;
+            form.getElementsByClassName("edit-artist")[0].value = curr.artist;
         }
     });
     node.querySelector(".song-repair").addEventListener("click", () => {

@@ -80,6 +80,8 @@ public class DataController : ControllerBase
 
         song.Tags = data.Tags;
         song.Source = data.Source;
+        song.Name = data.Name;
+        song.Artist = data.Artist;
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
