@@ -63,10 +63,10 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
                 editWarn.classList.remove("is-hidden");
                 editUrl.classList.add("is-warning");
                 editWarn.innerHTML = "Only changing the URL can affect<br>others songs sharing the album name";
-            } else if (editName.value === "") {
+            } else if (editName.value === "" && editUrl.value !== "") {
                 editWarn.classList.remove("is-hidden");
                 editUrl.classList.add("is-warning");
-                editWarn.innerHtml = "Changing the URL without adding<br>a name will assign a random one";
+                editWarn.innerHTML = "Changing the URL without adding<br>a name will assign a random one";
             }
 
             if (editName.value === "") { // User removed the name
@@ -81,7 +81,7 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
                 namePlaceholder = crypto.randomUUID();
             }
         }
-        if (editKey.value !== "") haveChanges = true;
+        if (editKey.value !== "" && editKey.value !== curr.album) haveChanges = true;
 
         editName.placeholder = namePlaceholder ?? "Name of the album";
 
@@ -89,6 +89,8 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
         let key;
         if (editName.value === "" && editUrl.value === "") {
             key = "";
+        } else if (!haveChanges && curr.album) {
+            key = curr.album;
         } else {
             key = generateKey(curr.artist, editName.value === "" ? namePlaceholder : editName.value);
         }
@@ -99,14 +101,21 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
         if (haveChanges && currKey in json.albums) {
             keyWarn.classList.remove("is-hidden");
             editKey.classList.add("is-warning");
+
+            editName.disabled = true;
+            editUrl.disabled = true;
         } else {
             keyWarn.classList.add("is-hidden");
             editKey.classList.remove("is-warning");
+
+            editName.disabled = false;
+            editUrl.disabled = false;
         }
     }
 
     editName.addEventListener("change", (_) => { onAlbumChange(); });
     editUrl.addEventListener("change", (_) => { onAlbumChange(); });
+    editKey.addEventListener("change", (_) => { onAlbumChange(); });
 
     node.querySelector(".song-edit").addEventListener("click", () => {
         target.hidden = !target.hidden;
@@ -122,7 +131,7 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
             if (curr.album) {
                 form.getElementsByClassName("edit-album-name")[0].value = json.albums[curr.album].name ?? curr.album;
                 form.getElementsByClassName("edit-album-url")[0].value = json.albums[curr.album].source;
-                form.getElementsByClassName("edit-album-key")[0].value = curr.album;
+                form.getElementsByClassName("edit-album-key")[0].placeholder = curr.album;
             }
         }
     });
