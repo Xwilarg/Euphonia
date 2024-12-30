@@ -110,9 +110,12 @@ public class DataController : ControllerBase
         song.Name = data.Name;
         song.Artist = data.Artist;
 
+        Album albumData;
+
         if (string.IsNullOrWhiteSpace(data.AlbumUrl) && string.IsNullOrWhiteSpace(data.AlbumName)) // No album name, no URL, we have no album
         {
             song.Album = null;
+            albumData = null;
         }
         else
         {
@@ -123,35 +126,60 @@ public class DataController : ControllerBase
             var source = string.IsNullOrWhiteSpace(data.AlbumUrl) ? null : data.AlbumUrl;
             if (!info.Albums.ContainsKey(key))
             {
-                info.Albums.Add(key, new()
+                albumData = new()
                 {
                     Name = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName,
                     Path = source == null ? null : $"{key}.webp",
                     Source = source
-                });
+                };
+                info.Albums.Add(key, albumData);
                 if (source != null)
                 {
-                    Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp"));
+                    if (!Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp")))
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+                        {
+                            Success = false,
+                            Reason = "Image URL is invalid"
+                        });
+                    }
                 }
             }
             else
             {
                 if (source != null && info.Albums[key].Source != source)
                 {
-                    Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp"));
+                    if (!Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp")))
+                    {
+                        return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+                        {
+                            Success = false,
+                            Reason = "Image URL is invalid"
+                        });
+                    }
                 }
                 info.Albums[key].Name = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName;
                 info.Albums[key].Path = source == null ? null : $"{key}.webp";
                 info.Albums[key].Source = source;
+                albumData = info.Albums[key];
             }
         }
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
-        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
+        return StatusCode(StatusCodes.Status200OK, new SongResponse()
         {
             Success = true,
-            Reason = null
+            Reason = null,
+
+            Name = song.Name,
+            Artist = song.Artist,
+            Tags = song.Tags,
+
+            AlbumKey = song.Album,
+            AlbumName = albumData?.Name,
+            AlbumSource = albumData?.Source,
+            AlbumPath = albumData?.Path
         });
     }
 
@@ -219,7 +247,14 @@ public class DataController : ControllerBase
         var albumName = data.AlbumName == null ? null : GetAlbumName(data.Artist, data.AlbumName);
         if (albumName != null && !string.IsNullOrWhiteSpace(data.AlbumUrl))
         {
-            Utils.SaveUrlAsImage(_client, data.AlbumUrl, GetImagePath(folder, albumName, "webp"));
+            if (!Utils.SaveUrlAsImage(_client, data.AlbumUrl, GetImagePath(folder, albumName, "webp")))
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+                {
+                    Success = false,
+                    Reason = "Image URL is invalid"
+                });
+            }
         }
 
         // Prepare to download the rest

@@ -16,12 +16,22 @@ namespace Euphonia.API.Controllers
             }
             return name;
         }
-        public static void SaveUrlAsImage(HttpClient client, string url, string path)
+        public static bool SaveUrlAsImage(HttpClient client, string url, string path)
         {
-            var img = Image.Load(client.GetByteArrayAsync(url).GetAwaiter().GetResult());
+            byte[] data;
+            try
+            {
+                data = client.GetByteArrayAsync(url).GetAwaiter().GetResult();
+            }
+            catch (HttpRequestException)
+            {
+                return false;
+            }
+            var img = Image.Load(data);
             var ar = (img.Width > img.Height ? img.Width : img.Height) / 450f;
             img.Mutate(x => x.Resize((int)Math.Ceiling(img.Width / ar), (int)Math.Ceiling(img.Height / ar)));
             img.SaveAsWebp(path);
+            return true;
         }
 
         public static void ExecuteProcess(ProcessStartInfo startInfo, out int returnCode, out string errStr)
