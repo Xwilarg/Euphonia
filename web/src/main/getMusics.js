@@ -6,7 +6,7 @@
 
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
-import { archiveSong, getApiToken, isLoggedIn, logOff, validateIntegrity } from '../common/api';
+import { archiveSong, favoriteSong, getApiToken, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 
 let json;
@@ -109,6 +109,9 @@ function nextSong() {
     lastTimeUpdate = 0;
     trackDuration = 0;
     timeStarted = Math.floor(Date.now() / 1000);
+
+    // Update player
+    document.getElementById("favorite-icon").innerHTML = elem.isFavorite ? "heart_minus" : "heart_plus";
 
     // Load song and play it
     let player = document.getElementById("player");
@@ -452,6 +455,13 @@ function loadPage() {
             }, () => { });
         }
     });
+    document.getElementById("favorite").addEventListener("click", (_) => {
+        favoriteSong(getSongKey(currSong), !currSong.isFavorite, () => {
+            currSong.isFavorite = !currSong.isFavorite;
+            document.getElementById("favorite-icon").innerHTML = currSong.isFavorite ? "heart_minus" : "heart_plus";
+            updateFavorites();
+        }, () => {});
+    });
     document.getElementById("volume").addEventListener("change", (_) => {
         const val = document.getElementById("volume").value / 100;
         player.volume = val;
@@ -555,14 +565,16 @@ function loadPage() {
         } else {
             document.getElementById("random").classList.add("is-hidden");
         }
-        if (json.highlight !== undefined && json.highlight.length > 0) {
-            document.getElementById("highlight").hidden = false;
-            displaySongs(json.musics.filter(x => json.highlight.includes(x.name) && (x.type === undefined || x.type === null)), "highlightlist", "", false, false, 5);
-        }
+        updateFavorites();
         displaySongs(json.musics.slice(-15).reverse(), "latestlist", "", false, false, 15);
 
         lookForSong(url);
     }
+}
+
+function updateFavorites()
+{
+    displaySongs(json.musics.filter(x => x.isFavorite), "highlightlist", "", false, false, 5);
 }
 
 function lookForSong(url)

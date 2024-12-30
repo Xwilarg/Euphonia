@@ -6,9 +6,10 @@
         <button class="button" id="togglePlay"><span class="material-symbols-outlined">play_arrow</span></button>
         <button class="button" id="previous"><span class="material-symbols-outlined">skip_previous</span></button>
         <button class="button" id="skip"><span class="material-symbols-outlined">skip_next</span></button>
+        <button class="button requires-admin" id="favorite"><span class="material-symbols-outlined" id="favorite-icon">heart_plus</span></button>
         {% if metadata.allowShare %}<button class="button" id="share"><span class="material-symbols-outlined">share</span></button>{% endif %}
         {% if metadata.allowDownload %}<button class="button" id="download"><span class="material-symbols-outlined">download</span></button>{% endif %}
-        <button id="archive" class="button requires-admin"><span class="material-symbols-outlined">delete</span></button>
+        <button class="button requires-admin" id="archive"><span class="material-symbols-outlined">delete</span></button>
     </div>
     <br/>
     <span id="currDuration"></span> / <span id="maxDuration"></span>

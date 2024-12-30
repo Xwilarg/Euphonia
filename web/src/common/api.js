@@ -168,6 +168,33 @@ export async function archiveSong(key, onSuccess, onFailure) {
     });
 }
 
+export async function favoriteSong(key, toggle, onSuccess, onFailure) {
+    const data = new FormData();
+    data.append("Key", key);
+    data.append("IsOn", toggle);
+
+    fetch(`${apiTarget}data/favorite`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        },
+        body: data
+    })
+    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(json => {
+        if (json.success) {
+            onSuccess();
+        } else {
+            alert(`Failed to favorite song: ${json.reason}`);
+            onFailure();
+        }
+    })
+    .catch((err) => {
+        alert(`Failed to favorite song: ${err}`);
+        onFailure();
+    });
+}
+
 export async function repairSong(key, onSuccess, onFailure) {
     const data = new FormData();
     data.append("Key", key);
