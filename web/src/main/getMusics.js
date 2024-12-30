@@ -651,12 +651,12 @@ function chooseDisplay() {
     if (playlist === null || playlist === "none") { // Display playlist
         document.getElementById("pageStateReady").hidden = true;
         document.getElementById("pageStatePlaylist").hidden = false;
-        document.getElementById("back").hidden = true;
+        document.getElementById("back").classList.add("is-hidden");
         displayPlaylists(json.playlists, "playlistlist", "");
     } else { // Display songs of corresponding playlist
         document.getElementById("pageStateReady").hidden = false;
         document.getElementById("pageStatePlaylist").hidden = true;
-        document.getElementById("back").hidden = false;
+        document.getElementById("back").classList.remove("is-hidden");
         if (json.musics !== undefined)
         {
             json.musics = json.musics.filter(x => playlist === "all" || x.playlist === playlist || (playlist === "default" && (x.playlist === undefined || x.playlist === null)));
