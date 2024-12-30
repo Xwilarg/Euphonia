@@ -240,7 +240,7 @@ export async function updateSong(data, onSuccess, onFailure) {
     .then(json => {
         if (json.success) {
             alert(`Your song was successfully updated`);
-            onSuccess();
+            onSuccess(json);
         } else {
             alert(`Failed to update song: ${json.reason}`);
             onFailure();

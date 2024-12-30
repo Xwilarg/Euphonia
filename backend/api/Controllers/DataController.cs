@@ -112,7 +112,7 @@ public class DataController : ControllerBase
 
         Album albumData;
 
-        if (string.IsNullOrWhiteSpace(data.AlbumUrl) && string.IsNullOrWhiteSpace(data.AlbumName)) // No album name, no URL, we have no album
+        if (data.AlbumUrl == null && data.AlbumName == null) // No album name, no URL, we have no album
         {
             song.Album = null;
             albumData = null;
@@ -120,11 +120,21 @@ public class DataController : ControllerBase
         else
         {
             var albName = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName;
-            var key = Utils.CleanPath(string.IsNullOrWhiteSpace(data.AlbumKey) ? GetAlbumName(song.Artist, albName ?? Guid.NewGuid().ToString()) : data.AlbumKey);
-            song.Album = key;
+            string key;
+            if (string.IsNullOrWhiteSpace(data.AlbumKey))
+            {
+                key = song.Album != null && info.Albums.ContainsKey(song.Album)
+                        ? song.Album // The album already exists, so we use it
+                        : GetAlbumName(song.Artist, albName ?? Guid.NewGuid().ToString()); // Else we generate one
+            }
+            else
+            {
+                key = data.AlbumKey;
+            }
+            song.Album = Utils.CleanPath(key);
 
             var source = string.IsNullOrWhiteSpace(data.AlbumUrl) ? null : data.AlbumUrl;
-            if (!info.Albums.ContainsKey(key))
+            if (!info.Albums.ContainsKey(key)) // New album we don't have before, let's add it
             {
                 albumData = new()
                 {
@@ -133,7 +143,7 @@ public class DataController : ControllerBase
                     Source = source
                 };
                 info.Albums.Add(key, albumData);
-                if (source != null)
+                if (source != null) // Album have a source, we try to download the image
                 {
                     if (!Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp")))
                     {
@@ -145,22 +155,28 @@ public class DataController : ControllerBase
                     }
                 }
             }
-            else
+            else // Album already exists
             {
-                if (source != null && info.Albums[key].Source != source)
+                if (info.Albums[key].Source != null) // We only attempt to update sources if one was provided
                 {
-                    if (!Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp")))
+                    info.Albums[key].Path = source == null ? null : $"{key}.webp";
+                    info.Albums[key].Source = source;
+                    if (source != null && info.Albums[key].Source != source)
                     {
-                        return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+                        if (!Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp")))
                         {
-                            Success = false,
-                            Reason = "Image URL is invalid"
-                        });
+                            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+                            {
+                                Success = false,
+                                Reason = "Image URL is invalid"
+                            });
+                        }
                     }
                 }
-                info.Albums[key].Name = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName;
-                info.Albums[key].Path = source == null ? null : $"{key}.webp";
-                info.Albums[key].Source = source;
+                if (data.AlbumName != null) // Was name provided?
+                {
+                    info.Albums[key].Name = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName;
+                }
                 albumData = info.Albums[key];
             }
         }

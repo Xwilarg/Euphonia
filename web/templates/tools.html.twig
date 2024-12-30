@@ -6,6 +6,9 @@
         <meta property="og:description" content="Setup tools for Euphonia"/>
         <link rel="icon" type="image/x-icon" href="/favicon.ico">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script id="data" type="application/json">
+            {{ json | replace({'<': '&lt;' }) | raw }}
+        </script>
 
         <script src="/js/tools.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"/>
@@ -25,6 +28,12 @@
                     <input class="button is-link" type="submit"/>
                 </div>
             </form>
+        </fieldset>
+        <fieldset class="box">
+            <legend class="label has-text-centered">Statistics</legend>
+            <div>
+                <h2 class="subtitle"></h2>
+            </div>
         </fieldset>
     </body>
 </html>

@@ -8,4 +8,7 @@ use Twig\Environment;
 $loader = new FilesystemLoader(["templates"]);
 $twig = new Environment($loader);
 
-echo $twig->render("tools.html.twig", []);
+$rawInfo = file_get_contents("$basePath/info.json");
+echo $twig->render("tools.html.twig", [
+    "json" => $rawInfo
+]);

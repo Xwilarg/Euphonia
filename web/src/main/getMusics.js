@@ -190,7 +190,7 @@ function sanitize(text) {
 // #region On page load
 
 function getAlbumImage(elem) {
-    if (elem.album === null || elem.album === undefined || !(elem.album in json.albums)) {
+    if (elem.album === null || elem.album === undefined || !(elem.album in json.albums) || json.albums[elem.album].path === null) {
         return "/img/CD.png";
     }
     return "/data/icon/" + json.albums[elem.album].path;
@@ -204,7 +204,7 @@ function getPlaylistHtml(id, name) {
             continue;
         }
         count++;
-        if (elem.album === null) {
+        if (elem.album === null) { // TODO: Should also check playlist path
             continue;
         }
         let img = getAlbumImage(elem);

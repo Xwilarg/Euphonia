@@ -163,7 +163,7 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
         for (var i = 0, len = form.elements.length; i < len; ++i) {
             form.elements[i].disabled = true;
         }
-        updateSong(data, () => {
+        updateSong(data, (json) => { // TODO: Use json to update data
             target.hidden = true;
 
             if (data.get("Tags") !== undefined) {
