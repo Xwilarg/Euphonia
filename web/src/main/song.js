@@ -68,6 +68,8 @@ export function spawnSongNode(curr, id, isMinimalist) {
             if (data["Tags"] !== undefined) {
                 curr.tags = data["Tags"];
             }
+            curr.name = data["Name"];
+            curr.artist = data["Artist"];
 
             updateSingleSongDisplay(document.getElementById(idContainer), curr);
         }, () => {
