@@ -42,7 +42,7 @@ export function spawnSongNode(curr, id, isMinimalist) {
         if (isRepairOngoing) {
             alert("A repair is already ongoing")
         } else {
-            let res = confirm("Are you sure you want to repair this song?");
+            let res = confirm("Are you sure you want to repair this song? This will redownload the whole audio file");
             if (res) {
                 isRepairOngoing = true;
                 repairSong(getSongKey(elem), () => {

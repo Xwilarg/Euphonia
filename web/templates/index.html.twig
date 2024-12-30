@@ -52,9 +52,22 @@
                         <p></p>
                         <div class="tags-container">
                         </div>
-                        <div class="flex">
-                            <button class="requires-admin song-edit is-hidden"><span class="material-symbols-outlined">edit</span></button>
-                            <button class="requires-admin song-repair is-hidden"><span class="material-symbols-outlined">construction</span></button>
+                        <div class="dropdown is-hoverable requires-admin">
+                            <div class="dropdown-trigger">
+                                <button class="button" aria-haspopup="true" aria-controls="dropdown-menu4">
+                                    <span class="material-symbols-outlined">settings</span>
+                                </button>
+                            </div>
+                            <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                                <div class="dropdown-content">
+                                    <div class="dropdown-item">
+                                        <button class="button is-fullwidth song-edit">Edit</button>
+                                    </div>
+                                    <div class="dropdown-item">
+                                        <button class="button is-fullwidth song-repair">Redownload</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div class="edit-content" hidden>
                             <form class="song-edit-form">

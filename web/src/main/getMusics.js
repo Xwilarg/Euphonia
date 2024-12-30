@@ -294,11 +294,11 @@ export function updateSingleSongDisplay(node, elem) {
     }
     if (isLoggedIn())
     {
-        node.querySelector("button").classList.remove("is-hidden");
+        node.querySelector(".requires-admin").classList.remove("is-hidden");
     }
     else
     {
-        node.querySelector("button").classList.add("is-hidden");
+        node.querySelector(".requires-admin").classList.add("is-hidden");
     }
 }
 
