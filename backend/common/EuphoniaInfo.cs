@@ -25,7 +25,6 @@ public static class Serialization
 
 public class EuphoniaInfo
 {
-    public List<string> Highlight { set; get; } = [];
     public Dictionary<string, Playlist> Playlists { set; get; } = [];
     public List<Song> Musics { set; get; } = [];
     public Dictionary<string, Album> Albums { set; get; } = [];
