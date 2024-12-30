@@ -5,7 +5,19 @@ import { getSongKey, prepareShuffle, updateSingleSongDisplay } from "./getMusics
 
 let isRepairOngoing;
 
-export function spawnSongNode(curr, id, isMinimalist) {
+function cleanPath(name) {
+    const arr = ['<', '>', ':', '\\', '/', '"', '|', '?', '*', '#', '&', '%'];
+    for (let a of arr) {
+        name = name.replace(a, "");
+    }
+    return name;
+}
+
+function generateKey(artist, album) {
+    return `${cleanPath(artist?.trim() ?? "unknown")}_${cleanPath(album.trim())}`;
+}
+
+export function spawnSongNode(json, curr, id, isMinimalist) {
     let template = document.getElementById("template-song");
     const node = template.content.cloneNode(true);
 
@@ -25,6 +37,77 @@ export function spawnSongNode(curr, id, isMinimalist) {
     }
     let target = node.querySelector(".edit-content");
     let form = node.querySelector("form");
+
+    // We if edit album stuff, we need to take some stuff into consideration...
+    let editName = node.querySelector(".edit-album-name");
+    let editUrl = node.querySelector(".edit-album-url");
+    let editKey = node.querySelector(".edit-album-key");
+    let editWarn = node.querySelector(".edit-album-url-warning");
+    let keyWarn = node.querySelector(".edit-album-key-warn");
+    function onAlbumChange() {
+        editWarn.classList.add("is-hidden");
+        editUrl.classList.remove("is-warning");
+        editWarn.innerHTML = "";
+
+        let namePlaceholder = null;
+        let haveChanges = false;
+
+        // We warn users if unexpected things might happen due to name/URL changes
+        if (curr.album) { // There was an album before
+            const isSameName = editName.value === (json.albums[curr.album].name ?? curr.album);
+            const isSameUrl = editUrl.value === (json.albums[curr.album].source ?? "");
+
+            haveChanges = !isSameName || !isSameUrl;
+
+            if (!isSameUrl && isSameName) {
+                editWarn.classList.remove("is-hidden");
+                editUrl.classList.add("is-warning");
+                editWarn.innerHTML = "Only changing the URL can affect<br>others songs sharing the album name";
+            } else if (editName.value === "") {
+                editWarn.classList.remove("is-hidden");
+                editUrl.classList.add("is-warning");
+                editWarn.innerHtml = "Changing the URL without adding<br>a name will assign a random one";
+            }
+
+            if (editName.value === "") { // User removed the name
+                namePlaceholder = crypto.randomUUID();
+            }
+        }
+        else
+        {
+            haveChanges = editName.value !== "" || editUrl.value !== "";
+
+            if (editUrl.value !== "" && editName.value === "") { // Used added a URL but name is still empty
+                namePlaceholder = crypto.randomUUID();
+            }
+        }
+        if (editKey.value !== "") haveChanges = true;
+
+        editName.placeholder = namePlaceholder ?? "Name of the album";
+
+        // Generate a key in case user didn't add one
+        let key;
+        if (editName.value === "" && editUrl.value === "") {
+            key = "";
+        } else {
+            key = generateKey(curr.artist, editName.value === "" ? namePlaceholder : editName.value);
+        }
+
+        editKey.placeholder = key;
+
+        const currKey = editKey.value === "" ? key : editKey.value;
+        if (haveChanges && currKey in json.albums) {
+            keyWarn.classList.remove("is-hidden");
+            editKey.classList.add("is-warning");
+        } else {
+            keyWarn.classList.add("is-hidden");
+            editKey.classList.remove("is-warning");
+        }
+    }
+
+    editName.addEventListener("change", (_) => { onAlbumChange(); });
+    editUrl.addEventListener("change", (_) => { onAlbumChange(); });
+
     node.querySelector(".song-edit").addEventListener("click", () => {
         target.hidden = !target.hidden;
         if (!target.hidden) {
@@ -36,20 +119,29 @@ export function spawnSongNode(curr, id, isMinimalist) {
             form.getElementsByClassName("edit-source")[0].value = curr.source;
             form.getElementsByClassName("edit-name")[0].value = curr.name;
             form.getElementsByClassName("edit-artist")[0].value = curr.artist;
+            if (curr.album) {
+                form.getElementsByClassName("edit-album-name")[0].value = json.albums[curr.album].name ?? curr.album;
+                form.getElementsByClassName("edit-album-url")[0].value = json.albums[curr.album].source;
+                form.getElementsByClassName("edit-album-key")[0].value = curr.album;
+            }
         }
     });
     node.querySelector(".song-repair").addEventListener("click", () => {
         if (isRepairOngoing) {
             alert("A repair is already ongoing")
         } else {
-            let res = confirm("Are you sure you want to repair this song? This will redownload the whole audio file");
-            if (res) {
-                isRepairOngoing = true;
-                repairSong(getSongKey(elem), () => {
-                    isRepairOngoing = false;
-                }, () => {
-                    isRepairOngoing = false;
-                });
+            if (elem.source === "localfile") {
+                alert("This feature isn't available for local files");
+            } else {
+                let res = confirm("Are you sure you want to repair this song? This will redownload the whole audio file");
+                if (res) {
+                    isRepairOngoing = true;
+                    repairSong(getSongKey(elem), () => {
+                        isRepairOngoing = false;
+                    }, () => {
+                        isRepairOngoing = false;
+                    });
+                }
             }
         }
     })

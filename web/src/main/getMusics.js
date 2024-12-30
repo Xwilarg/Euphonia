@@ -351,7 +351,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     } else {
         document.getElementById(id).innerHTML = "";
         for (let elem of musics) {
-            spawnSongNode(elem, id, isMinimalist);
+            spawnSongNode(json, elem, id, isMinimalist);
         }
 
         // Playlist changed, maybe there is a song we should highlight now
