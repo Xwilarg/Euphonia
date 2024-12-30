@@ -79,7 +79,7 @@ Then you will need to download the following and place them in your path:
 Once this is done, go to [your website]/tools.php and enter your password, then write the value returned in data/credentials.json
 
 ## Updating Euphonia
-With docker, update the files and run `docker compose build --no-cache`
+With docker, update the files and run `docker compose build --no-cache` then run `docker compose up -d` again
 
 ## How to add songs
 

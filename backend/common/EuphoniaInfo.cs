@@ -51,6 +51,7 @@ public class Song
     public string Type { set; get; }
     public string[] Tags { set; get; } = [];
     public bool IsArchived { set; get; }
+    public bool IsFavorite { set; get; }
 }
 
 public class Playlist

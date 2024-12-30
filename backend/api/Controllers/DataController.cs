@@ -37,6 +37,32 @@ public class DataController : ControllerBase
         return song;
     }
 
+    [HttpPost("favorite")]
+    [Authorize]
+    public IActionResult FavoriteSong([FromForm] SongToggleAction data)
+    {
+        var song = LookupSong(data.Key, out var folder, out var info);
+
+        if (song == null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new Response()
+            {
+                Success = false,
+                Reason = "Can't find a song with the given key"
+            });
+        }
+
+        song.IsFavorite = data.IsOn;
+
+        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+
+        return StatusCode(StatusCodes.Status200OK, new Response()
+        {
+            Success = true,
+            Reason = null
+        });
+    }
+
     [HttpPost("archive")]
     [Authorize]
     public IActionResult ArchiveSong([FromForm] SongIdentifier data)
