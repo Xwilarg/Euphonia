@@ -453,7 +453,9 @@ function loadPage() {
         }
     });
     document.getElementById("volume").addEventListener("change", (_) => {
-        player.volume = document.getElementById("volume").value / 100;
+        const val = document.getElementById("volume").value / 100;
+        player.volume = val;
+        localStorage.setItem("volume", val);
     });
     document.getElementById("durationSlider").addEventListener("change", (_) => {
         player.currentTime = document.getElementById("durationSlider").value;
@@ -521,6 +523,7 @@ function loadPage() {
         }
         lastTimeUpdate = player.currentTime;
     });
+
     document.getElementById("currentImage").addEventListener("error", (err) => {
         document.getElementById("error-log").innerHTML += `<div class="error">Loading "${currSong.name}" by "${currSong.artist}" thumbnail failed: ${err.target.src}</div>`;
     });
@@ -529,8 +532,12 @@ function loadPage() {
         nextSong();
     });
 
+    // Read volume from local storage
+    const volume = localStorage.getItem("volume") ?? 0.5;
+    player.volume = volume;
+    document.getElementById("volume").value = volume * 100;
+
     // Audio player config
-    player.volume = 0.5; // Base volume is too loud
     // When song end, we start the next one
     player.addEventListener('ended', function() {
         // Play next song if playlist isn't empty
