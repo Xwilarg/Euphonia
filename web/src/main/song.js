@@ -65,11 +65,11 @@ export function spawnSongNode(curr, id, isMinimalist) {
         updateSong(data, () => {
             target.hidden = true;
 
-            if (data["Tags"] !== undefined) {
-                curr.tags = data["Tags"];
+            if (data.get("Tags") !== undefined) {
+                curr.tags = data.get("Tags");
             }
-            curr.name = data["Name"];
-            curr.artist = data["Artist"];
+            curr.name = data.get("Name");
+            curr.artist = data.get("Artist");
 
             updateSingleSongDisplay(document.getElementById(idContainer), curr);
         }, () => {

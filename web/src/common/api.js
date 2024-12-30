@@ -92,6 +92,7 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
     })
     .catch((err) => {
         document.getElementById("error-log").innerHTML += `<div class="error">Login failed: ${err}</div>`;
+        console.error(err);
         onFailure();
         logOff();
     });
@@ -115,6 +116,7 @@ export async function generatePassword(pwd) {
     })
     .catch((err) => {
         alert(`Request failed: ${err}`);
+        console.error(err);
     });
 }
 
@@ -138,6 +140,7 @@ export async function uploadSong(data, onSuccess, onFailure) {
     })
     .catch((err) => {
         alert(`Failed to upload song: ${err}`);
+        console.error(err);
         onFailure();
     });
 }
@@ -164,6 +167,7 @@ export async function archiveSong(key, onSuccess, onFailure) {
     })
     .catch((err) => {
         alert(`Failed to archive song: ${err}`);
+        console.error(err);
         onFailure();
     });
 }
@@ -191,6 +195,7 @@ export async function favoriteSong(key, toggle, onSuccess, onFailure) {
     })
     .catch((err) => {
         alert(`Failed to favorite song: ${err}`);
+        console.error(err);
         onFailure();
     });
 }
@@ -218,6 +223,7 @@ export async function repairSong(key, onSuccess, onFailure) {
     })
     .catch((err) => {
         alert(`Failed to repair song: ${err}`);
+        console.error(err);
         onFailure();
     });
 }
@@ -242,6 +248,7 @@ export async function updateSong(data, onSuccess, onFailure) {
     })
     .catch((err) => {
         alert(`Failed to update song: ${err}`);
+        console.error(err);
         onFailure();
     });
 }
@@ -263,5 +270,6 @@ export async function validateIntegrity() {
     })
     .catch((err) => {
         alert(`Unexpected error: ${err}`);
+        console.error(err);
     });
 }
