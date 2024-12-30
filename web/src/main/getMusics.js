@@ -255,7 +255,7 @@ function displayPlaylists(playlists, id, filter) {
             html += getPlaylistHtml(elem, p.name);
         }
     }
-    if (json.musics.some(x => x.playlist === "default") && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
+    if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlist === "default") && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
         html += getPlaylistHtml("default", "Unnamed");
     }
     document.getElementById(id).innerHTML = html;
@@ -381,7 +381,7 @@ function loadPage() {
     const url = new URL(window.location.href);
 
     document.getElementById("back").addEventListener("click", () => {
-        window.location=window.location.origin + window.location.pathname;
+        window.location=window.location.origin + window.location.pathname + "?playlist=none";
     });
 
     // Set media session
@@ -634,7 +634,7 @@ function chooseDisplay() {
     let playlist = url.searchParams.get("playlist");
 
     // If parameter is not set or set to a wrong value
-    if ((!metadataJson.showAllPlaylist || playlist !== "all") && (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined)) {
+    if (playlist != "none" && (!metadataJson.showAllPlaylist || playlist !== "all") && (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined)) {
         // If there is no playlist we just display the default one
         if (json.musics !== undefined && json.musics.some(x => x.playlist !== "default" && x.playlist !== null && x.playlist !== undefined)) {
             if (playlist === "default") {
@@ -648,7 +648,7 @@ function chooseDisplay() {
     }
 
     currentPlaylist = playlist;
-    if (playlist === null) { // Display playlist
+    if (playlist === null || playlist === "none") { // Display playlist
         document.getElementById("pageStateReady").hidden = true;
         document.getElementById("pageStatePlaylist").hidden = false;
         document.getElementById("back").hidden = true;
