@@ -1,3 +1,7 @@
+/*
+ * Take care of initializing everything
+ */
+
 import { musics_initAsync } from "./getMusics"
 import { lastfm_initAsync } from "./lastfm"
 import { api_initAsync } from "../common/api"

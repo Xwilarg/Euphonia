@@ -1,5 +1,9 @@
 // module "cookie.js"
 
+/*
+ * Manage cookies
+ */
+
 // https://stackoverflow.com/a/21125098
 export function getCookie(name) {
     var match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));

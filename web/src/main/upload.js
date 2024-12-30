@@ -1,3 +1,7 @@
+/*
+ * Manage upload popup
+ */
+
 import { uploadSong } from "../common/api";
 
 export async function upload_initAsync() {

@@ -58,10 +58,22 @@
                         </div>
                         <div class="edit-content" hidden>
                             <form class="song-edit-form">
-                                <select name="Tags" multiple>
-                                </select>
-                                <input type="text" class="edit-source" name="Source" placeholder="Source"/>
-                                <input type="submit" />
+                                <div class="field">
+                                    <label class="label">Tags</label>
+                                    <div class="control">
+                                        <select name="Tags" multiple>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <label class="label">YouTube URL</label>
+                                    <div class="control">
+                                        <input class="input edit-source" type="text" name="Source" placeholder="Source"/>
+                                    </div>
+                                </div>
+                                <div class="field">
+                                    <input class="button is-link" type="submit"/>
+                                </div>
                             </form>
                         </div>
                     </div>

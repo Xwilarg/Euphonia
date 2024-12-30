@@ -1,3 +1,7 @@
+/*
+ * Manage navigation bar
+ */
+
 export async function navbar_initAsync()
 {
     document.getElementById("toggle-settings").addEventListener("click", () => {

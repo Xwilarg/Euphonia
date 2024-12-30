@@ -1,5 +1,9 @@
 // module "lastfm.js"
 
+/*
+ * Take care of last.fm integration
+ */
+
 import { setCookie, getCookie } from "./cookie"
 
 let lastFmApiKey;

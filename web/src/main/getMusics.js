@@ -1,5 +1,9 @@
 // module "getMusics.js"
 
+/*
+ * Core module, manage everything related to musics
+ */
+
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 import { archiveSong, getApiToken, isLoggedIn, logOff, repairSong, updateSong, validateIntegrity } from '../common/api';
