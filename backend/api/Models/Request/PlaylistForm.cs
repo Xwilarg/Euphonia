@@ -6,7 +6,7 @@ public class PlaylistForm
 {
     [Required]
     public string Name { set; get; }
-    public string FullName { set; get; }
+    public string? FullName { set; get; } = null;
     public string? Description { set; get; } = string.Empty;
     public string? ImageUrl { set; get; } = null;
 }
