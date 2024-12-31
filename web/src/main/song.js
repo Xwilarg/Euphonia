@@ -126,6 +126,14 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
             for (var i = 0, len = form.elements.length; i < len; ++i) {
                 form.elements[i].disabled = false;
             }
+
+            if (json.playlists) {
+                const editPlaylist = form.getElementsByClassName("edit-playlist")[0];
+                for (let [key, value] of Object.entries(json.playlists)) {
+                    editPlaylist.innerHTML += `<option value="${key}">${value.name}</option>`;
+                }
+                editPlaylist.value = curr.playlist;
+            }
             form.getElementsByClassName("edit-source")[0].value = curr.source;
             form.getElementsByClassName("edit-name")[0].value = curr.name;
             form.getElementsByClassName("edit-artist")[0].value = curr.artist;
