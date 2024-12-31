@@ -439,7 +439,7 @@ function loadPage() {
     document.getElementById("togglePlay").addEventListener("click", togglePlay);
     document.getElementById("share")?.addEventListener("click", (_) => {
         const playlist = url.searchParams.get("playlist");
-        const newUrl = window.location.origin + window.location.pathname + `?playlist=${playlist}&song=${encodeURIComponent(`${currSong.name}_${currSong.artist}`)}`;
+        const newUrl = window.location.origin + window.location.pathname + `?playlist=${playlist}&song=${encodeURIComponent(getSongKey(currSong))}`;
         if (navigator.share)
         {
             navigator.share({url: newUrl});
@@ -603,6 +603,7 @@ function loadPage() {
         updateFavorites();
         displaySongs(json.musics.slice(-15).reverse(), "latestlist", "", false, false, 15);
 
+        // Check "?song=" parameter when we share a song
         lookForSong(url);
     }
 }
@@ -619,7 +620,7 @@ function lookForSong(url)
         let found = false;
         for (let i = 0; i < json.musics.length; i++) {
             const s = json.musics[i];
-            if (song === `${s.name}_${s.artist}`)
+            if (song === getSongKey(s))
             {
                 playSingleSong(i);
                 found = true;
