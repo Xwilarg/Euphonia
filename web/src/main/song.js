@@ -54,15 +54,16 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
 
         // We warn users if unexpected things might happen due to name/URL changes
         if (curr.album) { // There was an album before
+            const isSameKey = editKey.value === curr.album || editKey.value === "";
             const isSameName = editName.value === (json.albums[curr.album].name ?? curr.album);
             const isSameUrl = editUrl.value === (json.albums[curr.album].source ?? "");
 
-            haveChanges = !isSameName || !isSameUrl;
+            haveChanges = !isSameKey && (!isSameName || !isSameUrl);
 
-            if (!isSameUrl && isSameName) {
+            if (!isSameUrl && isSameName && isSameKey) {
                 editWarn.classList.remove("is-hidden");
                 editUrl.classList.add("is-warning");
-                editWarn.innerHTML = "Only changing the URL can affect<br>others songs sharing the album name";
+                editWarn.innerHTML = "Only changing the URL can affect<br>others songs sharing the album key";
             } else if (editName.value === "" && editUrl.value !== "") {
                 editWarn.classList.remove("is-hidden");
                 editUrl.classList.add("is-warning");

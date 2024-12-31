@@ -258,6 +258,15 @@ function displayPlaylists(playlists, id, filter) {
     if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlist === "default") && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
         html += getPlaylistHtml("default", "Unnamed");
     }
+    html += `
+    <div class="song card requires-admin ${isLoggedIn() ? "" : "is-hidden"}">
+        <div class="card-content has-text-centered">
+            <p>
+                Create new playlist
+            </p>
+        </div>
+    </div>
+    `;
     document.getElementById(id).innerHTML = html;
 }
 
