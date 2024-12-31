@@ -30,6 +30,8 @@ let playlistIndex;
 
 let replayMode = 0;
 
+let useRawAudio; // Use raw files instead of normalized
+
 // #region Music management
 
 // Start playing if audio player is paused, else pause it
@@ -115,7 +117,7 @@ function nextSong() {
 
     // Load song and play it
     let player = document.getElementById("player");
-    player.src = `./data/normalized/${elem.path}`;
+    player.src = `./data/${useRawAudio ? "raw" : "normalized"}/${elem.path}`;
     player.play();
 
     // Display song data
@@ -452,7 +454,7 @@ function loadPage() {
     document.getElementById("download")?.addEventListener("click", (_) => {
         let b = document.getElementById("download");
         b.disabled = true;
-        fetch(`/data/normalized/${currSong.path}`)
+        fetch(`/data/${useRawAudio ? "raw" : "normalized"}/${currSong.path}`)
         .then(resp => resp.ok ? resp.blob() : Promise.reject(`Code ${resp.status}`))
         .then(blob => {
             const url = window.URL.createObjectURL(blob);
@@ -581,6 +583,15 @@ function loadPage() {
     const volume = localStorage.getItem("volume") ?? 0.5;
     player.volume = volume;
     document.getElementById("volume").value = volume * 100;
+
+    // Preferences
+    useRawAudio = localStorage.getItem("useRaw") ?? false;
+    const useRawToggle = document.getElementById("use-raw");
+    useRawToggle.checked = useRawAudio;
+    useRawToggle.addEventListener("change", (_) => {
+        useRawAudio = useRawToggle.checked;
+        localStorage.setItem("useRaw", useRawAudio);
+    });
 
     // Audio player config
     // When song end, we start the next one

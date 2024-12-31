@@ -8,6 +8,10 @@
                 <legend class="label has-text-centered">Settings</legend>
                 <button class="button" id="toggleAdmin" disabled>Switch to admin mode</button><br>
                 <button class="button" id="minimalistMode">Toggle minimalist mode</button>
+                <div class="field">
+                    <input id="use-raw" type="checkbox" class="switch is-rounded"/>
+                    <label for="use-raw">Use raw audio instead of normalized</label>
+                </div>
             </fieldset>
             {% if metadata.readme is not empty %}
             <fieldset class="box">
