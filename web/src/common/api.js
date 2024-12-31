@@ -273,3 +273,30 @@ export async function validateIntegrity() {
         console.error(err);
     });
 }
+
+export async function createPlaylist(name, onSuccess, onFailure) {
+    const data = new FormData();
+    data.append("Name", name);
+
+    fetch(`${apiTarget}playlist/add`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        },
+        body: data
+    })
+    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(json => {
+        if (json.success) {
+            onSuccess();
+        } else {
+            alert(`Failed to create playlist: ${json.reason}`);
+            onFailure();
+        }
+    })
+    .catch((err) => {
+        alert(`Failed to create playlist: ${err}`);
+        console.error(err);
+        onFailure();
+    });
+}

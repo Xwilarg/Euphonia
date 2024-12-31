@@ -6,7 +6,7 @@
 
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
-import { archiveSong, favoriteSong, getApiToken, isLoggedIn, logOff, validateIntegrity } from '../common/api';
+import { archiveSong, createPlaylist, favoriteSong, getApiToken, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 
 let json;
@@ -259,7 +259,7 @@ function displayPlaylists(playlists, id, filter) {
         html += getPlaylistHtml("default", "Unnamed");
     }
     html += `
-    <div class="song card requires-admin ${isLoggedIn() ? "" : "is-hidden"}">
+    <div id="new-playlist" class="song card requires-admin ${isLoggedIn() ? "" : "is-hidden"}">
         <div class="card-content has-text-centered">
             <p>
                 Create new playlist
@@ -268,6 +268,22 @@ function displayPlaylists(playlists, id, filter) {
     </div>
     `;
     document.getElementById(id).innerHTML = html;
+
+    document.getElementById("new-playlist").addEventListener("click", createNewPlaylist);
+}
+
+function createNewPlaylist(_)
+{
+    var playlistName = window.prompt("Enter new playlist name");
+    if (playlistName) {
+        createPlaylist(playlistName, () => {
+            json.playlists[playlistName] = {
+                name: playlistName,
+                description: null
+            };
+            displayPlaylists(json.playlists, "playlistlist", "");
+        }, () => {});
+    }
 }
 
 /// Update the song HTML of the element given in parameter

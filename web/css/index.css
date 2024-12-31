@@ -27,6 +27,16 @@
     text-overflow: ellipsis;
 }
 
+/* Hovering a song */
+.song:hover {
+    box-shadow: 0 0.5em 1em -0.125em rgba(200, 200, 200, 0.1), 0 0px 0 1px rgba(200, 200, 200, 0.02) !important;
+}
+
+/* Selected song */
+.current {
+    box-shadow: 0 0.5em 1em -0.125em rgba(50, 110, 167, 0.2), 0 0px 0 1px rgba(50, 110, 167, 0.05) !important;
+}
+
 /* https://github.com/jgthms/bulma/issues/2398 */
 .card:last-child {
     margin-bottom: 1.5rem;
@@ -135,9 +145,4 @@
     #full-player {
         max-width: 100%;
     }
-}
-
-/* Selected song */
-.current {
-    box-shadow: 0 0.5em 1em -0.125em rgba(50, 110, 167, 0.2), 0 0px 0 1px rgba(50, 110, 167, 0.05) !important;
 }

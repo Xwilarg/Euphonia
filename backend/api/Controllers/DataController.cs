@@ -160,8 +160,10 @@ public class DataController : ControllerBase
                 if (info.Albums[key].Source != null) // We only attempt to update sources if one was provided
                 {
                     info.Albums[key].Path = source == null ? null : $"{key}.webp";
+
+                    var oldSource = info.Albums[key].Source;
                     info.Albums[key].Source = source;
-                    if (source != null && info.Albums[key].Source != source)
+                    if (source != null && oldSource != source) // Source image changed
                     {
                         if (!Utils.SaveUrlAsImage(_client, source, GetImagePath(folder, key, "webp")))
                         {
