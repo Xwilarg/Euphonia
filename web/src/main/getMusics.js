@@ -487,6 +487,16 @@ function loadPage() {
             updateFavorites();
         }, () => {});
     });
+    document.getElementById("display-more").addEventListener("click", (_) => {
+        const target = document.getElementById("advanced-controls");
+        if (target.classList.contains("is-hidden")) {
+            target.classList.remove("is-hidden");
+            document.getElementById("display-more-icon").innerHTML = "expand_circle_up";
+        } else {
+            target.classList.add("is-hidden");
+            document.getElementById("display-more-icon").innerHTML = "expand_circle_down";
+        }
+    });
     document.getElementById("volume").addEventListener("change", (_) => {
         const val = document.getElementById("volume").value / 100;
         player.volume = val;
