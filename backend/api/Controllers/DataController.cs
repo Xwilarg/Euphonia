@@ -30,7 +30,7 @@ public class DataController : ControllerBase
         info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
         // ID Lookup
-        Song? song = info.Musics.FirstOrDefault(x => x.Id == key);
+        Song? song = info.Musics.FirstOrDefault(x => x.Key == key);
 
         // Key lookup
         song ??= info.Musics.FirstOrDefault(x => $"{x.Name}_{x.Artist}_{x.Type}" == key);
@@ -334,7 +334,7 @@ public class DataController : ControllerBase
         // Create Song class
         var m = new Song
         {
-            Id = Guid.NewGuid().ToString(),
+            Key = Guid.NewGuid().ToString(),
             Album = albumKey,
             Artist = artist,
             Name = songName,

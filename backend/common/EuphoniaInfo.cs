@@ -40,7 +40,7 @@ public class Album
 
 public class Song
 {
-    public string Id { set; get; }
+    public string Key { set; get; }
     public string Name { set; get; }
     public string Path { set; get; }
     public string Artist { set; get; }
