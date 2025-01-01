@@ -263,6 +263,7 @@ function displayPlaylists(playlists, id, filter) {
     html += `
     <div id="new-playlist" class="song card requires-admin ${isLoggedIn() ? "" : "is-hidden"}">
         <div class="card-content has-text-centered">
+            <div class="is-flex is-flex-wrap-wrap is-gap-0 playlist-img-container card-image"></div>
             <p>
                 Create new playlist
             </p>
