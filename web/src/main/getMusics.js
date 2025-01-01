@@ -580,12 +580,12 @@ function loadPage() {
     });
 
     // Read volume from local storage
-    const volume = localStorage.getItem("volume") ?? 0.5;
+    const volume = JSON.parse(localStorage.getItem("volume") ?? 0.5);
     player.volume = volume;
     document.getElementById("volume").value = volume * 100;
 
     // Preferences
-    useRawAudio = localStorage.getItem("useRaw") ?? false;
+    useRawAudio = JSON.parse(localStorage.getItem("useRaw") ?? false);
     const useRawToggle = document.getElementById("use-raw");
     useRawToggle.checked = useRawAudio;
     useRawToggle.addEventListener("change", (_) => {
