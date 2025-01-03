@@ -11,7 +11,7 @@ export function getCookie(name) {
 }
 
 export function setCookie(name, value) {
-    document.cookie = `${name}=${value}; max-age=86400; path=/; SameSite=Strict`;
+    document.cookie = `${name}=${value}; max-age=2592000; path=/; SameSite=Strict`;
 }
 
 export function deleteCookie(name) {
