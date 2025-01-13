@@ -64,6 +64,16 @@ export function logOff() {
     document.getElementById("toggleAdmin").innerHTML = "Switch to admin mode";
 }
 
+function handleFetchResponse(resp)
+{
+    const contentType = resp.headers.get("content-type");
+    if (contentType && contentType.indexOf("application/json") !== -1) {
+        return resp.json();
+    } else {
+        return Promise.reject(`Code ${resp.status}`);
+    }
+}
+
 export async function getApiToken(pwd, onSuccess, onFailure) {
     if (pwd === null) return;
 
@@ -74,7 +84,7 @@ export async function getApiToken(pwd, onSuccess, onFailure) {
         },
         body: JSON.stringify(pwd)
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             adminToken = json.token;
@@ -106,7 +116,7 @@ export async function generatePassword(pwd) {
         },
         body: JSON.stringify(pwd)
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             prompt("Hashed password, please paste it in your credentials file", json.token);
@@ -128,7 +138,7 @@ export async function uploadSong(data, onSuccess, onFailure) {
         },
         body: data
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             alert(`Success`);
@@ -156,7 +166,7 @@ export async function archiveSong(key, onSuccess, onFailure) {
         },
         body: data
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             onSuccess();
@@ -184,7 +194,7 @@ export async function favoriteSong(key, toggle, onSuccess, onFailure) {
         },
         body: data
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             onSuccess();
@@ -211,7 +221,7 @@ export async function repairSong(key, onSuccess, onFailure) {
         },
         body: data
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             onSuccess();
@@ -236,7 +246,7 @@ export async function updateSong(data, onSuccess, onFailure) {
         },
         body: data
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             alert(`Your song was successfully updated`);
@@ -260,7 +270,7 @@ export async function validateIntegrity() {
             'Authorization': `Bearer ${adminToken}`
         }
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             alert(`Integrity succeeded`);
@@ -285,7 +295,7 @@ export async function createPlaylist(name, onSuccess, onFailure) {
         },
         body: data
     })
-    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+    .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
             onSuccess();
