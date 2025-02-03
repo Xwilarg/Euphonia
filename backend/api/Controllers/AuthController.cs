@@ -16,10 +16,10 @@ namespace Euphonia.API.Controllers;
 public class AuthController : ControllerBase
 {
 
-    private readonly ILogger<RootController> _logger;
+    private readonly ILogger<AuthController> _logger;
     private WebsiteManager _manager;
 
-    public AuthController(ILogger<RootController> logger, WebsiteManager manager)
+    public AuthController(ILogger<AuthController> logger, WebsiteManager manager)
     {
         _logger = logger;
         _manager = manager;

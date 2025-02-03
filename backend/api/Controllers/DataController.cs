@@ -13,11 +13,11 @@ namespace Euphonia.API.Controllers;
 public class DataController : ControllerBase
 {
 
-    private readonly ILogger<RootController> _logger;
+    private readonly ILogger<DataController> _logger;
     private WebsiteManager _manager;
     private HttpClient _client;
 
-    public DataController(ILogger<RootController> logger, WebsiteManager manager, HttpClient client)
+    public DataController(ILogger<DataController> logger, WebsiteManager manager, HttpClient client)
     {
         _logger = logger;
         _manager = manager;

@@ -14,11 +14,11 @@ namespace Euphonia.API.Controllers;
 public class PlaylistController : ControllerBase
 {
 
-    private readonly ILogger<RootController> _logger;
+    private readonly ILogger<PlaylistController> _logger;
     private WebsiteManager _manager;
     private HttpClient _client;
 
-    public PlaylistController(ILogger<RootController> logger, WebsiteManager manager, HttpClient client)
+    public PlaylistController(ILogger<PlaylistController> logger, WebsiteManager manager, HttpClient client)
     {
         _logger = logger;
         _manager = manager;
