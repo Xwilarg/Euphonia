@@ -146,3 +146,12 @@
         max-width: 100%;
     }
 }
+
+/* Show notification floating at the bottom of the screen */
+#notification {
+    position: absolute;
+    top: 200px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 4;
+}

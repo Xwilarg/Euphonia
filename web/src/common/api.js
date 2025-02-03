@@ -1,4 +1,5 @@
 import { deleteCookie, getCookie, setCookie } from "../main/cookie";
+import { showNotification } from "../main/notification";
 
 let apiTarget;
 let adminToken = null;
@@ -141,7 +142,7 @@ export async function uploadSong(data, onSuccess, onFailure) {
     .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
-            alert(`Success`);
+            showNotification("The song was successfully uploaded");
             onSuccess();
         } else {
             alert(`Failed to upload song: ${json.reason}`);
@@ -249,7 +250,7 @@ export async function updateSong(data, onSuccess, onFailure) {
     .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
-            alert(`Your song was successfully updated`);
+            showNotification("The song was successfully updated");
             onSuccess(json);
         } else {
             alert(`Failed to update song: ${json.reason}`);

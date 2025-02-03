@@ -8,6 +8,7 @@ import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 import { archiveSong, createPlaylist, favoriteSong, getApiToken, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
+import { showNotification } from './notification';
 
 let json;
 let metadataJson;
@@ -728,9 +729,9 @@ export async function musics_initAsync() {
         } else {
             var pwd = window.prompt("Enter admin password");
             getApiToken(pwd, () => {
-                alert("You are now logged as an admin");
+                showNotification("You are now logged in", true);
             }, () => {
-                alert("Login failed");
+                showNotification("Login failed", false);
             })
         }
     });
