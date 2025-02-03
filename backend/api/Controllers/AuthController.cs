@@ -97,7 +97,7 @@ public class AuthController : ControllerBase
 
         var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
             claims: claims,
-            expires: DateTime.UtcNow.AddDays(1),
+            expires: DateTime.UtcNow.AddDays(30),
             signingCredentials: credentials);
 
         var tokenHandler = new System.IdentityModel.Tokens.Jwt.JwtSecurityTokenHandler();
