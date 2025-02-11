@@ -6,7 +6,7 @@
 
 import * as wanakana from 'wanakana';
 import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
-import { archiveSong, createPlaylist, favoriteSong, getApiToken, isLoggedIn, logOff, validateIntegrity } from '../common/api';
+import { archiveSong, createPlaylist, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 import { showNotification } from './notification';
 
@@ -761,6 +761,13 @@ export async function musics_initAsync() {
     document.getElementById("filter").value = "";
 
     chooseDisplay();
+
+    setInterval(() => {
+        getDownloadProcess((data) => {
+            console.log(data);
+            const container = document.getElementById("download-progress");
+        })
+    }, 10_000); // 10s
 }
 
 window.onkeydown = function(e){

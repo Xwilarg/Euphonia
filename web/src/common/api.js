@@ -75,6 +75,19 @@ function handleFetchResponse(resp)
     }
 }
 
+export async function getDownloadProcess(onSuccess)
+{
+    fetch(`${apiTarget}download/progress`)
+    .then()
+    .then(handleFetchResponse)
+    .then(json => {
+        if (json.success) {
+            onSuccess(json.data);
+        }
+    })
+    .catch((err) => {});
+}
+
 export async function getApiToken(pwd, onSuccess, onFailure) {
     if (pwd === null) return;
 
