@@ -148,13 +148,13 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
         if (isRepairOngoing) {
             alert("A repair is already ongoing")
         } else {
-            if (elem.source === "localfile") {
+            if (curr.source === "localfile") {
                 alert("This feature isn't available for local files");
             } else {
                 let res = confirm("Are you sure you want to repair this song? This will redownload the whole audio file");
                 if (res) {
                     isRepairOngoing = true;
-                    repairSong(getSongKey(elem), () => {
+                    repairSong(getSongKey(curr), () => {
                         isRepairOngoing = false;
                     }, () => {
                         isRepairOngoing = false;

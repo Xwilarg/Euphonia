@@ -96,17 +96,29 @@ public class DownloadController : ControllerBase
     {
         while (Thread.CurrentThread.IsAlive)
         {
-            if (_downloadData.TryDequeue(out var res))
+            if (_downloadData.TryPeek(out var res))
             {
-                var error = DownloadSong(res);
-                res.Error = error;
-                res.CurrentState = DownloadState.Finished;
-                res.LastUpdate = DateTime.UtcNow;
+                _logger.LogInformation($"Starting download of {res.Song.Name} by {res.Song.Artist}");
 
-                if (res.Error != null)
+                try
                 {
-                    _erroredData.Enqueue(res);
+                    var error = DownloadSong(res);
+                    res.Error = error;
+                    res.CurrentState = DownloadState.Finished;
+                    res.LastUpdate = DateTime.UtcNow;
+
+                    if (res.Error != null)
+                    {
+                        _logger.LogInformation("Download failed");
+                        _erroredData.Enqueue(res);
+                    }
+                    else _logger.LogInformation("Download succeeded");
                 }
+                catch (Exception e)
+                {
+                    _logger.LogError(e, e.Message);
+                }
+                _downloadData.TryDequeue(out var _);
             }
             Thread.Sleep(100);
         }
