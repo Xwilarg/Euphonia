@@ -132,7 +132,7 @@ export async function generatePassword(pwd) {
 }
 
 export async function uploadSong(data, onSuccess, onFailure) {
-    fetch(`${apiTarget}data/upload`, {
+    fetch(`${apiTarget}download/upload`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${adminToken}`
@@ -215,7 +215,7 @@ export async function repairSong(key, onSuccess, onFailure) {
     const data = new FormData();
     data.append("Key", key);
 
-    fetch(`${apiTarget}data/repair`, {
+    fetch(`${apiTarget}download/repair`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${adminToken}`
