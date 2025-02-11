@@ -33,6 +33,19 @@ public class DownloadController : ControllerBase
         _downloadThread.Start();
     }
 
+
+    [HttpGet("progress")]
+    public IActionResult GetProgress()
+    {
+        return StatusCode(StatusCodes.Status200OK, new SongDownloadResponse()
+        {
+            Success = true,
+            Reason = null,
+            Data = [.._downloadData.Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error }),
+                .._erroredData.Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error })]
+        });
+    }
+
     private Song? LookupSong(string key, out string folder, out EuphoniaInfo info)
     {
         folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
@@ -49,6 +62,7 @@ public class DownloadController : ControllerBase
 
     private string DownloadSong(DownloadSongData data)
     {
+        data.LastUpdate = DateTime.UtcNow;
         int code; string err;
         Utils.ExecuteProcess(new("yt-dlp", $"{data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
         if (code != 0)
@@ -56,6 +70,7 @@ public class DownloadController : ControllerBase
             return $"yt-dlp {data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress failed:\n{string.Join("", err.TakeLast(1000))}";
         }
         data.CurrentState = DownloadState.Normalizing;
+        data.LastUpdate = DateTime.UtcNow;
         Utils.ExecuteProcess(new("ffmpeg-normalize", $"\"{data.RawPath}\" -pr -ext {AudioFormat} -o \"{data.NormPath}\" -c:a libmp3lame"), out code, out err);
         if (code != 0)
         {
@@ -86,6 +101,7 @@ public class DownloadController : ControllerBase
                 var error = DownloadSong(res);
                 res.Error = error;
                 res.CurrentState = DownloadState.Finished;
+                res.LastUpdate = DateTime.UtcNow;
 
                 if (res.Error != null)
                 {
