@@ -115,7 +115,7 @@ public class DataController : ControllerBase
 
         if (data.AlbumUrl == null && data.AlbumName == null) // No album name, no URL, we have no album
         {
-            song.Album = null;
+            song.Album = string.IsNullOrWhiteSpace(data.AlbumKey) ? null : data.AlbumKey; // In case we only updated the key
             albumData = null;
         }
         else
