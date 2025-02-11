@@ -42,7 +42,7 @@ public class DownloadController : ControllerBase
             Success = true,
             Reason = null,
             Data = [.._downloadData.Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error }),
-                .._erroredData.Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error })]
+                .._erroredData.Where(x => (DateTime.UtcNow - x.LastUpdate).TotalHours < 10).Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error })]
         });
     }
 
