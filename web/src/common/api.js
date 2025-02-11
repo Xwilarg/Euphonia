@@ -155,7 +155,7 @@ export async function uploadSong(data, onSuccess, onFailure) {
     .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
-            showNotification("The song was successfully uploaded");
+            showNotification("The song was successfully uploaded", true);
             onSuccess();
         } else {
             alert(`Failed to upload song: ${json.reason}`);
@@ -264,7 +264,7 @@ export async function updateSong(data, onSuccess, onFailure) {
     .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
-            showNotification("The song was successfully updated");
+            showNotification("The song was successfully updated", true);
             onSuccess(json);
         } else {
             alert(`Failed to update song: ${json.reason}`);
