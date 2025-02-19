@@ -17,20 +17,16 @@ public class DownloadController : ControllerBase
 
     private readonly ILogger<DownloadController> _logger;
     private WebsiteManager _manager;
+    private DownloaderManager _download;
     private HttpClient _client;
 
-    private Thread _downloadThread;
-    ConcurrentQueue<DownloadSongData> _downloadData = new();
-    ConcurrentQueue<DownloadSongData> _erroredData = new();
-
-    public DownloadController(ILogger<DownloadController> logger, WebsiteManager manager, HttpClient client)
+    public DownloadController(ILogger<DownloadController> logger, WebsiteManager manager, HttpClient client, DownloaderManager download)
     {
         _logger = logger;
         _manager = manager;
         _client = client;
 
-        _downloadThread = new(new ThreadStart(DownloadThread));
-        _downloadThread.Start();
+        _download = download;
     }
 
 
@@ -41,8 +37,7 @@ public class DownloadController : ControllerBase
         {
             Success = true,
             Reason = null,
-            Data = [.._downloadData.Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error }),
-                .._erroredData.Where(x => (DateTime.UtcNow - x.LastUpdate).TotalHours < 10).Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error })]
+            Data = _download.GetProgress()
         });
     }
 
@@ -58,70 +53,6 @@ public class DownloadController : ControllerBase
         song ??= info.Musics.FirstOrDefault(x => $"{x.Name}_{x.Artist}_{x.Type}" == key);
 
         return song;
-    }
-
-    private string DownloadSong(DownloadSongData data)
-    {
-        data.LastUpdate = DateTime.UtcNow;
-        int code; string err;
-        Utils.ExecuteProcess(new("yt-dlp", $"{data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
-        if (code != 0)
-        {
-            return $"yt-dlp {data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress failed:\n{string.Join("", err.TakeLast(1000))}";
-        }
-        data.CurrentState = DownloadState.Normalizing;
-        data.LastUpdate = DateTime.UtcNow;
-        Utils.ExecuteProcess(new("ffmpeg-normalize", $"\"{data.RawPath}\" -pr -ext {AudioFormat} -o \"{data.NormPath}\" -c:a libmp3lame"), out code, out err);
-        if (code != 0)
-        {
-            return $"ffmpeg-normalize \"{data.RawPath}\" -pr -ext {AudioFormat} -o \"{data.NormPath}\" -c:a libmp3lame failed:\n{string.Join("", err.TakeLast(1000))}";
-        }
-        return null;
-    }
-
-    public void QueueToDownload(Song song, string url, string rawPath, string normPath)
-    {
-        _downloadData.Enqueue(new()
-        {
-            Song = song,
-            CurrentState = DownloadState.Downloading,
-            Error = null,
-            RawPath = rawPath,
-            NormPath = normPath,
-            DownloadUrl = url
-        });
-    }
-
-    private void DownloadThread()
-    {
-        while (Thread.CurrentThread.IsAlive)
-        {
-            if (_downloadData.TryPeek(out var res))
-            {
-                _logger.LogInformation($"Starting download of {res.Song.Name} by {res.Song.Artist}");
-
-                try
-                {
-                    var error = DownloadSong(res);
-                    res.Error = error;
-                    res.CurrentState = DownloadState.Finished;
-                    res.LastUpdate = DateTime.UtcNow;
-
-                    if (res.Error != null)
-                    {
-                        _logger.LogInformation("Download failed");
-                        _erroredData.Enqueue(res);
-                    }
-                    else _logger.LogInformation("Download succeeded");
-                }
-                catch (Exception e)
-                {
-                    _logger.LogError(e, e.Message);
-                }
-                _downloadData.TryDequeue(out var _);
-            }
-            Thread.Sleep(100);
-        }
     }
 
     [HttpPost("repair")]
@@ -153,7 +84,7 @@ public class DownloadController : ControllerBase
         System.IO.File.Delete(rawPath);
         System.IO.File.Delete(normPath);
 
-        QueueToDownload(song, song.Source, rawPath, normPath);
+        _download.QueueToDownload(song, song.Source, rawPath, normPath);
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -254,7 +185,7 @@ public class DownloadController : ControllerBase
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
 
-        QueueToDownload(m, data.Youtube, rawSongPath, normSongPath);
+        _download.QueueToDownload(m, data.Youtube, rawSongPath, normSongPath);
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -263,7 +194,7 @@ public class DownloadController : ControllerBase
         });
     }
 
-    private const string AudioFormat = "mp3";
+    public string AudioFormat => _download.AudioFormat;
 
     private string GetMusicKey(string songName, string artist, string songType)
     {

@@ -36,6 +36,7 @@ namespace Euphonia.API
             builder.Logging.AddConsole();
 #endif
             builder.Services.AddSingleton(manager);
+            builder.Services.AddSingleton<DownloaderManager>();
             builder.Services.AddHttpClient();
 
             // Add services to the container.

@@ -239,7 +239,7 @@ export async function repairSong(key, onSuccess, onFailure) {
     .then(json => {
         if (json.success) {
             onSuccess();
-            alert("Your song was successfully repaired");
+            alert("Your song repair is underway");
         } else {
             alert(`Failed to repair song: ${json.reason}`);
             onFailure();
@@ -264,7 +264,7 @@ export async function updateSong(data, onSuccess, onFailure) {
     .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
-            showNotification("The song was successfully updated", true);
+            showNotification("The song upload is underway", true);
             onSuccess(json);
         } else {
             alert(`Failed to update song: ${json.reason}`);
