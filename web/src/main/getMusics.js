@@ -762,12 +762,19 @@ export async function musics_initAsync() {
 
     chooseDisplay();
 
-    setInterval(() => {
+    function updateProgress() {
         getDownloadProcess((data) => {
-            console.log(data);
-            const container = document.getElementById("download-progress");
+            let html = "";
+            for (let elem of data)
+            {
+                html += `${elem.songName} by ${elem.songArtist} (${elem.currentState}): ${elem.error}`;
+            }
+            document.getElementById("download-progress").innerHTML = html;
         })
-    }, 10_000); // 10s
+    }
+
+    setInterval(updateProgress, 10_000); // 10s
+    updateProgress();
 }
 
 window.onkeydown = function(e){
