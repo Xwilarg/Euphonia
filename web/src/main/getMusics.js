@@ -767,7 +767,7 @@ export async function musics_initAsync() {
             let html = "";
             for (let elem of data)
             {
-                html += `${elem.songName} by ${elem.songArtist} (${elem.currentState}): ${elem.error}`;
+                html += `<p>${elem.songName} by ${elem.songArtist} (${elem.currentState}): ${elem.error}</p>`;
             }
             document.getElementById("download-progress").innerHTML = html;
         })

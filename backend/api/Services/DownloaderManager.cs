@@ -70,14 +70,14 @@ namespace Euphonia.API.Services
                         res.Error = error;
                         res.CurrentState = DownloadState.Finished;
                         res.LastUpdate = DateTime.UtcNow;
-
-                        if (res.Error != null)
-                        {
-                            _erroredData.Enqueue(res);
-                        }
                     }
                     catch (Exception e)
                     {
+                        res.Error = e.Message;
+                    }
+                    finally
+                    {
+                        _erroredData.Enqueue(res);
                     }
                     _downloadData.TryDequeue(out var _);
                 }
