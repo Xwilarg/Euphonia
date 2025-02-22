@@ -42,6 +42,21 @@ if ($json)
 else
 {
     $translator = new Translator("en");
+
+    $local = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+    $locals = [];
+    foreach (explode(",", $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $local) {
+        $value = explode(";", $local)[0];
+        if ($value === "*") {
+            array_push($locals, "en");
+            break;
+        }
+        else {
+            array_push($locals, $value);
+        }
+    }
+    $translator->setlocale($locals[0]);
+
     $langs = [ "en", "fr" ];
     foreach ($langs as $lang) {
         $translator->addLoader("yml", new YamlFileLoader());
@@ -61,6 +76,6 @@ else
             "name" => $name,
             "description" => $description
         ],
-        "local" => $translator->getLocale()
+        "local" => join(", ", $locals)
     ]);
 }
