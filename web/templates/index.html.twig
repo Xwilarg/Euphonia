@@ -50,9 +50,8 @@
             <div id="playlists">
                 <hr/>
                 <div id="actions">
-                <p>{{ test | trans }}</p>
-                    <button class="button" id="random-btn">Random</button>
-                    <button class="button" id="refresh-btn">Refresh</button>
+                    <button class="button" id="random-btn">{{ "main.random" | trans }}</button>
+                    <button class="button" id="refresh-btn">{{ "main.refresh" | trans }}</button>
                     <input class="input" type="text" id="filter" placeholder="Filter"/>
                 </div>
                 <div id="pageStatePlaylist">
@@ -61,17 +60,17 @@
                 </div>
                 <div id="pageStateReady" hidden>
                     <div id="random">
-                        <h2 id="random-title" class="subtitle">Random</h2>
+                        <h2 id="random-title" class="subtitle">{{ "main.random" | trans }}</h2>
                         <div id="songlist" class="is-flex is-flex-wrap-wrap is-gap-2 is-justify-content-center">
                         </div>
                     </div>
                     <div id="highlight">
-                        <h2 id="highlight-title" class="subtitle">Favorites</h2>
+                        <h2 id="highlight-title" class="subtitle">{{ "main.favorites" | trans }}</h2>
                         <div id="highlightlist" class="is-flex is-flex-wrap-wrap is-gap-2 is-justify-content-center">
                         </div>
                     </div>
                     <div id="latest">
-                        <h2 id="latest-title" class="subtitle">Latest</h2>
+                        <h2 id="latest-title" class="subtitle">{{ "main.latest" | trans }}</h2>
                         <div id="latestlist" class="is-flex is-flex-wrap-wrap is-gap-2 is-justify-content-center">
                         </div>
                     </div>

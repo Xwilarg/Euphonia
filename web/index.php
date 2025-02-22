@@ -34,19 +34,6 @@ if (isset($_GET["playlist"]))
     }
 }
 
-$langs = [ "en" ];
-foreach ($langs as $lang) {
-    $translator = new Translator($lang);
-    $translator->addLoader("yml", new YamlFileLoader());
-    $translator->addResource(
-        "yml",
-        __DIR__."/translations/messages.$lang.yml",
-        $lang
-    );
-    echo $translator->trans('test');
-    $twig->addExtension(new TranslationExtension($translator));
-}
-
 if ($json)
 {
     header('Content-Type: application/json; charset=utf-8');
@@ -54,6 +41,18 @@ if ($json)
 }
 else
 {
+    $translator = new Translator("en");
+    $langs = [ "en", "fr" ];
+    foreach ($langs as $lang) {
+        $translator->addLoader("yml", new YamlFileLoader());
+        $translator->addResource(
+            "yml",
+            __DIR__."/translations/messages.$lang.yml",
+            $lang
+        );
+    }
+    $twig->addExtension(new TranslationExtension($translator));
+
     echo $twig->render("index.html.twig", [
         "json" => $rawInfo,
         "rawMetadata" => $rawMetadata,

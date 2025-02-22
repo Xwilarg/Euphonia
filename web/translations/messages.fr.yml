@@ -1,0 +1,27 @@
+main:
+  random: Aléatoire
+  refresh: Rafraîchir
+  favorites: Favoris
+  latest: Derniers ajouts
+navbar:
+  general:
+    settings: Options
+    toggleAdmin: Se connecter en adminitrateur
+    minimalistMode: (Dé)activer le mode minimaliste
+    useRaw: Utiliser les audio non-normalisés
+  readme:
+    title: Lisez-moi
+  lastfm:
+    login: Se connecter avec last.fm
+    cookie: Ceci utilisera vos cookies pour stocker votre token de connection
+    status: Status last.fm
+  download:
+    title: Téléchargements
+  logs:
+    title: Rapports d'erreurs
+  sourceCode:
+    title: Code source
+  advanced:
+    title: Options avancés
+    apiLocation: Localisation de l'API
+    integrity: Vérifier l'intégrité

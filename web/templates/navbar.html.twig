@@ -5,17 +5,17 @@
         </button>
         <div id="settings-dropdown" class="navbar-dropdown is-hidden">
             <fieldset class="box">
-                <legend class="label has-text-centered">Settings</legend>
-                <button class="button" id="toggleAdmin" disabled>Switch to admin mode</button><br>
-                <button class="button" id="minimalistMode">Toggle minimalist mode</button>
+                <legend class="label has-text-centered">{{ "navbar.general.settings" | trans }}</legend>
+                <button class="button" id="toggleAdmin" disabled>{{ "navbar.general.toggleAdmin" | trans }}</button><br>
+                <button class="button" id="minimalistMode">{{ "navbar.general.minimalistMode" | trans }}</button>
                 <div class="field">
                     <input id="use-raw" type="checkbox" class="switch is-rounded"/>
-                    <label for="use-raw">Use raw audio instead of normalized</label>
+                    <label for="use-raw">{{ "navbar.general.useRaw" | trans }}</label>
                 </div>
             </fieldset>
             {% if metadata.readme is not empty %}
             <fieldset class="box">
-                <legend class="label has-text-centered">Readme</legend>
+                <legend class="label has-text-centered">{{ "navbar.readme.title" | trans }}</legend>
                 <div id="readme">
                     {{ metadata.readme | map(x => x | replace({'<': '&lt;' })) | join('<br>') | raw }}
                 </div>
@@ -25,32 +25,32 @@
             <fieldset class="box">
                 <legend class="label has-text-centered">last.fm</legend>
                 <div>
-                    <button class="button" id="lastfmLogin" disabled>Login with last.fm</button><br/>
-                    <small>This will use cookies to store your token</small><br/>
-                    last.fm status: <span id="lastfmStatus"></span><br/>
+                    <button class="button" id="lastfmLogin" disabled>{{ "navbar.lastfm.login" | trans }}</button><br/>
+                    <small>{{ "navbar.lastfm.cookie" | trans }}</small><br/>
+                    {{ "navbar.lastfm.status" | trans }}: <span id="lastfmStatus"></span><br/>
                 </div>
             </fieldset>
             {% endif %}
             <fieldset class="box">
-                <legend class="label has-text-centered">Download</legend>
+                <legend class="label has-text-centered">{{ "navbar.download.title" | trans }}</legend>
                 <div id="download-progress">
                 </div>
             </fieldset>
             <fieldset class="box">
-                <legend class="label has-text-centered">Error Logs</legend>
+                <legend class="label has-text-centered">{{ "navbar.logs.title" | trans }}</legend>
                 <p id="error-log"></p>
             </fieldset>
             {% if metadata.showGitHub %}
             <fieldset class="box">
-                <legend class="label has-text-centered">Source Code</legend>
+                <legend class="label has-text-centered">{{ "navbar.sourceCode.title" | trans }}</legend>
                 <a class="button" target="_blank" href="https://github.com/Xwilarg/Euphonia">GitHub</a>
             </fieldset>
             {% endif %}
             {% if metadata.showDebug %}
             <fieldset class="box">
-                <legend class="label has-text-centered">Advanced Settings</legend>
-                API location: <span id="apiTarget"></span><br>
-                <button class="button requires-admin" id="check-integrity">Validate integrity</button>
+                <legend class="label has-text-centered">{{ "navbar.advanced.title" | trans }}</legend>
+                {{ "navbar.advanced.apiLocation" | trans }}: <span id="apiTarget"></span><br>
+                <button class="button requires-admin" id="check-integrity">{{ "navbar.advanced.integrity" | trans }}</button>
             </fieldset>
             {% endif %}
         </div>
