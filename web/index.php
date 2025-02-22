@@ -60,6 +60,7 @@ else
         "og" => [
             "name" => $name,
             "description" => $description
-        ]
+        ],
+        "local" => $translator->getLocale()
     ]);
 }

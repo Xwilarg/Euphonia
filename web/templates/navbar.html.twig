@@ -48,6 +48,7 @@
             {% endif %}
             {% if metadata.showDebug %}
             <fieldset class="box">
+                <span>{{ "navbar.advanced.local" | trans }}: {{ local }}</span><br>
                 <legend class="label has-text-centered">{{ "navbar.advanced.title" | trans }}</legend>
                 {{ "navbar.advanced.apiLocation" | trans }}: <span id="apiTarget"></span><br>
                 <button class="button requires-admin" id="check-integrity">{{ "navbar.advanced.integrity" | trans }}</button>

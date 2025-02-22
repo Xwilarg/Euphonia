@@ -25,3 +25,4 @@ navbar:
     title: Options avancés
     apiLocation: Localisation de l'API
     integrity: Vérifier l'intégrité
+    local: Langue détectée

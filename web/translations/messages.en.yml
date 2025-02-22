@@ -25,3 +25,4 @@ navbar:
     title: Advanced Settings
     apiLocation: API location
     integrity: Validate integrity
+    local: Detected language
