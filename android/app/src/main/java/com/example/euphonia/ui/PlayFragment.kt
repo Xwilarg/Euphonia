@@ -1,6 +1,7 @@
 package com.example.euphonia.ui
 
 import android.content.Context.MODE_PRIVATE
+import android.content.Intent
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -45,7 +46,7 @@ class PlayFragment : Fragment() {
         val desc = view.findViewById<TextView>(R.id.playerDescription)
         if (player != null) {
             view.findViewById<ImageButton>(R.id.delete).setOnClickListener {
-                val key = metadata?.displayTitle
+                val key = metadata?.displayTitle // Display title is not used so store the song key
                 if (key != null) {
                     val okHttpClient = OkHttpClient()
 
@@ -77,6 +78,21 @@ class PlayFragment : Fragment() {
                             }
                         }
                     })
+                }
+            }
+
+            view.findViewById<ImageButton>(R.id.share).setOnClickListener {
+                val key = metadata?.displayTitle
+                if (key != null) {
+                    val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
+                    val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
+                    val index = sharedPref.getInt("currentServer", -1)
+
+                    val intent= Intent()
+                    intent.action = Intent.ACTION_SEND
+                    intent.putExtra(Intent.EXTRA_TEXT, "https://" + servers.elementAt(index) + "?playlist=null&song=$key")
+                    intent.type = "text/plain"
+                    startActivity(Intent.createChooser(intent,"Share To:"))
                 }
             }
 
