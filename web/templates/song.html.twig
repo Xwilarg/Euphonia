@@ -17,10 +17,10 @@
             <div class="dropdown-menu" id="dropdown-menu4" role="menu">
                 <div class="dropdown-content">
                     <div class="dropdown-item">
-                        <button class="button is-fullwidth song-edit">Edit</button>
+                        <button class="button is-fullwidth song-edit">{{ "song.settings.edit" | trans }}</button>
                     </div>
                     <div class="dropdown-item">
-                        <button class="button is-fullwidth song-repair">Redownload</button>
+                        <button class="button is-fullwidth song-repair">{{ "song.settings.redownload" | trans }}</button>
                     </div>
                 </div>
             </div>
@@ -28,54 +28,54 @@
         <div class="edit-content" hidden>
             <form class="song-edit-form">
                 <div class="field">
-                    <label class="label">Tags</label>
+                    <label class="label">{{ "song.upload.tags" | trans }}</label>
                     <div class="control select is-multiple">
                         <select name="Tags" multiple>
                         </select>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Playlist</label>
+                    <label class="label">{{ "song.upload.playlist" | trans }}</label>
                     <div class="control select">
                         <select class="edit-playlist" name="Playlist">
-                            <option value="default">Default</option>
+                            <option value="default">{{ "song.upload.default" | trans }}</option>
                         </select>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Name</label>
+                    <label class="label">{{ "song.upload.name" | trans }}</label>
                     <div class="control">
                         <input class="input edit-name" type="text" name="Name" placeholder="Name of the song"/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Artist name</label>
+                    <label class="label">{{ "song.upload.artistName" | trans }}</label>
                     <div class="control">
                         <input class="input edit-artist" type="text" name="Artist" placeholder="Name of the artist"/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">YouTube URL</label>
+                    <label class="label">{{ "song.upload.youtubeUrl" | trans }}</label>
                     <div class="control">
                         <input class="input edit-source" type="text" name="Source" placeholder="Source"/>
                     </div>
                     <p class="help">If you edit this you'll still need<br>to trigger a manual redownload</p>
                 </div>
                 <div class="field">
-                    <label class="label">Album key</label>
+                    <label class="label">{{ "song.upload.albumKey" | trans }}</label>
                     <div class="control">
                         <input class="input edit-album-key" type="text" name="AlbumKey"/>
                     </div>
                     <p class="help is-warning is-hidden edit-album-key-warn">This key is already used by<br>This will overrides changes below</p>
                 </div>
                 <div class="field">
-                    <label class="label">Album name</label>
+                    <label class="label">{{ "song.upload.albumName" | trans }}</label>
                     <div class="control">
                         <input class="input edit-album-name" type="text" name="AlbumName" placeholder="Name of the album"/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Album URL</label>
+                    <label class="label">{{ "song.upload.albumUrl" | trans }}</label>
                     <div class="control">
                         <input class="input edit-album-url" type="text" name="AlbumUrl" placeholder="URL to an image of the album"/>
                     </div>

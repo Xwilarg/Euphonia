@@ -26,3 +26,20 @@ navbar:
     apiLocation: Localisation de l'API
     integrity: Vérifier l'intégrité
     local: Langue détectée
+song:
+  settings:
+    edit: Modifier
+    redownload: Re-télécharger
+  upload:
+    default: Défaut
+    tags: Tags
+    playlist: Playlist
+    name: Nom
+    artistName: Nom de l'artiste
+    youtubeUrl: Lien YouTube
+    albumKey: Clé d'album
+    albumName: Nom de l'album
+    albumUrl: Lien de l'image de l'album
+    songType: Type de la musique
+    uploadTitle: Télécharger une nouvelle musique
+    invalidYoutubeUrl: Ceci ne ressemble pas à un lien YouTube valide

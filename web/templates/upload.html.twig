@@ -1,53 +1,53 @@
 <div class="modal-background"></div>
 <div class="modal-card">
     <header class="modal-card-head">
-        <p class="modal-card-title">Upload new song</p>
+        <p class="modal-card-title">{{ "song.upload.uploadTitle" | trans }}</p>
         <button id="close-upload" class="delete" aria-label="close"></button>
     </header>
     <section class="modal-card-body">
         <form id="upload-form">
             <div class="field">
-                <label class="label">Name</label>
+                <label class="label">{{ "song.upload.name" | trans }}</label>
                 <div class="control">
                     <input class="input" type="text" name="Name" placeholder="Name of the song"/>
                 </div>
             </div>
             <div class="field">
-                <label class="label">Artist name</label>
+                <label class="label">{{ "song.upload.artistName" | trans }}</label>
                 <div class="control">
                     <input class="input" type="text" name="Artist" placeholder="Name of the artists"/>
                 </div>
             </div>
             <div class="field">
-                <label class="label">Youtube URL</label>
+                <label class="label">{{ "song.upload.youtubeUrl" | trans }}</label>
                 <div class="control">
                     <input class="input" type="url" name="Youtube" placeholder="Youtube URL to the song" id="upload-url"/>
                 </div>
-                <p class="help is-danger is-hidden" id="upload-url-error">This doesn't look like a valid YouTube link</p>
+                <p class="help is-danger is-hidden" id="upload-url-error">{{ "song.upload.invalidYoutubeUrl" | trans }}</p>
             </div>
             <div class="field">
-                <label class="label">Album name</label>
+                <label class="label">{{ "song.upload.albumName" | trans }}</label>
                 <div class="control">
                     <input class="input" type="text" name="AlbumName" placeholder="Name of the album"/>
                 </div>
             </div>
             <div class="field">
-                <label class="label">Album URL</label>
+                <label class="label">{{ "song.upload.albumUrl" | trans }}</label>
                 <div class="control">
                     <input class="input" type="url" name="AlbumUrl" placeholder="URL to an image of the album"/>
                 </div>
             </div>
             <div class="field">
-                <label class="label">Song type</label>
+                <label class="label">{{ "song.upload.songType" | trans }}</label>
                 <div class="control">
                     <input class="input" type="text" name="SongType" placeholder="Is it a cover, live, alternative version..."/>
                 </div>
             </div>
             <div class="field">
-                <label class="label">Playlist</label>
+                <label class="label">{{ "song.upload.playlist" | trans }}</label>
                 <div class="control select">
                     <select id="upload-playlist" name="Playlist">
-                        <option value="default">Default</option>
+                        <option value="default">{{ "song.upload.default" | trans }}</option>
                     </select>
                 </div>
             </div>

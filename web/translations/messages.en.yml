@@ -26,3 +26,20 @@ navbar:
     apiLocation: API location
     integrity: Validate integrity
     local: Detected language
+song:
+  settings:
+    edit: Edit
+    redownload: Redownload
+  upload:
+    default: Default
+    tags: Tags
+    playlist: Playlist
+    name: Name
+    artistName: Artist Name
+    youtubeUrl: Youtube URL
+    albumKey: Album Key
+    albumName: Album Name
+    albumUrl: Album URL
+    songType: Song Type
+    uploadTitle: Upload new song
+    invalidYoutubeUrl: This doesn't look like a valid YouTube link
