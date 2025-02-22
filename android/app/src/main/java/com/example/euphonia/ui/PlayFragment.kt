@@ -34,6 +34,7 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okhttp3.Response
 import java.io.IOException
+import java.net.URLEncoder
 
 class PlayFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +91,7 @@ class PlayFragment : Fragment() {
 
                     val intent= Intent()
                     intent.action = Intent.ACTION_SEND
-                    intent.putExtra(Intent.EXTRA_TEXT, "https://" + servers.elementAt(index) + "?playlist=null&song=$key")
+                    intent.putExtra(Intent.EXTRA_TEXT, "https://" + servers.elementAt(index) + "?playlist=null&song=" + URLEncoder.encode(key.toString(), "utf-8"))
                     intent.type = "text/plain"
                     startActivity(Intent.createChooser(intent,"Share To:"))
                 }
