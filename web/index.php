@@ -4,6 +4,9 @@ require_once "vendor/autoload.php";
 
 use Twig\Loader\FilesystemLoader;
 use Twig\Environment;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\Loader\YamlFileLoader;
+use Symfony\Bridge\Twig\Extension\TranslationExtension;
 
 $loader = new FilesystemLoader(["templates"]);
 $twig = new Environment($loader);
@@ -29,6 +32,19 @@ if (isset($_GET["playlist"]))
             $description = $p["description"];
         }
     }
+}
+
+$langs = [ "en" ];
+foreach ($langs as $lang) {
+    $translator = new Translator($lang);
+    $translator->addLoader("yml", new YamlFileLoader());
+    $translator->addResource(
+        "yml",
+        __DIR__."/translations/messages.$lang.yml",
+        $lang
+    );
+    echo $translator->trans('test');
+    $twig->addExtension(new TranslationExtension($translator));
 }
 
 if ($json)
