@@ -1,4 +1,5 @@
 <div class="navbar-brand">
+    {% if not isReduced %}
     <div class="navbar-item has-dropdown is-active" id="settings">
         <button class="navbar-link" id="toggle-settings">
             <span class="material-symbols-outlined">menu</span>
@@ -59,6 +60,7 @@
     <button class="navbar-item" id="back">
         <span class="material-symbols-outlined">arrow_back</span>
     </button>
+    {% endif %}
     <div class="navbar-item has-dropdown is-active" id="volume-container">
         <button class="navbar-item" id="toggle-volume">
             <span class="material-symbols-outlined">volume_up</span>
@@ -67,7 +69,9 @@
             <input type="range" max="100" id="volume"/>
         </div>
     </div>
+    {% if not isReduced %}
     <button class="navbar-item requires-admin" id="upload">
         <span class="material-symbols-outlined">upload</span>
     </button>
+    {% endif %}
 </div>

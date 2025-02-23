@@ -1,5 +1,7 @@
 export async function modal_initAsync()
 {
+    if (isReduced) return;
+
     document.getElementById("password-cancel").addEventListener("click", (e) => {
         document.getElementById("password-text").value = "";
         document.getElementById("password-modal").classList.remove("is-active");

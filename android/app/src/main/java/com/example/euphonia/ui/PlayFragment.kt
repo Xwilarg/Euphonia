@@ -91,7 +91,7 @@ class PlayFragment : Fragment() {
 
                     val intent= Intent()
                     intent.action = Intent.ACTION_SEND
-                    intent.putExtra(Intent.EXTRA_TEXT, "https://" + servers.elementAt(index) + "?playlist=null&song=" + URLEncoder.encode(key.toString(), "utf-8"))
+                    intent.putExtra(Intent.EXTRA_TEXT, "https://" + servers.elementAt(index) + "?song=" + URLEncoder.encode(key.toString(), "utf-8"))
                     intent.type = "text/plain"
                     startActivity(Intent.createChooser(intent,"Share To:"))
                 }

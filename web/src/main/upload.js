@@ -5,6 +5,8 @@
 import { uploadSong } from "../common/api";
 
 export async function upload_initAsync() {
+    if (isReduced) return;
+
     document.getElementById("upload").addEventListener("click", () => {
         const popup = document.getElementById("upload-window");
         popup.classList.add("is-active");

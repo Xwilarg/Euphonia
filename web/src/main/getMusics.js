@@ -81,17 +81,19 @@ function nextSong() {
     document.getElementById("full-player").classList.remove("is-hidden");
 
     // Update playlist text
-    let playlistSize = playlist.length - playlistIndex - 1;
-    document.getElementById("playlist").classList.remove("is-hidden");
-    document.getElementById("playlist-title").innerHTML =
-    `<h3>${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:</h3>`;
-    let playlistElems = document.getElementsByClassName("next-song");
-    for (let i = 0; i < playlistElems.length; i++) {
-        if (playlistIndex + i + 1 >= playlist.length) {
-            break;
+    if (!isReduced) {
+        let playlistSize = playlist.length - playlistIndex - 1;
+        document.getElementById("playlist").classList.remove("is-hidden");
+        document.getElementById("playlist-title").innerHTML =
+        `<h3>${playlistSize} song${playlistSize > 1 ? 's' : ''} queued:</h3>`;
+        let playlistElems = document.getElementsByClassName("next-song");
+        for (let i = 0; i < playlistElems.length; i++) {
+            if (playlistIndex + i + 1 >= playlist.length) {
+                break;
+            }
+            const curr = json.musics[playlist[playlistIndex + i + 1]];
+            playlistElems[i].innerHTML = sanitize(curr.name) + " by " + sanitize(curr.artist);
         }
-        const curr = json.musics[playlist[playlistIndex + i + 1]];
-        playlistElems[i].innerHTML = sanitize(curr.name) + " by " + sanitize(curr.artist);
     }
 
     // Select current song and move playlist forward
@@ -115,7 +117,9 @@ function nextSong() {
     timeStarted = Math.floor(Date.now() / 1000);
 
     // Update player
-    document.getElementById("favorite-icon").innerHTML = elem.isFavorite ? "heart_minus" : "heart_plus";
+    if (!isReduced) {
+        document.getElementById("favorite-icon").innerHTML = elem.isFavorite ? "heart_minus" : "heart_plus";
+    }
 
     // Load song and play it
     let player = document.getElementById("player");
@@ -410,13 +414,15 @@ async function updateScrobblerAsync() {
 function loadPage() {
     const url = new URL(window.location.href);
 
-    document.getElementById("back").addEventListener("click", () => {
-        window.location=window.location.origin + window.location.pathname + "?playlist=none";
-    });
-
-    // Set media session
-    navigator.mediaSession.setActionHandler('previoustrack', previousSong);
-    navigator.mediaSession.setActionHandler('nexttrack', nextSong);
+    if (!isReduced) {
+        document.getElementById("back").addEventListener("click", () => {
+            window.location=window.location.origin + window.location.pathname + "?playlist=none";
+        });
+    
+        // Set media session
+        navigator.mediaSession.setActionHandler('previoustrack', previousSong);
+        navigator.mediaSession.setActionHandler('nexttrack', nextSong);
+    }
 
     let player = document.getElementById("player");
 
@@ -439,12 +445,9 @@ function loadPage() {
             elem.innerHTML = `<span class="material-symbols-outlined">repeat_one</span>`;
         }
     });
-    document.getElementById("previous").addEventListener("click", previousSong);
-    document.getElementById("skip").addEventListener("click", nextSong);
     document.getElementById("togglePlay").addEventListener("click", togglePlay);
     document.getElementById("share")?.addEventListener("click", (_) => {
-        const playlist = url.searchParams.get("playlist");
-        const newUrl = window.location.origin + window.location.pathname + `?playlist=${playlist}&song=${encodeURIComponent(getSongKey(currSong))}`;
+        const newUrl = window.location.origin + window.location.pathname + `?song=${encodeURIComponent(getSongKey(currSong))}`;
         if (navigator.share)
         {
             navigator.share({url: newUrl});
@@ -475,23 +478,27 @@ function loadPage() {
             b.disabled = false;
         });
     });
-    document.getElementById("archive")?.addEventListener("click", (_) => {
-        let res = confirm("Are you sure you want to archive this song?");
-        if (res) {
-            archiveSong(getSongKey(currSong), () => {
-                currSong.isArchived = true;
-                json.musics = json.musics.filter(x => !x.isArchived);
-                nextSong();
-            }, () => { });
-        }
-    });
-    document.getElementById("favorite").addEventListener("click", (_) => {
-        favoriteSong(getSongKey(currSong), !currSong.isFavorite, () => {
-            currSong.isFavorite = !currSong.isFavorite;
-            document.getElementById("favorite-icon").innerHTML = currSong.isFavorite ? "heart_minus" : "heart_plus";
-            updateFavorites();
-        }, () => {});
-    });
+    if (!isReduced) {
+        document.getElementById("previous").addEventListener("click", previousSong);
+        document.getElementById("skip").addEventListener("click", nextSong);
+        document.getElementById("archive")?.addEventListener("click", (_) => {
+            let res = confirm("Are you sure you want to archive this song?");
+            if (res) {
+                archiveSong(getSongKey(currSong), () => {
+                    currSong.isArchived = true;
+                    json.musics = json.musics.filter(x => !x.isArchived);
+                    nextSong();
+                }, () => { });
+            }
+        });
+        document.getElementById("favorite").addEventListener("click", (_) => {
+            favoriteSong(getSongKey(currSong), !currSong.isFavorite, () => {
+                currSong.isFavorite = !currSong.isFavorite;
+                document.getElementById("favorite-icon").innerHTML = currSong.isFavorite ? "heart_minus" : "heart_plus";
+                updateFavorites();
+            }, () => {});
+        });
+    }
     document.getElementById("display-more").addEventListener("click", (_) => {
         const target = document.getElementById("advanced-controls");
         if (target.classList.contains("is-hidden")) {
@@ -521,19 +528,21 @@ function loadPage() {
             document.getElementById(id).classList.add("is-hidden");
         }
     }
-    document.getElementById("random-title").addEventListener("click", _ => {
-        toggleHide("songlist");
-    });
-    document.getElementById("highlight-title").addEventListener("click", _ => {
-        toggleHide("highlightlist");
-    });
-    document.getElementById("latest-title").addEventListener("click", _ => {
-        toggleHide("latestlist");
-    });
-
-    document.getElementById("check-integrity")?.addEventListener("click", _ => {
-        validateIntegrity();
-    });
+    if (!isReduced) {
+        document.getElementById("random-title").addEventListener("click", _ => {
+            toggleHide("songlist");
+        });
+        document.getElementById("highlight-title").addEventListener("click", _ => {
+            toggleHide("highlightlist");
+        });
+        document.getElementById("latest-title").addEventListener("click", _ => {
+            toggleHide("latestlist");
+        });
+    
+        document.getElementById("check-integrity")?.addEventListener("click", _ => {
+            validateIntegrity();
+        });
+    }
 
     // Player callbacks
     player.addEventListener('volumechange', (_) => {
@@ -588,13 +597,15 @@ function loadPage() {
     document.getElementById("volume").value = volume * 100;
 
     // Preferences
-    useRawAudio = JSON.parse(localStorage.getItem("useRaw") ?? false);
-    const useRawToggle = document.getElementById("use-raw");
-    useRawToggle.checked = useRawAudio;
-    useRawToggle.addEventListener("change", (_) => {
-        useRawAudio = useRawToggle.checked;
-        localStorage.setItem("useRaw", useRawAudio);
-    });
+    if (!isReduced) {
+        useRawAudio = JSON.parse(localStorage.getItem("useRaw") ?? false);
+        const useRawToggle = document.getElementById("use-raw");
+        useRawToggle.checked = useRawAudio;
+        useRawToggle.addEventListener("change", (_) => {
+            useRawAudio = useRawToggle.checked;
+            localStorage.setItem("useRaw", useRawAudio);
+        });
+    }
 
     // Audio player config
     // When song end, we start the next one
@@ -608,14 +619,16 @@ function loadPage() {
     // Display songs
     if (json.musics !== undefined)
     {
-        if (json.musics.length > 5) {
-            displaySongs(json.musics, "songlist", "", false, true, 5);
-            document.getElementById("random").classList.remove("is-hidden");
-        } else {
-            document.getElementById("random").classList.add("is-hidden");
+        if (!isReduced) {
+            if (json.musics.length > 5) {
+                displaySongs(json.musics, "songlist", "", false, true, 5);
+                document.getElementById("random").classList.remove("is-hidden");
+            } else {
+                document.getElementById("random").classList.add("is-hidden");
+            }
+            updateFavorites();
+            displaySongs(json.musics.slice(-15).reverse(), "latestlist", "", false, false, 15);
         }
-        updateFavorites();
-        displaySongs(json.musics.slice(-15).reverse(), "latestlist", "", false, false, 15);
 
         // Check "?song=" parameter when we share a song
         lookForSong(url);
@@ -721,6 +734,17 @@ function chooseDisplay() {
 }
 
 export async function musics_initAsync() {
+    json = JSON.parse(document.getElementById("data").innerText);
+    metadataJson = JSON.parse(document.getElementById("metadata").innerText);
+    if (json.musics) {
+        json.musics = json.musics.filter(x => !x.isArchived);
+    }
+
+    if (isReduced) {
+        loadPage();
+        return;
+    }
+
     // Buttons
     document.getElementById("refresh-btn").addEventListener("click", refresh);
     document.getElementById("random-btn").addEventListener("click", random);
@@ -739,12 +763,6 @@ export async function musics_initAsync() {
             });
         }
     });
-
-    json = JSON.parse(document.getElementById("data").innerText);
-    metadataJson = JSON.parse(document.getElementById("metadata").innerText);
-    if (json.musics) {
-        json.musics = json.musics.filter(x => !x.isArchived);
-    }
 
     if (json.playlists) {
         for (let [key, value] of Object.entries(json.playlists)) {

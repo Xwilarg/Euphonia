@@ -22,6 +22,7 @@ $metadata = json_decode($rawMetadata, true);
 $name = $metadata["name"];
 $description = "";
 $image = null;
+$isReduced = false;
 if (isset($_GET["song"])) {
     foreach ($info["musics"] as $m)
     {
@@ -40,6 +41,7 @@ if (isset($_GET["song"])) {
             }
         }
     }
+    $isReduced = true;
 }
 else if (isset($_GET["playlist"]))
 {
@@ -89,14 +91,15 @@ else
     $twig->addExtension(new TranslationExtension($translator));
 
     echo $twig->render("index.html.twig", [
-        "json" => $rawInfo,
-        "rawMetadata" => $rawMetadata,
+        "json" => $rawInfo, // Raw data containing all song info
+        "rawMetadata" => $rawMetadata, // Metadata containing how the website should behave
         "metadata" => $metadata,
-        "og" => [
+        "og" => [ // https://ogp.me/
             "name" => $name,
             "description" => $description,
             "image" => $image
         ],
-        "local" => join(", ", $locals)
+        "local" => join(", ", $locals), // Detected user languages (for debug)
+        "isReduced" => $isReduced // When sharing a song, we only display it and nothing else
     ]);
 }

@@ -15,6 +15,9 @@
         <script id="metadata" type="application/json">
             {{ rawMetadata | replace({'<': '&lt;' }) | raw }}
         </script>
+        <script>
+            var isReduced = {% if isReduced %}true{% else %}false{% endif %};
+        </script>
         <script src="/js/index.js"></script>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,1,0" />
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"/>
@@ -27,6 +30,7 @@
             {% include 'navbar.html.twig' %}
         </nav>
 
+        {% if not isReduced %}
         <div id="notification" class="container notification is-hidden"></div>
         
         <div id="upload-window" class="modal">
@@ -45,12 +49,14 @@
                 <div class="next-song"></div>
             </div>
         </div>
+        {% endif %}
         <div class="container">
             <div class="has-text-centered is-flex is-justify-content-center">
                 <div id="full-player" class="is-hidden">
                     {% include 'player.html.twig' %}
                 </div>
             </div>
+            {% if not isReduced %}
             <template id="template-song">
                 {% include 'song.html.twig' %}
             </template>
@@ -83,6 +89,7 @@
                     </div>
                 </div>
             </div>
+            {% endif %}
         </div>
     </body>
 </html>
