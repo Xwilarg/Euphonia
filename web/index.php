@@ -21,7 +21,27 @@ $metadata = json_decode($rawMetadata, true);
 
 $name = $metadata["name"];
 $description = "";
-if (isset($_GET["playlist"]))
+$image = null;
+if (isset($_GET["song"])) {
+    foreach ($info["musics"] as $m)
+    {
+        if ($m["key"] !== null) {
+            $key = $m["key"];
+        } else {
+            $key = $m["name"] . "_" . ($m["artist"] ?? "") . "_" . ($m["type"] ?? "");
+        }
+        if ($key === $_GET["song"]) {
+            $name = $m["name"];
+            if ($m["artist"] !== null) {
+                $name .= " by " . $m["artist"];
+            }
+            if ($m["album"] !== null && array_key_exists($m["album"], $info["albums"])) {
+                $image = "https://$_SERVER[HTTP_HOST]/data/icon/" . $info["albums"][$m["album"]]["path"];
+            }
+        }
+    }
+}
+else if (isset($_GET["playlist"]))
 {
     $target = $_GET["playlist"];
     foreach ($info["playlists"] as $key => $p)
@@ -74,7 +94,8 @@ else
         "metadata" => $metadata,
         "og" => [
             "name" => $name,
-            "description" => $description
+            "description" => $description,
+            "image" => $image
         ],
         "local" => join(", ", $locals)
     ]);
