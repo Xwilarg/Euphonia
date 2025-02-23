@@ -660,6 +660,8 @@ function refresh() {
 }
 
 let isMinimalist = false;
+export function IsMinimalist() { return isMinimalist; }
+
 function toggleMinimalistMode() {
     isMinimalist = !isMinimalist;
 
