@@ -139,6 +139,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         executor.execute {
+            var newDownloads = mutableListOf<Song>()
             // Update data from remove server
             val text: String
             try {
@@ -153,7 +154,6 @@ class MainActivity : AppCompatActivity() {
                 return@execute
             }
 
-            downloaded = mutableListOf<Song>()
             // Download missing songs
             data.musics.forEachIndexed{ index, song ->
                 if (!File(filesDir, "${currUrl}music/${song.path}").exists()) {
@@ -184,10 +184,12 @@ class MainActivity : AppCompatActivity() {
                     catch (_: Exception)
                     { }
                 }
-                downloaded.add(0, song)
+                newDownloads.add(0, song)
                 // TODO: Update list
             }
 
+            downloaded.reverse()
+            newDownloads = downloaded
             builder
                 .setContentText(resources.getString(R.string.music_updated))
                 .setSilent(false)
