@@ -33,11 +33,13 @@ public class DownloadController : ControllerBase
     [HttpGet("progress")]
     public IActionResult GetProgress()
     {
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+
         return StatusCode(StatusCodes.Status200OK, new SongDownloadResponse()
         {
             Success = true,
             Reason = null,
-            Data = _download.GetProgress()
+            Data = _download.Get(folder).GetProgress()
         });
     }
 
@@ -84,7 +86,7 @@ public class DownloadController : ControllerBase
         System.IO.File.Delete(rawPath);
         System.IO.File.Delete(normPath);
 
-        _download.QueueToDownload(song, song.Source, rawPath, normPath);
+        _download.Get(folder).QueueToDownload(song, song.Source, rawPath, normPath);
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -185,7 +187,7 @@ public class DownloadController : ControllerBase
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
 
-        _download.QueueToDownload(m, data.Youtube, rawSongPath, normSongPath);
+        _download.Get(folder).QueueToDownload(m, data.Youtube, rawSongPath, normSongPath);
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -194,7 +196,7 @@ public class DownloadController : ControllerBase
         });
     }
 
-    public string AudioFormat => _download.AudioFormat;
+    public string AudioFormat => WebsiteDownloaderManager.AudioFormat;
 
     private string GetMusicKey(string songName, string artist, string songType)
     {

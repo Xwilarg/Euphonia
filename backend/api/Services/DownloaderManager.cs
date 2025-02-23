@@ -8,13 +8,30 @@ namespace Euphonia.API.Services
 {
     public class DownloaderManager
     {
+        private Dictionary<string, WebsiteDownloaderManager> _downloads = new();
+
+        public WebsiteDownloaderManager Get(string s)
+        {
+            if (_downloads.TryGetValue(s, out var value))
+            {
+                return value;
+            }
+
+            var newValue = new WebsiteDownloaderManager();
+            _downloads.Add(s, newValue);
+            return newValue;
+        }
+    }
+
+    public class WebsiteDownloaderManager
+    {
         private Thread _downloadThread;
 
         private ConcurrentQueue<DownloadSongData> _downloadData = new();
         private ConcurrentQueue<DownloadSongData> _erroredData = new();
-        public string AudioFormat => "mp3";
+        public static string AudioFormat => "mp3";
 
-        public DownloaderManager()
+        public WebsiteDownloaderManager()
         {
             _downloadThread = new(new ThreadStart(DownloadThread));
             _downloadThread.Start();
