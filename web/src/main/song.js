@@ -1,6 +1,6 @@
 // module "song.js"
 
-import { repairSong, updateSong } from "../common/api";
+import { archiveSong, repairSong, updateSong } from "../common/api";
 import { getSongKey, prepareShuffle, updateSingleSongDisplay } from "./getMusics";
 
 let isRepairOngoing;
@@ -162,7 +162,18 @@ export function spawnSongNode(json, curr, id, isMinimalist) {
                 }
             }
         }
-    })
+    });
+    node.querySelector(".song-archive").addEventListener("click", () => {
+        // TODO: Dupplicated code from getMusics.js
+        let res = confirm("Are you sure you want to archive this song?");
+        if (res) {
+            archiveSong(getSongKey(curr), () => {
+                curr.isArchived = true;
+                json.musics = json.musics.filter(x => !x.isArchived);
+                alert("The song was archived");
+            }, () => { });
+        }
+    });
     form.addEventListener("submit", (e) => {
         e.preventDefault();
 

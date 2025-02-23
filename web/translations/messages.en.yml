@@ -33,6 +33,7 @@ song:
   settings:
     edit: Edit
     redownload: Redownload
+    archive: Archive
   upload:
     default: Default
     tags: Tags

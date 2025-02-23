@@ -26,10 +26,14 @@ navbar:
     apiLocation: Localisation de l'API
     integrity: Vérifier l'intégrité
     local: Langue détectée
+login:
+  password: Entrez votre mot de passer
+  cancel: Annuler
 song:
   settings:
     edit: Modifier
     redownload: Re-télécharger
+    archive: Archiver
   upload:
     default: Défaut
     tags: Tags
