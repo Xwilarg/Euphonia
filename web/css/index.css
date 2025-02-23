@@ -10,6 +10,11 @@
 }
 
 /* Song container image is always 256x256 */
+.song-img img {
+    height: 256px;
+    object-fit: cover;
+}
+
 .song {
     width: 256px;
 }
