@@ -10,7 +10,7 @@
     <string name="pref_sort">Mode de tri des musiques</string>
     <string name="sort_music_name">Nom de musique</string>
     <string name="sort_artist_name">Nom d\'artiste</string>
-    <string name="view_search">Recherche</string>
+    <string name="view_search">Chercher</string>
     <string name="pref_source_set">Changer la provenance des données</string>
     <string name="init_set_source">Charger les données</string>
     <string name="pref_source_add">Ajouter une source de données</string>
