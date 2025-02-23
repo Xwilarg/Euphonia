@@ -47,6 +47,7 @@ export async function upload_initAsync() {
             }
             form.reset();
             document.getElementById("upload-yt-player").src = "";
+            document.getElementById("upload-album-preview").classList.add("is-hidden");
         }, () => {
             for (var i = 0, len = form.elements.length; i < len; ++i) {
                 form.elements[i].disabled = false;
@@ -59,6 +60,15 @@ export async function upload_initAsync() {
         if (r !== null)
         {
             document.getElementById("upload-yt-player").src = `https://www.youtube-nocookie.com/embed/${r[3]}`;
+        }
+    });
+    document.getElementById("album-url").addEventListener("change", (e) => {
+        const value = document.getElementById("album-url").value;
+        if (value) {
+            document.getElementById("upload-album-preview").classList.remove("is-hidden");
+            document.getElementById("upload-album-preview").src = value;
+        } else {
+            document.getElementById("upload-album-preview").classList.add("is-hidden");
         }
     });
 }

@@ -34,7 +34,7 @@
             <div class="field">
                 <label class="label">{{ "song.upload.albumUrl" | trans }}</label>
                 <div class="control">
-                    <input class="input" type="url" name="AlbumUrl" placeholder="URL to an image of the album"/>
+                    <input class="input" type="url" name="AlbumUrl" placeholder="URL to an image of the album" id="album-url"/>
                 </div>
             </div>
             <div class="field">
@@ -56,6 +56,11 @@
             </div>
         </form>
 
-        <iframe id="upload-yt-player" src="" frameborder="0" allow="" referrerpolicy="strict-origin-when-cross-origin" ></iframe>
+        <div class="fixed-grid has-2-cols">
+            <div class="grid">
+                <div class="cell"><iframe id="upload-yt-player" src="" frameborder="0" allow="" referrerpolicy="strict-origin-when-cross-origin" ></iframe></div>
+                <div class="cell"><img id="upload-album-preview"/></div>
+            </div>
+        </div>
     </section>    
 </div>
