@@ -37,7 +37,8 @@ jobs:
           web/vendor/
           web/favicon.ico
           web/index.php
-          web/data
+          web/tools.php
+          web/translations/
         if-no-files-found: error
 
   api:
