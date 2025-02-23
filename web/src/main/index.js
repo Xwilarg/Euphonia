@@ -7,6 +7,7 @@ import { lastfm_initAsync } from "./lastfm"
 import { api_initAsync } from "../common/api"
 import { upload_initAsync } from "./upload"
 import { navbar_initAsync } from "./navbar"
+import { modal_initAsync } from "./modal"
 
 async function initAsync() {
     for (const e of document.getElementsByClassName("requires-admin")) {
@@ -18,6 +19,7 @@ async function initAsync() {
     await musics_initAsync();
     await lastfm_initAsync();
     await upload_initAsync();
+    await modal_initAsync();
 }
 
 document.onreadystatechange = async function () {

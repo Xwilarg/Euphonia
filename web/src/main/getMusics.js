@@ -9,6 +9,7 @@ import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 import { archiveSong, createPlaylist, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 import { showNotification } from './notification';
+import { modal_askPassword } from './modal';
 
 let json;
 let metadataJson;
@@ -727,12 +728,13 @@ export async function musics_initAsync() {
         if (isLoggedIn()) {
             logOff();
         } else {
-            var pwd = window.prompt("Enter admin password");
-            getApiToken(pwd, () => {
-                showNotification("You are now logged in", true);
-            }, () => {
-                showNotification("Login failed", false);
-            })
+            modal_askPassword((pwd) => {
+                getApiToken(pwd, () => {
+                    showNotification("You are now logged in", true);
+                }, () => {
+                    showNotification("Login failed", false);
+                })
+            });
         }
     });
 

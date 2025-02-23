@@ -8,7 +8,7 @@ use Symfony\Component\Translation\Translator;
 use Symfony\Component\Translation\Loader\YamlFileLoader;
 use Symfony\Bridge\Twig\Extension\TranslationExtension;
 
-$loader = new FilesystemLoader(["templates"]);
+$loader = new FilesystemLoader(["templates", "templates/modals"]);
 $twig = new Environment($loader);
 $json = isset($_GET["json"]) && $_GET["json"] === "1";
 
