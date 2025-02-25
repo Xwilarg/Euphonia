@@ -27,7 +27,7 @@ navbar:
     integrity: Vérifier l'intégrité
     local: Langue détectée
 login:
-  password: Entrez votre mot de passer
+  password: Entrez votre mot de passe
   cancel: Annuler
 song:
   settings:
