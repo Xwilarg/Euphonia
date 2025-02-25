@@ -2,6 +2,40 @@
 <html lang="en">
     <head>
         <link rel="stylesheet" href="/css/index.css"/>
+        <script src="/js/index.js"></script>
     </head>
-    <body></body>
+    <body>
+        <div id="choose-website">
+            <form id="upload-form">
+                <label class="label">Website API location</label>
+                <div class="field has-addons has-addons-centered">
+                    <p class="control">
+                        https://
+                    </p>
+                    <p class="control">
+                        <input class="input" type="text" id="choose-website-url"/>
+                    </p>
+                    <p class="control">
+                        /api/
+                    </p>
+                </div>
+                <div class="field">
+                    <input class="button is-link" type="submit" id="choose-website-submit"/>
+                </div>
+            </form>
+        </div>
+        <div id="choose-password" class="is-hidden">
+            <form id="upload-form">
+                <div class="field">
+                    <label class="label">Enter your password</label>
+                    <div class="control">
+                        <input class="input" type="password" id="choose-password-value"/>
+                    </div>
+                </div>
+                <div class="field">
+                    <input class="button is-link" type="submit" id="choose-password-submit"/>
+                </div>
+            </form>
+        </div>
+    </body>
 </html>
