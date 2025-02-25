@@ -3,33 +3,25 @@ let token;
 
 async function initAsync() {
     chrome.storage.local.get(["website", "token"]).then((result) => {
-        if (result.website !== undefined) {
+        if (result.website === undefined) {
+            document.getElementById("choose-loading").classList.add("is-hidden");
+            document.getElementById("choose-website").classList.remove("is-hidden");
+        } else {
             website = result.website;
-            document.getElementById("choose-website").classList.add("is-hidden");
 
             if (result.token === undefined) {
+                document.getElementById("choose-loading").classList.add("is-hidden");
                 document.getElementById("choose-password").classList.remove("is-hidden");
             } else {
                 token = result.token;
-                fetch(`${website}auth/validate`, { // Validate user token
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                })
+                fetch(`${website}?json=1`)
                 .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
                 .then(json => {
-                    if (json.success) {
-                        console.log("ok");
-                        document.getElementById("choose-upload").classList.remove("is-hidden");
-                    } else {
-                        console.log(json);
-                        document.getElementById("choose-password").classList.remove("is-hidden");
-                    }
+                    document.getElementById("choose-loading").classList.add("is-hidden");
+                    document.getElementById("choose-upload").classList.remove("is-hidden");
                 })
                 .catch((err) => {
-                    console.log(err);
-                    document.getElementById("choose-password").classList.remove("is-hidden");
+                    alert("Failed to get website info")
                 });
             }
         }
@@ -41,7 +33,7 @@ async function initAsync() {
 
         const userEntry = document.getElementById("choose-website-url").value;
 
-        website = `https://${userEntry}/api/`;
+        website = `https://${userEntry}/`;
         chrome.storage.local.set({ website: website }).then(() => {
             document.getElementById("choose-website").classList.add("is-hidden");
             document.getElementById("choose-password").classList.remove("is-hidden");
@@ -54,7 +46,7 @@ async function initAsync() {
 
         const userEntry = document.getElementById("choose-password-value").value;
         document.getElementById("choose-password-value").value = "";
-        fetch(`${website}auth/token`, {
+        fetch(`${website}api/auth/token`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
