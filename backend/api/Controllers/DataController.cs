@@ -146,12 +146,12 @@ public class DataController : ControllerBase
                 info.Albums.Add(key, albumData);
                 if (source != null) // Album have a source, we try to download the image
                 {
-                    if (!Utils.SaveUrlAsImage(_client, source, DownloadController.GetImagePath(folder, key, "webp")))
+                    if (!Utils.SaveUrlAsImage(_client, source, DownloadController.GetImagePath(folder, key, "webp"), out var error))
                     {
                         return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                         {
                             Success = false,
-                            Reason = "Image URL is invalid"
+                            Reason = $"Image URL is invalid: {error}"
                         });
                     }
                 }
@@ -166,12 +166,12 @@ public class DataController : ControllerBase
                     info.Albums[key].Source = source;
                     if (source != null && oldSource != source) // Source image changed
                     {
-                        if (!Utils.SaveUrlAsImage(_client, source, DownloadController.GetImagePath(folder, key, "webp")))
+                        if (!Utils.SaveUrlAsImage(_client, source, DownloadController.GetImagePath(folder, key, "webp"), out var error))
                         {
                             return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                             {
                                 Success = false,
-                                Reason = "Image URL is invalid"
+                                Reason = $"Image URL is invalid: {error}"
                             });
                         }
                     }

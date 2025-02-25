@@ -27,7 +27,7 @@ public class PlaylistController : ControllerBase
 
     [HttpPost("add")]
     [Authorize]
-    public IActionResult ArchiveSong([FromForm] PlaylistForm data)
+    public IActionResult CreatePlaylist([FromForm] PlaylistForm data)
     {
         var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
         var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
@@ -45,7 +45,14 @@ public class PlaylistController : ControllerBase
 
         if (data.ImageUrl != null)
         {
-            Utils.SaveUrlAsImage(_client, data.ImageUrl, $"{folder}icon/playlist/{Utils.CleanPath(data.Name)}.webp");
+            if (!Utils.SaveUrlAsImage(_client, data.ImageUrl, $"{folder}icon/playlist/{Utils.CleanPath(data.Name)}.webp", out var error))
+            {
+                return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+                {
+                    Success = false,
+                    Reason = $"Image URL is invalid: {error}"
+                });
+            }
         }
 
         info.Playlists.Add(key, new()

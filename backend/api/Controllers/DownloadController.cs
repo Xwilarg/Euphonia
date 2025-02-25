@@ -106,12 +106,12 @@ public class DownloadController : ControllerBase
         var albumName = data.AlbumName == null ? null : GetAlbumName(data.Artist, data.AlbumName);
         if (albumName != null && !string.IsNullOrWhiteSpace(data.AlbumUrl))
         {
-            if (!Utils.SaveUrlAsImage(_client, data.AlbumUrl, GetImagePath(folder, albumName, "webp")))
+            if (!Utils.SaveUrlAsImage(_client, data.AlbumUrl, GetImagePath(folder, albumName, "webp"), out var error))
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                 {
                     Success = false,
-                    Reason = "Image URL is invalid"
+                    Reason = $"Image URL is invalid: {error}"
                 });
             }
         }
