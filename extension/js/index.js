@@ -22,7 +22,6 @@ async function initAsync() {
 
                     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                         chrome.tabs.sendMessage(tabs[0].id, {greeting: "fetchData"}, (response) => {
-                            console.log(response);
                             document.getElementById("youtube-url").value = response.url;
                             document.getElementById("artist").value = response.artist;
                             document.getElementById("name").value = response.name;
@@ -44,9 +43,9 @@ async function initAsync() {
                         e.preventDefault();
                         const data = new FormData(e.target);
 
-                        document.getElementById("choose-loading").classList.add("is-hidden");
-                        document.getElementById("choose-upload").classList.remove("is-hidden");
-                        fetch(`${apiTarget}api/download/upload`, {
+                        document.getElementById("choose-loading").classList.remove("is-hidden");
+                        document.getElementById("choose-upload").classList.add("is-hidden");
+                        fetch(`${website}api/download/upload`, {
                             method: 'POST',
                             headers: {
                                 'Authorization': `Bearer ${token}`
@@ -57,18 +56,18 @@ async function initAsync() {
                         .then(json => {
                             if (json.success) {
                                 alert(`Upload is on the way`);
-                                document.getElementById("choose-loading").classList.remove("is-hidden");
-                                document.getElementById("choose-upload").classList.add("is-hidden");
+                                document.getElementById("choose-loading").classList.add("is-hidden");
+                                document.getElementById("choose-upload").classList.remove("is-hidden");
                             } else {
                                 alert(`Failed to upload song: ${err}`);
-                                document.getElementById("choose-loading").classList.remove("is-hidden");
-                                document.getElementById("choose-upload").classList.add("is-hidden");
+                                document.getElementById("choose-loading").classList.add("is-hidden");
+                                document.getElementById("choose-upload").classList.remove("is-hidden");
                             }
                         })
                         .catch((err) => {
                             alert(`Failed to upload song: ${err}`);
-                            document.getElementById("choose-loading").classList.remove("is-hidden");
-                            document.getElementById("choose-upload").classList.add("is-hidden");
+                            document.getElementById("choose-loading").classList.add("is-hidden");
+                            document.getElementById("choose-upload").classList.remove("is-hidden");
                         });
                     });
                 })
