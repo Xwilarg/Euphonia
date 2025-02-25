@@ -77,7 +77,12 @@ function handleFetchResponse(resp)
 
 export async function getDownloadProcess(onSuccess)
 {
-    fetch(`${apiTarget}download/progress`)
+    fetch(`${apiTarget}download/progress`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        }
+    })
     .then()
     .then(handleFetchResponse)
     .then(json => {

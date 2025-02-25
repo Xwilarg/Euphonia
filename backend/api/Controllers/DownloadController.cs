@@ -30,7 +30,8 @@ public class DownloadController : ControllerBase
     }
 
 
-    [HttpGet("progress")]
+    [HttpPost("progress")]
+    [Authorize]
     public IActionResult GetProgress()
     {
         var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);

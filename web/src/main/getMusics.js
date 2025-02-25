@@ -785,14 +785,16 @@ export async function musics_initAsync() {
     chooseDisplay();
 
     function updateProgress() {
-        getDownloadProcess((data) => {
-            let html = "";
-            for (let elem of data)
-            {
-                html += `<p>${elem.songName} by ${elem.songArtist} (${elem.currentState}): ${elem.error}</p>`;
-            }
-            document.getElementById("download-progress").innerHTML = html;
-        })
+        if (isLoggedIn()) {
+            getDownloadProcess((data) => {
+                let html = "";
+                for (let elem of data)
+                {
+                    html += `<p>${elem.songName} by ${elem.songArtist} (${elem.currentState}): ${elem.error}</p>`;
+                }
+                document.getElementById("download-progress").innerHTML = html;
+            });
+        }
     }
 
     setInterval(updateProgress, 10_000); // 10s
