@@ -6,7 +6,7 @@ export async function modal_initAsync()
         document.getElementById("password-text").value = "";
         document.getElementById("password-modal").classList.remove("is-active");
     });
-    document.getElementById("password-submit").addEventListener("click", (e) => {
+    document.getElementById("password-submit").addEventListener("submit", (e) => {
         e.preventDefault();
         if (passwordCallback === null) console.error("Password submitted when callback not set");
 
