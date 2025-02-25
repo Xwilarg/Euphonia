@@ -20,6 +20,17 @@ async function initAsync() {
                     document.getElementById("choose-loading").classList.add("is-hidden");
                     document.getElementById("choose-upload").classList.remove("is-hidden");
 
+                    chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
+                        chrome.tabs.sendMessage(tabs[0].id, {greeting: "fetchData"}, (response) => {
+                            console.log(response);
+                            document.getElementById("youtube-url").value = response.url;
+                            document.getElementById("artist").value = response.artist;
+                            document.getElementById("name").value = response.name;
+                            document.getElementById("album-url").value = response.albumImage;
+                            document.getElementById("album-name").value = response.albumName;
+                        });
+                    });
+
                     // TODO: dupplicated code from web
 
                     if (json.playlists) { // Upload available playlists
@@ -29,24 +40,6 @@ async function initAsync() {
                     }
 
                     // Code from web/src/upload.js
-                    document.getElementById("upload-url").addEventListener("change", (_) => {
-                        const upload = document.getElementById("upload-url");
-                        const content = upload.value;
-                        if (content === "") {
-                            document.getElementById("upload-url-error").classList.add("is-hidden");
-                            upload.classList.remove("is-danger");
-                        } else {
-                            const r = /youtu\.?be(\.com)?\/(watch\?v=)?([^?]+)/g.exec(upload.value);
-                            if (r === null) {
-                                document.getElementById("upload-url-error").classList.remove("is-hidden");
-                                upload.classList.add("is-danger");
-                            } else {
-                                document.getElementById("upload-url-error").classList.add("is-hidden");
-                                upload.classList.remove("is-danger");
-                            }
-                        }
-                    });
-
                     document.getElementById("upload-form").addEventListener("submit", (e) => {
                         e.preventDefault();
                         const data = new FormData(e.target);
@@ -80,7 +73,7 @@ async function initAsync() {
                     });
                 })
                 .catch((err) => {
-                    alert("Failed to get website info")
+                    alert("Failed to get website info");
                 });
             }
         }
@@ -129,7 +122,6 @@ async function initAsync() {
         });
     });
 }
-
 
 document.onreadystatechange = async function () {
     if (document.readyState == "interactive") {

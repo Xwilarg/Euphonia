@@ -12,5 +12,11 @@
     ],
     "host_permissions": [
         "<all_urls>"
+    ],
+    "content_scripts": [
+        {
+            "matches": ["https://www.youtube.com/*"],
+            "js": ["js/content_script.js"]
+        }
     ]
 }
