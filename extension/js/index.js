@@ -22,11 +22,13 @@ async function initAsync() {
 
                     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                         chrome.tabs.sendMessage(tabs[0].id, {greeting: "fetchData"}, (response) => {
-                            document.getElementById("youtube-url").value = response.url;
-                            document.getElementById("artist").value = response.artist;
-                            document.getElementById("name").value = response.name;
-                            document.getElementById("album-url").value = response.albumImage;
-                            document.getElementById("album-name").value = response.albumName;
+                            if (response) {
+                                document.getElementById("youtube-url").value = response.url;
+                                document.getElementById("artist").value = response.artist;
+                                document.getElementById("name").value = response.name;
+                                document.getElementById("album-url").value = response.albumImage;
+                                document.getElementById("album-name").value = response.albumName;
+                            }
                         });
                     });
 
