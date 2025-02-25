@@ -28,6 +28,10 @@ async function initAsync() {
                                 document.getElementById("name").value = response.name;
                                 document.getElementById("album-url").value = response.albumImage;
                                 document.getElementById("album-name").value = response.albumName;
+                            } else {
+                                document.getElementById("choose-loading").classList.remove("is-hidden");
+                                document.getElementById("choose-loading").innerHTML = "This extension can only be used on YouTube<br>If you are currently on YouTube, please reload the page";
+                                document.getElementById("choose-upload").classList.add("is-hidden");
                             }
                         });
                     });
