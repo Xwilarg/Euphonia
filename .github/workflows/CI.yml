@@ -93,4 +93,5 @@ jobs:
           extension/index.html
           extension/options.html
           extension/manifest.json
+          extension/_locales/
         if-no-files-found: error
