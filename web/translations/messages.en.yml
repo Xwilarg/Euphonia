@@ -39,11 +39,17 @@ song:
     tags: Tags
     playlist: Playlist
     name: Name
+    nameDesc: Name of the song
     artistName: Artist Name
+    artistNameDesc: Names of the artists
     youtubeUrl: Youtube URL
+    youtubeUrlDesc: YouTube URL of the song
     albumKey: Album Key
     albumName: Album Name
+    albumNameDesc: Name of the album
     albumUrl: Album URL
+    albumUrlDesc: URL to an image of the album
     songType: Song Type
+    songTypeDesc: Is it a cover, live, alternative version...
     uploadTitle: Upload new song
     invalidYoutubeUrl: This doesn't look like a valid YouTube link
