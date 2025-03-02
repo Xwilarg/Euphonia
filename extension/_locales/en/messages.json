@@ -31,5 +31,23 @@
     },
     "default": {
         "message": "Default"
+    },
+    "youtubeOnly": {
+        "message": "This extension can only be used on YouTube"
+    },
+    "youtubeReload": {
+        "message": "If you are currently on YouTube, please reload the page"
+    },
+    "infoFailed": {
+        "message": "Failed to get website info"
+    },
+    "uploadOngoing": {
+        "message": "Upload is on the way"
+    },
+    "uploadFailed": {
+        "message": "Failed to upload song: "
+    },
+    "loginFailed": {
+        "message": "Login failed"
     }
 }

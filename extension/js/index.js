@@ -30,7 +30,7 @@ async function initAsync() {
                                 document.getElementById("album-name").value = response.albumName;
                             } else {
                                 document.getElementById("choose-loading").classList.remove("is-hidden");
-                                document.getElementById("choose-loading").innerHTML = "This extension can only be used on YouTube<br>If you are currently on YouTube, please reload the page";
+                                document.getElementById("choose-loading").innerHTML = chrome.i18n.getMessage("youtubeOnly") + "<br>" + chrome.i18n.getMessage("youtubeReload");
                                 document.getElementById("choose-upload").classList.add("is-hidden");
                             }
                         });
@@ -61,24 +61,24 @@ async function initAsync() {
                         .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
                         .then(json => {
                             if (json.success) {
-                                alert(`Upload is on the way`);
+                                alert(chrome.i18n.getMessage("uploadOngoing"));
                                 document.getElementById("choose-loading").classList.add("is-hidden");
                                 document.getElementById("choose-upload").classList.remove("is-hidden");
                             } else {
-                                alert(`Failed to upload song: ${err}`);
+                                alert(chrome.i18n.getMessage("uploadFailed") + json.message);
                                 document.getElementById("choose-loading").classList.add("is-hidden");
                                 document.getElementById("choose-upload").classList.remove("is-hidden");
                             }
                         })
                         .catch((err) => {
-                            alert(`Failed to upload song: ${err}`);
+                            alert(chrome.i18n.getMessage("uploadFailed") + err);
                             document.getElementById("choose-loading").classList.add("is-hidden");
                             document.getElementById("choose-upload").classList.remove("is-hidden");
                         });
                     });
                 })
                 .catch((err) => {
-                    alert("Failed to get website info");
+                    alert(chrome.i18n.getMessage("infoFailed"));
                 });
             }
         }
@@ -119,11 +119,11 @@ async function initAsync() {
                     document.getElementById("choose-upload").classList.remove("is-hidden");
                 });
             } else {
-                alert("Login failed");
+                alert(chrome.i18n.getMessage("loginFailed"));
             }
         })
         .catch((err) => {
-            alert("Login failed");
+            alert(chrome.i18n.getMessage("loginFailed"));
         });
     });
 }

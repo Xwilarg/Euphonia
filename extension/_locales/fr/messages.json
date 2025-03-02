@@ -1,0 +1,53 @@
+{
+    "loading": {
+        "message": "Chargement..."
+    },
+    "apiLocation": {
+        "message": "Location de l'API du site web"
+    },
+    "enterPassword": {
+        "message": "Entrez votre mot de passe"
+    },
+    "name": {
+        "message": "Nom"
+    },
+    "artistName": {
+        "message": "Nom des artists"
+    },
+    "youtubeUrl": {
+        "message": "Lien YouTube"
+    },
+    "albumName": {
+        "message": "Nom de l'album"
+    },
+    "albumUrl": {
+        "message": "Lien YouTube"
+    },
+    "songType": {
+        "message": "Type de la musique"
+    },
+    "playlist": {
+        "message": "Playlist"
+    },
+    "default": {
+        "message": "Défaut"
+    },
+    "youtubeOnly": {
+        "message": "Cette extension ne peut seulement être utilisé sur YouTube"
+    },
+    "youtubeReload": {
+        "message": "Si vous êtes actuellement sur YouTube, veuillez recharger la page"
+    },
+    "infoFailed": {
+        "message": "Impossible de récupérer les information du site"
+    },
+    "uploadOngoing": {
+        "message": "Le téléchargement est en cours"
+    },
+    "uploadFailed": {
+        "message": "Impossible de télécharger la musique : "
+    },
+    "loginFailed": {
+        "message": "Impossible de se connecter"
+    }
+}
