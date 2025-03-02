@@ -91,6 +91,7 @@ namespace Euphonia.API.Services
                     catch (Exception e)
                     {
                         res.Error = e.Message;
+                        res.CurrentState = DownloadState.Finished;
                     }
                     finally
                     {

@@ -6,7 +6,7 @@ main:
 navbar:
   general:
     settings: Options
-    toggleAdmin: Se connecter en adminitrateur
+    toggleAdmin: Se connecter en administrateur
     minimalistMode: (Dé)activer le mode minimaliste
     useRaw: Utiliser les audio non-normalisés
   readme:
