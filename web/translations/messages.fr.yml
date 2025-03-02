@@ -39,11 +39,17 @@ song:
     tags: Tags
     playlist: Playlist
     name: Nom
-    artistName: Nom de l'artiste
+    nameDesc: Nom de la musique
+    artistName: Nom des artists
+    artistNameDesc: Nom des artists
     youtubeUrl: Lien YouTube
+    youtubeUrlDesc: Lien YouTube vers la musique
     albumKey: Clé d'album
     albumName: Nom de l'album
+    albumNameDesc: Nom de l'album
     albumUrl: Lien de l'image de l'album
+    albumUrlDesc: URL vers une image qui illustre l'album
     songType: Type de la musique
+    songTypeDesc: S'agit-il d'une cover, version live...
     uploadTitle: Télécharger une nouvelle musique
     invalidYoutubeUrl: Ceci ne ressemble pas à un lien YouTube valide

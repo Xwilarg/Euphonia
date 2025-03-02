@@ -2,7 +2,7 @@
     "name": "Euphonia Downloader",
     "description": "Easily download new musics for Euphonia",
     "version": "1.0",
-    "manifest_version": 3,
+    "default_locale": "en",
     "action": {
         "default_popup": "index.html"
     },
@@ -18,5 +18,6 @@
             "matches": ["https://www.youtube.com/*"],
             "js": ["js/content_script.js"]
         }
-    ]
+    ],
+    "manifest_version": 3
 }

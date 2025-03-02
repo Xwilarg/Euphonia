@@ -1,0 +1,35 @@
+{
+    "loading": {
+        "message": "Loading..."
+    },
+    "apiLocation": {
+        "message": "Website API location"
+    },
+    "enterPassword": {
+        "message": "Enter your password"
+    },
+    "name": {
+        "message": "Name"
+    },
+    "artistName": {
+        "message": "Artist Names"
+    },
+    "youtubeUrl": {
+        "message": "YouTube URL"
+    },
+    "albumName": {
+        "message": "Album Name"
+    },
+    "albumUrl": {
+        "message": "Album URL"
+    },
+    "songType": {
+        "message": "Song Type"
+    },
+    "playlist": {
+        "message": "Playlist"
+    },
+    "default": {
+        "message": "Default"
+    }
+}

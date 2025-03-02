@@ -40,9 +40,9 @@ song:
     playlist: Playlist
     name: Name
     nameDesc: Name of the song
-    artistName: Artist Name
+    artistName: Artist Names
     artistNameDesc: Names of the artists
-    youtubeUrl: Youtube URL
+    youtubeUrl: YouTube URL
     youtubeUrlDesc: YouTube URL of the song
     albumKey: Album Key
     albumName: Album Name

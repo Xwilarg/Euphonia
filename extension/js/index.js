@@ -131,5 +131,11 @@ async function initAsync() {
 document.onreadystatechange = async function () {
     if (document.readyState == "interactive") {
         await initAsync();
+
+        for (const tr of document.getElementsByClassName("tr"))
+        {
+            console.log(tr.innerHTML);
+            tr.innerHTML = chrome.i18n.getMessage(tr.innerHTML);
+        }
     }
 };

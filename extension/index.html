@@ -5,10 +5,10 @@
         <script src="/js/index.js"></script>
     </head>
     <body>
-        <div id="choose-loading">Loading...</div>
+        <div id="choose-loading" class="tr">loading</div>
         <div id="choose-website" class="is-hidden">
             <form>
-                <label class="label">Website API location</label>
+                <label class="label tr">apiLocation</label>
                 <div class="field has-addons has-addons-centered">
                     <p class="control">
                         https://
@@ -28,7 +28,7 @@
         <div id="choose-password" class="is-hidden">
             <form>
                 <div class="field">
-                    <label class="label">Enter your password</label>
+                    <label class="label tr">enterPassword</label>
                     <div class="control">
                         <input class="input" type="password" id="choose-password-value"/>
                     </div>
@@ -41,46 +41,46 @@
         <div id="choose-upload" class="is-hidden">
             <form id="upload-form">
                 <div class="field">
-                    <label class="label">Song Name</label>
+                    <label class="label tr">name</label>
                     <div class="control">
                         <input class="input" type="text" name="Name" placeholder="Name of the song" id="name"/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Artist Name</label>
+                    <label class="label tr">artistName</label>
                     <div class="control">
                         <input class="input" type="text" name="Artist" id="artist" placeholder="Name of the artists"/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Youtube URL</label>
+                    <label class="label tr">youtubeUrl</label>
                     <div class="control">
                         <input class="input" type="url" name="Youtube" id="youtube-url" readonly/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Album Name</label>
+                    <label class="label tr">albumName</label>
                     <div class="control">
                         <input class="input" type="text" name="AlbumName" placeholder="Name of the album" id="album-name"/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Album URL</label>
+                    <label class="label tr">albumUrl</label>
                     <div class="control">
                         <input class="input" type="url" name="AlbumUrl" placeholder="URL to an image of the album" id="album-url"/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Song Type</label>
+                    <label class="label tr">songType</label>
                     <div class="control">
                         <input class="input" type="text" name="SongType" placeholder="Is it a cover, live, alternative version..."/>
                     </div>
                 </div>
                 <div class="field">
-                    <label class="label">Playlist</label>
+                    <label class="label tr">playlist</label>
                     <div class="control select">
                         <select id="upload-playlist" name="Playlist">
-                            <option value="default">Default</option>
+                            <option value="default" class="tr">default</option>
                         </select>
                     </div>
                 </div>
