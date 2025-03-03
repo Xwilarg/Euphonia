@@ -60,10 +60,10 @@ namespace Euphonia.API.Services
         {
             data.LastUpdate = DateTime.UtcNow;
             int code; string err;
-            Utils.ExecuteProcess(new("yt-dlp", $"{data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress"), out code, out err);
+            Utils.ExecuteProcess(new("yt-dlp", $"{data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist"), out code, out err);
             if (code != 0)
             {
-                return $"yt-dlp {data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress failed:\n{string.Join("", err.TakeLast(1000))}";
+                return $"yt-dlp {data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist failed:\n{string.Join("", err.TakeLast(1000))}";
             }
             data.CurrentState = DownloadState.Normalizing;
             data.LastUpdate = DateTime.UtcNow;
