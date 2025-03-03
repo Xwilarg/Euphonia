@@ -2,6 +2,7 @@
 using Euphonia.API.Models.Data;
 using Euphonia.API.Models.Response;
 using Euphonia.Common;
+using System;
 using System.Collections.Concurrent;
 
 namespace Euphonia.API.Services
@@ -50,6 +51,19 @@ namespace Euphonia.API.Services
             });
         }
 
+        public void QueueToNormalize(Song song, string rawPath, string normPath)
+        {
+            _downloadData.Enqueue(new()
+            {
+                Song = song,
+                CurrentState = DownloadState.Normalizing,
+                Error = null,
+                RawPath = rawPath,
+                NormPath = normPath,
+                DownloadUrl = null
+            });
+        }
+
         public SongDownloadData[] GetProgress()
         {
             return [.._downloadData.Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error }),
@@ -58,14 +72,17 @@ namespace Euphonia.API.Services
 
         public string DownloadSong(DownloadSongData data)
         {
-            data.LastUpdate = DateTime.UtcNow;
             int code; string err;
-            Utils.ExecuteProcess(new("yt-dlp", $"{data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist"), out code, out err);
-            if (code != 0)
+            if (data.CurrentState == DownloadState.Downloading) // If current state is normalizing, it means we don't have anything to download
             {
-                return $"yt-dlp {data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist failed:\n{string.Join("", err.TakeLast(1000))}";
+                data.LastUpdate = DateTime.UtcNow;
+                Utils.ExecuteProcess(new("yt-dlp", $"{data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist"), out code, out err);
+                if (code != 0)
+                {
+                    return $"yt-dlp {data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist failed:\n{string.Join("", err.TakeLast(1000))}";
+                }
+                data.CurrentState = DownloadState.Normalizing;
             }
-            data.CurrentState = DownloadState.Normalizing;
             data.LastUpdate = DateTime.UtcNow;
             Utils.ExecuteProcess(new("ffmpeg-normalize", $"\"{data.RawPath}\" -pr -ext {AudioFormat} -o \"{data.NormPath}\" -c:a libmp3lame"), out code, out err);
             if (code != 0)

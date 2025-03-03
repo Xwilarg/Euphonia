@@ -4,6 +4,8 @@
 
 import { uploadSong } from "../common/api";
 
+let endpoint = "youtube";
+
 function switchToYouTube() {
     document.querySelector("#upload-choices > .is-info").classList.remove("is-info");
     document.getElementById("upload-youtube").classList.add("is-info");
@@ -11,6 +13,8 @@ function switchToYouTube() {
     document.getElementById("upload-field-youtube").classList.remove("is-hidden");
     document.getElementById("upload-yt-player").classList.remove("is-hidden");
     document.getElementById("upload-field-local").classList.add("is-hidden");
+
+    endpoint = "youtube";
 }
 function switchToLocalFile() {
     document.querySelector("#upload-choices > .is-info").classList.remove("is-info");
@@ -19,6 +23,8 @@ function switchToLocalFile() {
     document.getElementById("upload-field-youtube").classList.add("is-hidden");
     document.getElementById("upload-yt-player").classList.add("is-hidden");
     document.getElementById("upload-field-local").classList.remove("is-hidden");
+
+    endpoint = "local";
 }
 
 export async function upload_initAsync() {
@@ -82,7 +88,7 @@ export async function upload_initAsync() {
             for (var i = 0, len = form.elements.length; i < len; ++i) {
                 form.elements[i].disabled = false;
             }
-        });
+        }, endpoint);
     });
 
     document.getElementById("upload-url").addEventListener("change", (e) => {

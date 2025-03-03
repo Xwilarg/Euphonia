@@ -56,16 +56,53 @@ public class Album
 
 public class Song
 {
+    /// <summary>
+    /// Unique song identifier
+    /// </summary>
     public string Key { set; get; }
+    /// <summary>
+    /// Name of the song
+    /// </summary>
     public string Name { set; get; }
+    /// <summary>
+    /// Name of the song under its raw format
+    /// </summary>
+    public string RawPath { set; get; }
+    /// <summary>
+    /// Name of the song under its normalized format
+    /// </summary>
     public string Path { set; get; }
+    /// <summary>
+    /// Artists of the song
+    /// </summary>
     public string Artist { set; get; }
+    /// <summary>
+    /// Key of the album of the song
+    /// </summary>
     public string Album { set; get; }
+    /// <summary>
+    /// Which playlist is this song stored in
+    /// </summary>
     public string Playlist { set; get; }
+    /// <summary>
+    /// Where is this song coming from (YouTube link of "localfile")
+    /// </summary>
     public string Source { set; get; }
+    /// <summary>
+    /// Type of the song (cover, instrumental, etc...)
+    /// </summary>
     public string Type { set; get; }
+    /// <summary>
+    /// User tags attached to the song
+    /// </summary>
     public string[] Tags { set; get; } = [];
+    /// <summary>
+    /// Archived songs are songs that we don't display to the users anymore
+    /// </summary>
     public bool IsArchived { set; get; }
+    /// <summary>
+    /// If the song was favorited by the user
+    /// </summary>
     public bool IsFavorite { set; get; }
 }
 

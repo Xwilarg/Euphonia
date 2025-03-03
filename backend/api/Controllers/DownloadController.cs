@@ -1,11 +1,10 @@
-﻿using Euphonia.API.Models.Data;
-using Euphonia.API.Models.Request;
+﻿using Euphonia.API.Models.Request;
+using Euphonia.API.Models.Request.Upload;
 using Euphonia.API.Models.Response;
 using Euphonia.API.Services;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Concurrent;
 using System.Security.Claims;
 
 namespace Euphonia.API.Controllers;
@@ -73,21 +72,23 @@ public class DownloadController : ControllerBase
             });
         }
 
-        if (!song.Source.StartsWith("http"))
+        if (song.Source == "localfile")
         {
-            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
-            {
-                Success = false,
-                Reason = "Song doens't have a valid source"
-            });
+            var rawPath = GetRawMusicPath(folder, song.RawPath);
+            var normPath = GetNormalizedMusicPath(folder, song.Path);
+            System.IO.File.Delete(normPath);
+
+            _download.Get(folder).QueueToNormalize(song, rawPath, normPath);
         }
+        else
+        {
+            var rawPath = GetRawMusicPath(folder, song.RawPath);
+            var normPath = GetNormalizedMusicPath(folder, song.Path);
+            System.IO.File.Delete(rawPath);
+            System.IO.File.Delete(normPath);
 
-        var rawPath = GetRawMusicPath(folder, song.Path);
-        var normPath = GetNormalizedMusicPath(folder, song.Path);
-        System.IO.File.Delete(rawPath);
-        System.IO.File.Delete(normPath);
-
-        _download.Get(folder).QueueToDownload(song, song.Source, rawPath, normPath);
+            _download.Get(folder).QueueToDownload(song, song.Source, rawPath, normPath);
+        }
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -96,11 +97,9 @@ public class DownloadController : ControllerBase
         });
     }
 
-    [HttpPost("upload")]
-    [Authorize]
-    public IActionResult UploadSong([FromForm] YoutubeForm data)
+    private IActionResult UploadSongInternal(AUploadForm data, out string folder, out Song song, out string rawSongPath, out string normSongPath, string extension)
     {
-        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
 
         // Download album image
         var albumName = data.AlbumName == null ? null : GetAlbumName(data.Artist, data.AlbumName);
@@ -108,6 +107,9 @@ public class DownloadController : ControllerBase
         {
             if (!Utils.SaveUrlAsImage(_client, data.AlbumUrl, GetImagePath(folder, albumName, "webp"), out var error))
             {
+                song = null;
+                rawSongPath = null;
+                normSongPath = null;
                 return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                 {
                     Success = false,
@@ -117,9 +119,11 @@ public class DownloadController : ControllerBase
         }
 
         // Prepare to download the rest
-        var musicKey = GetMusicKey(data.Name, data.Artist, data.SongType);
-        var rawSongPath = GetRawMusicPath(folder, musicKey);
-        var normSongPath = GetNormalizedMusicPath(folder, musicKey);
+        var rawKey = GetMusicKey(data.Name, data.Artist, data.SongType, extension);
+        var normKey = GetMusicKey(data.Name, data.Artist, data.SongType, AudioFormat);
+
+        rawSongPath = GetRawMusicPath(folder, rawKey);
+        normSongPath = GetNormalizedMusicPath(folder, normKey);
         var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
 
@@ -127,6 +131,7 @@ public class DownloadController : ControllerBase
         {
             if (info.Musics.Any(x => x.Name == data.Name.Trim() && x.Artist == data.Artist?.Trim() && data.SongType == data.SongType?.Trim()))
             {
+                song = null;
                 return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                 {
                     Success = false,
@@ -149,9 +154,6 @@ public class DownloadController : ControllerBase
         var albumUrl = data.AlbumUrl?.Trim();
         if (string.IsNullOrWhiteSpace(songType)) songType = null;
 
-        // Create output path
-        var outMusicPath = GetMusicKey(songName, artist, songType);
-
         // Format album data
         string? albumKey = null;
         var hasAlbum = !string.IsNullOrWhiteSpace(albumUrl);
@@ -161,18 +163,19 @@ public class DownloadController : ControllerBase
         }
 
         // Create Song class
-        var m = new Song
+        song = new Song
         {
             Key = Guid.NewGuid().ToString(),
             Album = albumKey,
             Artist = artist,
             Name = songName,
-            Path = outMusicPath,
+            RawPath = rawKey,
+            Path = normKey,
             Playlist = string.IsNullOrWhiteSpace(data.Playlist) ? "default" : data.Playlist.Trim(),
-            Source = data.Youtube,
+            Source = data is YoutubeForm ytForm ? ytForm.Youtube : "localfile",
             Type = songType
         };
-        info.Musics.Add(m);
+        info.Musics.Add(song);
 
         // If album exists we add it to the JSON too
         if (hasAlbum && !info.Albums.ContainsKey(albumKey))
@@ -187,8 +190,46 @@ public class DownloadController : ControllerBase
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
+        return null;
+    }
 
-        _download.Get(folder).QueueToDownload(m, data.Youtube, rawSongPath, normSongPath);
+    [HttpPost("upload/youtube")]
+    [Authorize]
+    public IActionResult UploadSongYoutube([FromForm] YoutubeForm data)
+    {
+        var sc = UploadSongInternal(data, out string folder, out Song song, out string rawSongPath, out string normSongPath, AudioFormat);
+
+        if (sc != null)
+        {
+            return sc;
+        }
+
+        _download.Get(folder).QueueToDownload(song, data.Youtube, rawSongPath, normSongPath);
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
+        {
+            Success = true,
+            Reason = null
+        });
+    }
+
+
+    [HttpPost("upload/local")]
+    [Authorize]
+    public async Task<IActionResult> UploadSongLocal([FromForm] LocalFileForm data)
+    {
+        var sc = UploadSongInternal(data, out string folder, out Song song, out string rawSongPath, out string normSongPath, Path.GetExtension(data.LocalFile.FileName));
+
+        if (sc != null)
+        {
+            return sc;
+        }
+
+        // Save file to disk
+        using Stream fileStream = new FileStream(rawSongPath, FileMode.Create);
+        await data.LocalFile.CopyToAsync(fileStream);
+
+        // Queue normalization
+        _download.Get(folder).QueueToNormalize(song, rawSongPath, normSongPath);
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -199,14 +240,14 @@ public class DownloadController : ControllerBase
 
     public string AudioFormat => WebsiteDownloaderManager.AudioFormat;
 
-    private string GetMusicKey(string songName, string artist, string songType)
+    private string GetMusicKey(string songName, string artist, string songType, string extension)
     {
         var outMusicPath = GetSongName(songName, artist);
         if (!string.IsNullOrWhiteSpace(songType))
         {
             outMusicPath += $"_{songType}";
         }
-        outMusicPath += $".{AudioFormat}";
+        outMusicPath += $".{extension}";
         return outMusicPath;
     }
 

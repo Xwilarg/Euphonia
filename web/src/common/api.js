@@ -133,8 +133,8 @@ export async function generatePassword(pwd) {
     });
 }
 
-export async function uploadSong(data, onSuccess, onFailure) {
-    fetch(`${apiTarget}download/upload`, {
+export async function uploadSong(data, onSuccess, onFailure, endpoint) {
+    fetch(`${apiTarget}download/upload/${endpoint}`, {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${adminToken}`
