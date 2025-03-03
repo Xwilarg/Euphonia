@@ -70,8 +70,6 @@ function updateSongHighlightColor() {
 
 // Play the next song of the playlist
 function nextSong() {
-    updateScrobblerAsync();
-
     // Displayer player if not here
     document.getElementById("full-player").classList.remove("is-hidden");
 
@@ -769,10 +767,3 @@ window.onkeydown = function(e){
         e.target.blur();
     }
 }
-
-/*
-window.onbeforeunload = async function() {
-    //TODO
-    //await updateScrobblerAsync();
-}
-*/

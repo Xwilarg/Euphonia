@@ -24,20 +24,26 @@ export async function settings_initAsync()
         isMinimalist = isMinimalistToggle.checked;
         localStorage.setItem("isMinimalist", isMinimalist);
 
-        if (isMinimalist) {
-            document.getElementById("currentImage").classList.add("is-hidden");
-            for (let e of document.querySelectorAll(".song-img"))
-            {
-                e.classList.add("is-hidden");
-            }
-        } else {
-            document.getElementById("currentImage").classList.remove("is-hidden");
-            for (let e of document.querySelectorAll(".song-img"))
-            {
-                e.classList.remove("is-hidden");
-            }
-        }
+        updateMinimalist();
     });
+
+    updateMinimalist();
+}
+
+function updateMinimalist() {
+    if (isMinimalist) {
+        document.getElementById("currentImage").classList.add("is-hidden");
+        for (let e of document.querySelectorAll(".song-img"))
+        {
+            e.classList.add("is-hidden");
+        }
+    } else {
+        document.getElementById("currentImage").classList.remove("is-hidden");
+        for (let e of document.querySelectorAll(".song-img"))
+        {
+            e.classList.remove("is-hidden");
+        }
+    }
 }
 
 export function doesUseRawAudio() { return useRawAudio; }
