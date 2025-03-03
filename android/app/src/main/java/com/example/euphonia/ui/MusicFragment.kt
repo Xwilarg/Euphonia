@@ -107,7 +107,7 @@ class MusicFragment : Fragment() {
         val filteredData = getCurrentMusics()
         val song = displayedData[position]
 
-        val selectedMusics = filteredData.filter { it.playlist == song.playlist && it.path != song.path }.shuffled().map { songToItem(pView.data, it) }.toMutableList()
+        val selectedMusics = filteredData.filter { it.path != song.path }.shuffled().map { songToItem(pView.data, it) }.toMutableList()
         selectedMusics.add(0, songToItem(pView.data, song))
 
         pView.controllerFuture!!.get().setMediaItems(selectedMusics)
@@ -150,7 +150,7 @@ class MusicFragment : Fragment() {
     fun getCurrentMusics(): List<Song> {
         val tmp = mutableListOf<Song>()
         tmp.addAll(pView.downloaded)
-        return tmp.filter { !it.isArchived && (pView.currentPlaylist == null || it.playlist == pView.currentPlaylist) }
+        return tmp.filter { !it.isArchived && (pView.currentPlaylist == null || it.playlists.contains(pView.currentPlaylist)) }
     }
 
     fun updateList() {
