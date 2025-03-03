@@ -536,6 +536,10 @@ function loadPage() {
     player.addEventListener('pause', (_) => {
         document.getElementById("togglePlay").innerHTML = '<span class="material-symbols-outlined">play_arrow</span>';
     });
+    player.addEventListener('loadedmetadata', (_) => {
+        document.getElementById("maxDuration").innerHTML = Math.trunc(player.duration / 60) + ":" + addZero(Math.trunc(player.duration % 60));
+        document.getElementById("durationSlider").max = player.duration;
+    });
     player.addEventListener('timeupdate', (_) => {
         let html = "";
         for (let i = 0; i < player.buffered.length; i++) {

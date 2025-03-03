@@ -81,9 +81,9 @@ public class Song
     /// </summary>
     public string Album { set; get; }
     /// <summary>
-    /// Which playlist is this song stored in
+    /// Which playlists is this song stored in
     /// </summary>
-    public string Playlist { set; get; }
+    public string[] Playlists { set; get; } = [];
     /// <summary>
     /// Where is this song coming from (YouTube link of "localfile")
     /// </summary>

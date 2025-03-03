@@ -109,7 +109,7 @@ public class DataController : ControllerBase
         song.Source = data.Source;
         song.Name = data.Name;
         song.Artist = data.Artist;
-        if (data.Playlist != null) song.Playlist = data.Playlist;
+        if (data.Playlists != null) song.Playlists = data.Playlists;
 
         Album albumData;
 

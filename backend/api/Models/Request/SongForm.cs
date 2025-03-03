@@ -7,7 +7,7 @@ public class SongForm : SongIdentifier
     [Required]
     public string Name { set; get; }
     public string Artist { set; get; } = string.Empty;
-    public string? Playlist { set; get; } = null;
+    public string[] Playlists { set; get; } = [];
     public string[]? Tags { set; get; } = [];
     public string Source { set; get; } = string.Empty;
     public string? AlbumKey { set; get; } = null;

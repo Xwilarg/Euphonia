@@ -171,7 +171,7 @@ public class DownloadController : ControllerBase
             Name = songName,
             RawPath = rawKey,
             Path = normKey,
-            Playlist = string.IsNullOrWhiteSpace(data.Playlist) ? "default" : data.Playlist.Trim(),
+            Playlists = data.Playlists == null ? [] : data.Playlists,
             Source = data is YoutubeForm ytForm ? ytForm.Youtube : "localfile",
             Type = songType
         };
