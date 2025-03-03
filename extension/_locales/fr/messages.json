@@ -21,7 +21,7 @@
         "message": "Nom de l'album"
     },
     "albumUrl": {
-        "message": "Lien YouTube"
+        "message": "Lien vers l'image de l'album"
     },
     "songType": {
         "message": "Type de la musique"

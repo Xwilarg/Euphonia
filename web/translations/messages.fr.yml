@@ -45,8 +45,8 @@ song:
     albumKey: Clé d'album
     albumName: Nom de l'album
     albumNameDesc: Nom de l'album
-    albumUrl: Lien de l'image de l'album
-    albumUrlDesc: URL vers une image qui illustre l'album
+    albumUrl: Lien vers l'image de l'album
+    albumUrlDesc: Lien vers une image qui illustre l'album
     songType: Type de la musique
     songTypeDesc: S'agit-il d'une cover, version live...
     uploadTitle: Télécharger une nouvelle musique
