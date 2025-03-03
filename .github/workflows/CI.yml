@@ -93,6 +93,10 @@ jobs:
           extension/index.html
           extension/options.html
           extension/manifest.json
+          extension/icon16.png
+          extension/icon32.png
+          extension/icon48.png
+          extension/icon128.png
           extension/_locales/
         if-no-files-found: error
 
