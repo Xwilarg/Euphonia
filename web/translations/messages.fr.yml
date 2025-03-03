@@ -7,8 +7,8 @@ navbar:
   general:
     settings: Options
     toggleAdmin: Se connecter en administrateur
-    minimalistMode: (Dé)activer le mode minimaliste
-    useRaw: Utiliser les audio non-normalisés
+    minimalistMode: Mode minimaliste
+    useRaw: Audio non-normalisés
   readme:
     title: Lisez-moi
   download:

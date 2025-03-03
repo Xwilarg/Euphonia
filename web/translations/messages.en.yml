@@ -7,7 +7,7 @@ navbar:
   general:
     settings: Settings
     toggleAdmin: Switch to admin mode
-    minimalistMode: Toggle minimalist mode
+    minimalistMode: Minimalist mode
     useRaw: Use raw audio
   readme:
     title: Readme
