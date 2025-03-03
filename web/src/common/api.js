@@ -7,6 +7,18 @@ let adminToken = null;
 export async function api_initAsync() {
     apiTarget = (window.location.hostname === "localhost" ? "http://localhost:5000" : window.location.origin) + "/api/";
 
+    const debugTarget = document.getElementById("apiTarget");
+    if (debugTarget)
+    {
+        fetch(`${apiTarget}auth/validate`, {
+            method: 'HEAD'
+        })
+        .then(resp => resp.status)
+        .then(status => {
+            debugTarget.innerHTML = status;
+        })
+    }
+
     const cookieAdmin = getCookie("admin");
     if (cookieAdmin)
     {

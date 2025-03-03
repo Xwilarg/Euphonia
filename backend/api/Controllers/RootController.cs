@@ -20,6 +20,12 @@ public class RootController : ControllerBase
         _manager = manager;
     }
 
+    [HttpHead("")]
+    public IActionResult GetHead()
+    {
+        return Ok();
+    }
+
     [HttpGet("")]
     public IActionResult Get()
     {
