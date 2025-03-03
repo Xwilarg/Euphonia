@@ -93,7 +93,7 @@ async function initAsync() {
 
                         document.getElementById("choose-loading").classList.remove("is-hidden");
                         document.getElementById("choose-upload").classList.add("is-hidden");
-                        fetch(`${website}api/download/upload`, {
+                        fetch(`${website}api/download/upload/youtube`, {
                             method: 'POST',
                             headers: {
                                 'Authorization': `Bearer ${token}`
