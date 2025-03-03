@@ -56,6 +56,27 @@ async function initAsync() {
                         });
                     });
 
+                    // Check if token is still valid
+                    fetch(`${website}api/auth/validate`, {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    })
+                    .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+                    .then(json => {
+                        if (!json.success) {
+                            chrome.storage.local.remove("token");
+                            document.getElementById("choose-upload").classList.add("is-hidden");
+                            document.getElementById("choose-password").classList.remove("is-hidden");
+                        }
+                    })
+                    .catch((err) => {
+                        chrome.storage.local.remove("token");
+                        document.getElementById("choose-upload").classList.add("is-hidden");
+                        document.getElementById("choose-password").classList.remove("is-hidden");
+                    });
+
                     // TODO: dupplicated code from web
 
                     if (json.playlists) { // Upload available playlists
@@ -65,6 +86,7 @@ async function initAsync() {
                     }
 
                     // Code from web/src/upload.js
+                    // Handle upload when clicking submit from form
                     document.getElementById("upload-form").addEventListener("submit", (e) => {
                         e.preventDefault();
                         const data = new FormData(e.target);
