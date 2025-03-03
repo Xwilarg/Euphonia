@@ -46,13 +46,20 @@ class PlayFragment : Fragment() {
         val player =  view.findViewById<ImageView>(R.id.playerImage)
         val desc = view.findViewById<TextView>(R.id.playerDescription)
         if (player != null) {
-            view.findViewById<ImageButton>(R.id.delete).setOnClickListener {
+            val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
+            val adminToken = sharedPref.getString("adminToken", null)
+
+            view.findViewById<ImageButton>(R.id.archive).visibility = if (adminToken == null) {
+                View.GONE
+            } else {
+                View.VISIBLE
+            }
+
+            view.findViewById<ImageButton>(R.id.archive).setOnClickListener {
                 val key = metadata?.displayTitle // Display title is not used so store the song key
                 if (key != null) {
                     val okHttpClient = OkHttpClient()
 
-                    val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
-                    val adminToken = sharedPref.getString("adminToken", null)
                     val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
                     val index = sharedPref.getInt("currentServer", -1)
 
@@ -120,15 +127,6 @@ class PlayFragment : Fragment() {
         val videoView = view.findViewById<PlayerView>(R.id.player)
 
         val pView = requireActivity() as MainActivity
-
-        val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
-        val adminToken = sharedPref.getString("adminToken", null)
-
-        view.findViewById<ImageButton>(R.id.delete).visibility = if (adminToken == null) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
 
         pView.controllerFuture?.addListener(
             {

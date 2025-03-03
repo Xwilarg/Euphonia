@@ -37,7 +37,7 @@
             android:src="@drawable/baseline_share_24" />
 
         <ImageButton
-            android:id="@+id/delete"
+            android:id="@+id/archive"
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:background="#00FFFFFF"
