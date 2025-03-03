@@ -15,7 +15,7 @@ In that case, my backend files are in `/home/backend/euphonia/` (I have the `api
 
 Since my domain is `https://euphonia.zirk.eu/` I also added a `data/` folder there, and inside of it, created a `euphonia.zirk.eu` folder that will contains my final data
 
-You will then need to link your data folder in your web config, we will do that again in the frontend explanations so don't worry too much about that right now, just remember what folder you created right before
+You will then need to link your data folder in your web config, we will do that again in the frontend explanations so don't worry too much about that right now, just remember what folder you created right before \
 (Example with Nginx)
 ```
 location /data/ {
@@ -28,7 +28,7 @@ Once you're done, run `docker compose up -d`
 ### Installing the frontend
 Just grab everything in the frontend folder and throw it in your server
 
-Configure your webserver to have your website ready and the backend on /api/
+Configure your webserver to have your website ready and the backend on /api/ \
 In these examples, my domain is `https://euphonia.zirk.eu/` my web files are installed in `/home/web/euphonia/` and my backend at `/home/backend/euphonia/`
 
 #### Nginx
@@ -65,7 +65,7 @@ server {
 ```
 
 ### Systemctl
-If you want to restart your backend automatically you can use a tool like systemctl
+If you want to restart your backend automatically you can use a tool like systemctl \
 As before my backend files are at `/home/backend/euphonia/`
 
 Throw your backend somewhere and create a systemctl file to keep it running:
