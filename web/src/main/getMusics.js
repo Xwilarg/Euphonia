@@ -29,7 +29,9 @@ let playlistIndex;
 
 let replayMode = 0;
 
-let useRawAudio; // Use raw files instead of normalized
+// Settings
+let useRawAudio = false; // Use raw files instead of normalized
+let isMinimalist = false;
 
 // #region Music management
 
@@ -583,6 +585,16 @@ function loadPage() {
             useRawAudio = useRawToggle.checked;
             localStorage.setItem("useRaw", useRawAudio);
         });
+
+        isMinimalist = JSON.parse(localStorage.getItem("isMinimalist") ?? false);
+        const isMinimalistToggle = document.getElementById("use-minimalist");
+        isMinimalistToggle.checked = isMinimalist;
+        isMinimalistToggle.addEventListener("change", (_) => {
+            isMinimalist = isMinimalistToggle.checked;
+            localStorage.setItem("isMinimalist", isMinimalist);
+
+            updateMinimalistMode();
+        });
     }
 
     // Audio player config
@@ -610,6 +622,24 @@ function loadPage() {
 
         // Check "?song=" parameter when we share a song
         lookForSong(url);
+    }
+}
+
+export function IsMinimalist() { return isMinimalist; }
+
+function updateMinimalistMode() {
+    if (isMinimalist) {
+        document.getElementById("currentImage").classList.add("is-hidden");
+        for (let e of document.querySelectorAll(".song-img"))
+        {
+            e.classList.add("is-hidden");
+        }
+    } else {
+        document.getElementById("currentImage").classList.remove("is-hidden");
+        for (let e of document.querySelectorAll(".song-img"))
+        {
+            e.classList.remove("is-hidden");
+        }
     }
 }
 
@@ -648,27 +678,6 @@ function random() {
 
 function refresh() {
     displaySongs(json.musics, "songlist", "", false, true, 5);
-}
-
-let isMinimalist = false;
-export function IsMinimalist() { return isMinimalist; }
-
-function toggleMinimalistMode() {
-    isMinimalist = !isMinimalist;
-
-    if (isMinimalist) {
-        document.getElementById("currentImage").classList.add("is-hidden");
-        for (let e of document.querySelectorAll(".song-img"))
-        {
-            e.classList.add("is-hidden");
-        }
-    } else {
-        document.getElementById("currentImage").classList.remove("is-hidden");
-        for (let e of document.querySelectorAll(".song-img"))
-        {
-            e.classList.remove("is-hidden");
-        }
-    }
 }
 
 function chooseDisplay() {
@@ -726,7 +735,6 @@ export async function musics_initAsync() {
     // Buttons
     document.getElementById("refresh-btn").addEventListener("click", refresh);
     document.getElementById("random-btn").addEventListener("click", random);
-    document.getElementById("minimalistMode")?.addEventListener("click", toggleMinimalistMode);
 
     document.getElementById("toggleAdmin").addEventListener("click", () => {
         if (isLoggedIn()) {

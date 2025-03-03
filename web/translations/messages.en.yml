@@ -8,7 +8,7 @@ navbar:
     settings: Settings
     toggleAdmin: Switch to admin mode
     minimalistMode: Toggle minimalist mode
-    useRaw: Use raw audio instead of normalized
+    useRaw: Use raw audio
   readme:
     title: Readme
   download:
