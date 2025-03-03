@@ -120,3 +120,7 @@ You can change the following fields in `metadata.json`:
 
 ### Styling
 You can also change the website CSS in `customize.cs`
+
+## Contributors
+- Icon: Stephano Naressi
+- Spanish translation: Paulina Araneda
