@@ -114,12 +114,12 @@ jobs:
       run: chmod +x ./gradlew
     - name: Build gradle project
       run: ./gradlew build
-    - name: Build apk release project (APK) - ${{ env.main_project_module }} module
+    - name: Build apk release project (APK)
       run: ./gradlew assemble
 
     - uses: actions/upload-artifact@v4
       with:
         name: extension
         path: |
-          android/app/build/outputs/apk/release/app-release.apk
+          android/app/build/outputs/apk/release/app-release-unsigned.apk
         if-no-files-found: error
