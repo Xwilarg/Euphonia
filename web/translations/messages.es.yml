@@ -1,0 +1,53 @@
+main:
+  random: Aleatorio
+  refresh: Refrescar
+  favorites: Favoritos
+  latest: Reciente
+navbar:
+  general:
+    settings: Configuración
+    toggleAdmin: Cambiar a modo administrador
+    minimalistMode: Modo minimalista
+    useRaw: Usar audio sin procesar
+  readme:
+    title: Readme
+  download:
+    title: Descargar
+  logs:
+    title: Registros de errores
+  sourceCode:
+    title: Código fuente
+  advanced:
+    title: Configuración avanzada
+    apiLocation: Estado de la API
+    integrity: Validar integridad
+    local: Idioma detectado
+login:
+  password: Contraseña
+  cancel: Cancelar
+song:
+  settings:
+    edit: Editar
+    redownload: Volver a descargar
+    archive: Archivar
+  upload:
+    default: Predeterminado
+    tags: Etiquetas
+    playlist: Lista de reproducción
+    name: Nombre
+    nameDesc: Descripción del nombre 
+    artistName: Nombres de los artistas
+    artistNameDesc: Descripción de los nombres de los artistas
+    youtubeUrl: Enlace de YouTube
+    youtubeUrlDesc: Descripción de enlace de YouTube 
+    localFile: Archivo de la canción
+    localFileDesc: "Selecciona un archivo..."
+    albumKey: Clave del álbum
+    albumName: Nombre del álbum
+    albumNameDesc: Descripción de nombre del álbum
+    albumUrl: Enlace del álbum
+    albumUrlDesc: Descripción de Enlace del álbum
+    songType: Tipo de canción
+    songTypeDesc: Es un cover, en vivo, una versión alternativa...
+    uploadTitle: Subir nueva canción
+    invalidYoutubeUrl: Esto no parece un enlace válido de YouTube 

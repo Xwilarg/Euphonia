@@ -1,0 +1,53 @@
+{
+    "loading": {
+        "message": "Cargando..."
+    },
+    "apiLocation": {
+        "message": "Ubicación de la API del sitio web"
+    },
+    "enterPassword": {
+        "message": "Ingresa tu contraseña"
+    },
+    "name": {
+        "message": "Nombre"
+    },
+    "artistName": {
+        "message": "Nombres de los artistas"
+    },
+    "youtubeUrl": {
+        "message": "URL de YouTube"
+    },
+    "albumName": {
+        "message": "Nombre del álbum"
+    },
+    "albumUrl": {
+        "message": "URL del álbum"
+    },
+    "songType": {
+        "message": "Tipo de canción"
+    },
+    "playlist": {
+        "message": "Lista de reproducción"
+    },
+    "default": {
+        "message": "Predeterminado"
+    },
+    "youtubeOnly": {
+        "message": "Esta extensión solo se puede usar en YouTube"
+    },
+    "youtubeReload": {
+        "message": "Si estás en YouTube, por favor recarga la página"
+    },
+    "infoFailed": {
+        "message": "No se pudo obtener la información del sitio web"
+    },
+    "uploadOngoing": {
+        "message": "La carga está en proceso"
+    },
+    "uploadFailed": {
+        "message": "No se pudo subir la canción: "
+    },
+    "loginFailed": {
+        "message": "Error al iniciar sesión"
+    }
+}

@@ -79,7 +79,7 @@ else
     }
     $translator->setlocale($locals[0]);
 
-    $langs = [ "en", "fr" ];
+    $langs = [ "en", "fr", "es" ];
     foreach ($langs as $lang) {
         $translator->addLoader("yml", new YamlFileLoader());
         $translator->addResource(

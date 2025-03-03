@@ -17,7 +17,7 @@
     <string name="pref_data_source">Source de données</string>
     <string name="pref_display">Affichage</string>
     <string name="pref_links">Liens</string>
-    <string name="pref_github">Ouvrir le GitHub</string>
+    <string name="pref_github">Ouvrir GitHub</string>
     <string name="pref_source_remove">Enlever la source de données actuelle</string>
     <string name="pref_source_remove_confirm">Êtes-vous sûr de vouloir supprimer la source de données actuelle ?</string>
     <string name="pref_deletion_confirm">Appuyez encore un fois pour confirmer la suppression</string>

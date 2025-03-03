@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="title_play">Reproductor</string>
+    <string name="title_music">Música</string>
+    <string name="title_settings">Configuración</string>
+    <string name="pref_website">Abrir sitio web</string>
+    <string name="main_data_update">Actualizando datos…</string>
+    <string name="sort_date">Fecha</string>
+    <string name="sort_random">Aleatorio</string>
+    <string name="pref_sort">Modo de ordenación de música</string>
+    <string name="sort_music_name">Nombre de la canción</string>
+    <string name="sort_artist_name">Nombre del artista</string>
+    <string name="view_search">Buscar</string>
+    <string name="pref_source_set">Establecer fuente de datos</string>
+    <string name="init_set_source">Cargar datos</string>
+    <string name="pref_source_add">Agregar fuente de datos</string>
+    <string name="pref_data_source">Fuente de datos</string>
+    <string name="pref_display">Pantalla</string>
+    <string name="pref_links">Enlaces</string>
+    <string name="pref_github">Abrir GitHub</string>
+    <string name="pref_source_remove">Eliminar fuente de datos actual</string>
+    <string name="pref_source_remove_confirm">¿Estás seguro de que quieres eliminar la fuente de datos actual?</string>
+    <string name="pref_deletion_confirm">Haz clic nuevamente para confirmar la eliminación</string>
+    <string name="music_updated">Toda la música está actualizada</string>
+    <string name="admin_login">Iniciar sesión como administrador</string>
+    <string name="admin_logoff">Cerrar sesión de administrador</string>
+    <string name="admin_enter_password">Ingresa la contraseña de administrador</string>
+    <string name="admin_login_success">Has iniciado sesión como administrador</string>
+    <string name="admin_login_wrong_password">Contraseña inválida</string>
+    <string name="by">por</string>
+</resources>
