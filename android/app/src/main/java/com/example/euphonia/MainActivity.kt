@@ -82,7 +82,6 @@ class MainActivity : AppCompatActivity() {
 
         val builder = NotificationCompat.Builder(this, "download_channel")
             .setContentTitle(applicationContext.getString(R.string.main_data_update))
-            .setSmallIcon(R.drawable.icon)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setSilent(true)
             .setOngoing(true)
