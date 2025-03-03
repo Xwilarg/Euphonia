@@ -131,9 +131,8 @@ export function spawnSongNode(json, curr, id) {
             if (json.playlists) {
                 const editPlaylist = form.getElementsByClassName("edit-playlist")[0];
                 for (let [key, value] of Object.entries(json.playlists)) {
-                    editPlaylist.innerHTML += `<option value="${key}">${value.name}</option>`;
+                    editPlaylist.innerHTML += `<option value="${key}"${curr.playlists.includes(key) ? " selected" : ""}>${value.name}</option>`;
                 }
-                editPlaylist.value = curr.playlist;
             }
             form.getElementsByClassName("edit-source")[0].value = curr.source;
             form.getElementsByClassName("edit-name")[0].value = curr.name;

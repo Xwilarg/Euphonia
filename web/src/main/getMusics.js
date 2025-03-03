@@ -17,11 +17,6 @@ let metadataJson;
 let currentPlaylist = null;
 // JSON data of the song being played
 let currSong = null;
-// Current time we listened to the song
-let timeListened = 0;
-// Every update of timeListened we store the last index in song duration
-let lastTimeUpdate = 0;
-let timeStarted;
 
 // Next songs to play
 let playlist = [];
@@ -104,9 +99,6 @@ function nextSong() {
     let elem = json.musics[playlist[playlistIndex]];
     console.log(`[Song] Playing ${elem.name} by ${elem.artist} from ${elem.album}`);
     currSong = elem;
-    timeListened = 0;
-    lastTimeUpdate = 0;
-    timeStarted = Math.floor(Date.now() / 1000);
 
     // Update player
     if (!isReduced) {
@@ -200,7 +192,7 @@ function getPlaylistHtml(id, name) {
     let mostPresents = {};
     let count = 0;
     for (let elem of json.musics) {
-        if (elem.playlist !== id && id !== "all") { // We filter by playlist (except if current playlist is "all")
+        if (!elem.playlists.includes(id) && id !== "all") { // We filter by playlist (except if current playlist is "all")
             continue;
         }
         count++;
@@ -255,7 +247,7 @@ function displayPlaylists(playlists, id, filter) {
             html += getPlaylistHtml(elem, p.name);
         }
     }
-    if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlist === "default") && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
+    if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlists.length === 0) && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
         html += getPlaylistHtml("default", "Unnamed");
     }
     html += `
@@ -554,11 +546,6 @@ function loadPage() {
         }
         document.getElementById("currDuration").innerHTML = Math.trunc(player.currentTime / 60) + ":" + addZero(Math.trunc(player.currentTime % 60));
         document.getElementById("durationSlider").value = player.currentTime;
-        if (player.currentTime - lastTimeUpdate < 1) // If it's more than 1s, we can assume the user moved the cursor elsewhere in the song
-        {
-            timeListened += player.currentTime - lastTimeUpdate;
-        }
-        lastTimeUpdate = player.currentTime;
     });
 
     document.getElementById("currentImage").addEventListener("error", (err) => {
@@ -654,7 +641,7 @@ function chooseDisplay() {
     // If parameter is not set or set to a wrong value
     if (playlist != "none" && (!metadataJson.showAllPlaylist || playlist !== "all") && (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined)) {
         // If there is no playlist we just display the default one
-        if (json.musics !== undefined && json.musics.some(x => x.playlist !== "default" && x.playlist !== null && x.playlist !== undefined)) {
+        if (json.musics !== undefined && json.musics.some(x => x.playlists.length > 0)) {
             if (playlist === "default") {
                 playlist = "default";
             } else {
@@ -677,7 +664,7 @@ function chooseDisplay() {
         document.getElementById("back").classList.remove("is-hidden");
         if (json.musics !== undefined)
         {
-            json.musics = json.musics.filter(x => playlist === "all" || x.playlist === playlist || (playlist === "default" && (x.playlist === undefined || x.playlist === null)));
+            json.musics = json.musics.filter(x => playlist === "all" || x.playlists.includes(playlist) || (playlist === "default" && x.playlists.length === 0));
             for (let id in json.musics) {
                 json.musics[id].id = id;
             }
