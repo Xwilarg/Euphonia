@@ -1,7 +1,8 @@
 // module "song.js"
 
 import { archiveSong, repairSong, updateSong } from "../common/api";
-import { getSongKey, IsMinimalist, prepareShuffle, updateSingleSongDisplay } from "./getMusics";
+import { getSongKey, prepareShuffle, updateSingleSongDisplay } from "./getMusics";
+import { isMinimalistMode } from "./settings";
 
 let isRepairOngoing;
 
@@ -25,13 +26,13 @@ export function spawnSongNode(json, curr, id) {
     node.querySelector(".song").id = idContainer;
     // If we are in minimalist mode, we allow click anywhere on the song since only the text part is displayed
     node.querySelector(".song-img").onclick = () => {
-        if (!IsMinimalist()) {
+        if (!isMinimalistMode()) {
             prepareShuffle(curr.id);
         }
     };
     // If we are not, we only allow click on the image so user can copy text without starting song
     node.querySelector(".song").onclick = () => {
-        if (IsMinimalist()) {
+        if (isMinimalistMode()) {
             prepareShuffle(curr.id);
         }
     }

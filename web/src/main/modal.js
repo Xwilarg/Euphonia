@@ -1,3 +1,7 @@
+/*
+ * Handle popups
+ */
+
 export async function modal_initAsync()
 {
     if (isReduced) return;
@@ -19,6 +23,17 @@ export async function modal_initAsync()
 export function modal_askPassword(callback) {
     passwordCallback = callback;
     document.getElementById("password-modal").classList.add("is-active");
+}
+
+export function modal_showNotification(text, isSuccess) {
+    const notif = document.getElementById("notification");
+    notif.innerHTML = text;
+    notif.classList.remove("is-hidden");
+    notif.classList.add(isSuccess ? "is-success" : "is-danger");
+
+    setTimeout(() => {
+        notif.classList.add("is-hidden");
+    }, 3000);
 }
 
 let passwordCallback = null;

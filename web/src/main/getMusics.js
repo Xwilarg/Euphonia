@@ -7,8 +7,8 @@
 import * as wanakana from 'wanakana';
 import { archiveSong, createPlaylist, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
-import { showNotification } from './notification';
-import { modal_askPassword } from './modal';
+import { modal_askPassword, modal_showNotification } from './modal';
+import { doesUseRawAudio, isMinimalistMode } from './settings';
 
 let json;
 let metadataJson;
@@ -28,10 +28,6 @@ let playlist = [];
 let playlistIndex;
 
 let replayMode = 0;
-
-// Settings
-let useRawAudio = false; // Use raw files instead of normalized
-let isMinimalist = false;
 
 // #region Music management
 
@@ -121,7 +117,7 @@ function nextSong() {
 
     // Load song and play it
     let player = document.getElementById("player");
-    player.src = `./data/${useRawAudio ? "raw" : "normalized"}/${elem.path}`;
+    player.src = `./data/${doesUseRawAudio() ? "raw" : "normalized"}/${elem.path}`;
     player.play();
 
     // Display song data
@@ -319,7 +315,7 @@ export function updateSingleSongDisplay(node, elem) {
     node.querySelector("p").innerHTML = `${sanitize(elem.name)}<br/>${sanitize(elem.artist)}`;
     node.querySelector(".tags-container").innerHTML = currentTags;
     node.querySelector("select").innerHTML = selectTags;
-    if (isMinimalist)
+    if (isMinimalistMode())
     {
         node.querySelector(".song-img").classList.add("is-hidden");
     }
@@ -383,7 +379,7 @@ function displaySongs(musics, id, filter, doesSort, doesShuffle, count) {
     } else {
         document.getElementById(id).innerHTML = "";
         for (let elem of musics) {
-            spawnSongNode(json, elem, id, isMinimalist);
+            spawnSongNode(json, elem, id);
         }
 
         // Playlist changed, maybe there is a song we should highlight now
@@ -448,7 +444,7 @@ function loadPage() {
     document.getElementById("download")?.addEventListener("click", (_) => {
         let b = document.getElementById("download");
         b.disabled = true;
-        fetch(`/data/${useRawAudio ? "raw" : "normalized"}/${currSong.path}`)
+        fetch(`/data/${doesUseRawAudio() ? "raw" : "normalized"}/${currSong.path}`)
         .then(resp => resp.ok ? resp.blob() : Promise.reject(`Code ${resp.status}`))
         .then(blob => {
             const url = window.URL.createObjectURL(blob);
@@ -578,23 +574,7 @@ function loadPage() {
 
     // Preferences
     if (!isReduced) {
-        useRawAudio = JSON.parse(localStorage.getItem("useRaw") ?? false);
-        const useRawToggle = document.getElementById("use-raw");
-        useRawToggle.checked = useRawAudio;
-        useRawToggle.addEventListener("change", (_) => {
-            useRawAudio = useRawToggle.checked;
-            localStorage.setItem("useRaw", useRawAudio);
-        });
-
-        isMinimalist = JSON.parse(localStorage.getItem("isMinimalist") ?? false);
-        const isMinimalistToggle = document.getElementById("use-minimalist");
-        isMinimalistToggle.checked = isMinimalist;
-        isMinimalistToggle.addEventListener("change", (_) => {
-            isMinimalist = isMinimalistToggle.checked;
-            localStorage.setItem("isMinimalist", isMinimalist);
-
-            updateMinimalistMode();
-        });
+        
     }
 
     // Audio player config
@@ -625,23 +605,7 @@ function loadPage() {
     }
 }
 
-export function IsMinimalist() { return isMinimalist; }
 
-function updateMinimalistMode() {
-    if (isMinimalist) {
-        document.getElementById("currentImage").classList.add("is-hidden");
-        for (let e of document.querySelectorAll(".song-img"))
-        {
-            e.classList.add("is-hidden");
-        }
-    } else {
-        document.getElementById("currentImage").classList.remove("is-hidden");
-        for (let e of document.querySelectorAll(".song-img"))
-        {
-            e.classList.remove("is-hidden");
-        }
-    }
-}
 
 function updateFavorites()
 {
@@ -742,9 +706,9 @@ export async function musics_initAsync() {
         } else {
             modal_askPassword((pwd) => {
                 getApiToken(pwd, () => {
-                    showNotification("You are now logged in", true);
+                    modal_showNotification("You are now logged in", true);
                 }, () => {
-                    showNotification("Login failed", false);
+                    modal_showNotification("Login failed", false);
                 })
             });
         }

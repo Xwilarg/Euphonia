@@ -7,6 +7,7 @@ import { api_initAsync } from "../common/api"
 import { upload_initAsync } from "./upload"
 import { navbar_initAsync } from "./navbar"
 import { modal_initAsync } from "./modal"
+import { settings_initAsync } from "./settings"
 
 async function initAsync() {
     for (const e of document.getElementsByClassName("requires-admin")) {
@@ -15,6 +16,7 @@ async function initAsync() {
 
     await navbar_initAsync();
     await api_initAsync();
+    await settings_initAsync();
     await musics_initAsync();
     await upload_initAsync();
     await modal_initAsync();
