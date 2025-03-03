@@ -19,7 +19,7 @@ navbar:
     title: Code source
   advanced:
     title: Options avancés
-    apiLocation: Localisation de l'API
+    apiLocation: Status de l'API
     integrity: Vérifier l'intégrité
     local: Langue détectée
 login:

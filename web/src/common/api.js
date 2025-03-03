@@ -8,44 +8,45 @@ export async function api_initAsync() {
     apiTarget = (window.location.hostname === "localhost" ? "http://localhost:5000" : window.location.origin) + "/api/";
 
     const debugTarget = document.getElementById("apiTarget");
-    if (debugTarget)
-    {
-        fetch(`${apiTarget}auth/validate`, {
-            method: 'HEAD'
-        })
-        .then(resp => resp.status)
-        .then(status => {
+    fetch(`${apiTarget}`, {
+        method: 'HEAD'
+    })
+    .then(resp => resp.status)
+    .then(status => {
+        document.getElementById("toggleAdmin").disabled = false;
+        if (debugTarget)
+        {
             debugTarget.innerHTML = status;
-        })
-    }
+        }
 
-    const cookieAdmin = getCookie("admin");
-    if (cookieAdmin)
-    {
-        fetch(`${apiTarget}auth/validate`, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${cookieAdmin}`
-            }
-        })
-        .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
-        .then(json => {
-            if (json.success) {
-                adminToken = cookieAdmin;
-                for (let c of document.getElementsByClassName("requires-admin")) {
-                    c.classList.remove("is-hidden");
+        const cookieAdmin = getCookie("admin");
+        if (cookieAdmin)
+        {
+            fetch(`${apiTarget}auth/validate`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${cookieAdmin}`
                 }
-                document.getElementById("toggleAdmin").innerHTML = "Turn off admin mode";
-            } else {
-                console.warn(`Admin token vertification failed: ${json.reason}`);
+            })
+            .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
+            .then(json => {
+                if (json.success) {
+                    adminToken = cookieAdmin;
+                    for (let c of document.getElementsByClassName("requires-admin")) {
+                        c.classList.remove("is-hidden");
+                    }
+                    document.getElementById("toggleAdmin").innerHTML = "Turn off admin mode";
+                } else {
+                    console.warn(`Admin token vertification failed: ${json.reason}`);
+                    logOff();
+                }
+            })
+            .catch((err) => {
+                console.warn(`Admin token vertification failed: ${err}`);
                 logOff();
-            }
-        })
-        .catch((err) => {
-            console.warn(`Admin token vertification failed: ${err}`);
-            logOff();
-        });
-    }
+            });
+        }
+    })
 }
 
 export function isLoggedIn() {
