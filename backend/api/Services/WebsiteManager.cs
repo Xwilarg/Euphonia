@@ -1,4 +1,5 @@
 ﻿using Euphonia.API.Models.Data;
+using Euphonia.Common;
 using System.Text.Json;
 
 namespace Euphonia.API.Services
@@ -22,7 +23,7 @@ namespace Euphonia.API.Services
             if (string.IsNullOrWhiteSpace(hashedPwd)) return null;
             foreach (var e in _endpoints)
             {
-                if (JsonSerializer.Deserialize<Credentials>(File.ReadAllText(e.Value + "credentials.json"), new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase })?.AdminPwd == hashedPwd)
+                if (Serialization.Deserialize<EuphoniaCredentials>(File.ReadAllText(e.Value + "credentials.json"))?.AdminPwd == hashedPwd)
                 {
                     return e.Key;
                 }

@@ -19,8 +19,23 @@ public static class Serialization
         }
     }
 
-    public static T Deserialize<T>(string path) => JsonSerializer.Deserialize<T>(path, Option);
+    public static T Deserialize<T>(string text) => JsonSerializer.Deserialize<T>(text, Option);
     public static string Serialize<T>(T data) => JsonSerializer.Serialize(data, Option);
+}
+
+public class EuphoniaCredentials
+{
+    public string? AdminPwd { set; get; } = null;
+}
+
+public class EuphoniaMetadata
+{
+    public string[] Readme { set; get; } = [];
+    public bool ShowGithub { set; get; } = false;
+    public bool ShowDebug { set; get; } = false;
+    public bool AllowDownload { set; get; } = false;
+    public bool AllowShare { set; get; } = false;
+    public bool ShowAllPlaylist { set; get; } = false;
 }
 
 public class EuphoniaInfo

@@ -1,4 +1,5 @@
 using Euphonia.API.Services;
+using Euphonia.Common;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
@@ -17,6 +18,8 @@ namespace Euphonia.API
             if (!Directory.Exists($"{path}icon")) Directory.CreateDirectory($"{path}icon");
             if (!Directory.Exists($"{path}icon/playlist")) Directory.CreateDirectory($"{path}icon/playlist");
             if (!File.Exists($"{path}info.json")) File.WriteAllText($"{path}info.json", "{}");
+            if (!File.Exists($"{path}credentials.json")) File.WriteAllText($"{path}credentials.json", Serialization.Serialize<EuphoniaCredentials>(new()));
+            if (!File.Exists($"{path}metadata.json")) File.WriteAllText($"{path}metadata.json", Serialization.Serialize<EuphoniaMetadata>(new()));
         }
 
         public static void Main(string[] args)
