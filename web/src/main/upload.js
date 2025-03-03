@@ -4,8 +4,36 @@
 
 import { uploadSong } from "../common/api";
 
+function switchToYouTube() {
+    document.querySelector("#upload-choices > .is-info").classList.remove("is-info");
+    document.getElementById("upload-youtube").classList.add("is-info");
+
+    document.getElementById("upload-field-youtube").classList.remove("is-hidden");
+    document.getElementById("upload-yt-player").classList.remove("is-hidden");
+    document.getElementById("upload-field-local").classList.add("is-hidden");
+}
+function switchToLocalFile() {
+    document.querySelector("#upload-choices > .is-info").classList.remove("is-info");
+    document.getElementById("upload-local").classList.add("is-info");
+
+    document.getElementById("upload-field-youtube").classList.add("is-hidden");
+    document.getElementById("upload-yt-player").classList.add("is-hidden");
+    document.getElementById("upload-field-local").classList.remove("is-hidden");
+}
+
 export async function upload_initAsync() {
     if (isReduced) return;
+
+    document.getElementById("upload-youtube").addEventListener("click", switchToYouTube);
+    document.getElementById("upload-local").addEventListener("click", switchToLocalFile);
+
+    document.getElementById("upload-file-button").addEventListener("change", e => {
+        const files = e.target.files;
+        if (files.length > 0)
+        {
+            document.getElementById("upload-file-name").innerHTML = files[0].name;
+        }
+    });
 
     document.getElementById("upload").addEventListener("click", () => {
         const popup = document.getElementById("upload-window");

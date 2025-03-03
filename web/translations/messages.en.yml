@@ -40,6 +40,8 @@ song:
     artistNameDesc: Names of the artists
     youtubeUrl: YouTube URL
     youtubeUrlDesc: YouTube URL of the song
+    localFile: "Song file"
+    localFileDesc: "Choose a file..."
     albumKey: Album Key
     albumName: Album Name
     albumNameDesc: Name of the album

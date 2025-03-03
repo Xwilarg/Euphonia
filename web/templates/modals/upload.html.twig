@@ -5,6 +5,10 @@
         <button id="close-upload" class="delete" aria-label="close"></button>
     </header>
     <section class="modal-card-body">
+        <div class="buttons has-addons" id="upload-choices">
+            <button class="button is-info" id="upload-youtube">YouTube</button>
+            <button class="button" id="upload-local">Local File</button>
+        </div>
         <form id="upload-form">
             <div class="field">
                 <label class="label">{{ "song.upload.name" | trans }}</label>
@@ -18,13 +22,31 @@
                     <input class="input" type="text" name="Artist" placeholder="{{ "song.upload.artistNameDesc" | trans }}"/>
                 </div>
             </div>
-            <div class="field">
+
+            <!-- YouTube upload -->
+            <div class="field" id="upload-field-youtube">
                 <label class="label">{{ "song.upload.youtubeUrl" | trans }}</label>
                 <div class="control">
                     <input class="input" type="url" name="Youtube" placeholder="{{ "song.upload.youtubeUrlDesc" | trans }}" id="upload-url"/>
                 </div>
                 <p class="help is-danger is-hidden" id="upload-url-error">{{ "song.upload.invalidYoutubeUrl" | trans }}</p>
             </div>
+            <!-- Local file upload -->
+            <div class="field is-hidden" id="upload-field-local">
+                <label class="label">{{ "song.upload.localFile" | trans }}</label>
+                <div class="control">
+                    <div class="file has-name">
+                        <label class="file-label">
+                            <input class="file-input" type="file" name="localFile" id="upload-file-button" />
+                            <span class="file-cta">
+                                <span class="file-label">{{ "song.upload.localFileDesc" | trans }}</span>
+                            </span>
+                            <span class="file-name" id="upload-file-name"></span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
             <div class="field">
                 <label class="label">{{ "song.upload.albumName" | trans }}</label>
                 <div class="control">
