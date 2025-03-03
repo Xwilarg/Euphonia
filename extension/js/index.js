@@ -20,14 +20,34 @@ async function initAsync() {
                     document.getElementById("choose-loading").classList.add("is-hidden");
                     document.getElementById("choose-upload").classList.remove("is-hidden");
 
+                    // Get data from content_script (information about current music)
                     chrome.tabs.query({active: true, currentWindow: true}, (tabs) => {
                         chrome.tabs.sendMessage(tabs[0].id, {greeting: "fetchData"}, (response) => {
                             if (response) {
-                                document.getElementById("youtube-url").value = response.url;
-                                document.getElementById("artist").value = response.artist;
-                                document.getElementById("name").value = response.name;
-                                document.getElementById("album-url").value = response.albumImage;
-                                document.getElementById("album-name").value = response.albumName;
+                                chrome.storage.local.get(["form"]).then((data) => {
+                                    let form = data.form;
+                                    if (form && form.url === response.url) { // Check cache answer URL (allow to close and open the popup again with same info)
+                                        document.getElementById("youtube-url").value = form.url;
+                                        document.getElementById("artist").value = form.artist;
+                                        document.getElementById("name").value = form.name;
+                                        document.getElementById("album-url").value = form.albumImage;
+                                        document.getElementById("album-name").value = form.albumName;
+                                    } else { // Answer changed
+                                        form = response;
+                                        document.getElementById("youtube-url").value = response.url;
+                                        document.getElementById("artist").value = response.artist;
+                                        document.getElementById("name").value = response.name;
+                                        document.getElementById("album-url").value = response.albumImage;
+                                        document.getElementById("album-name").value = response.albumName;
+                                        chrome.storage.local.set({ form: response }).then(() => {});
+                                    }
+
+                                    // Listen for form changes
+                                    document.getElementById("artist").addEventListener("change", e => { form.artist = e.target.value; chrome.storage.local.set({ form: form }).then(() => {}); } );
+                                    document.getElementById("name").addEventListener("change", e => { form.name = e.target.value; chrome.storage.local.set({ form: form }).then(() => {}); } );
+                                    document.getElementById("album-url").addEventListener("change", e => { form.albumImage = e.target.value; chrome.storage.local.set({ form: form }).then(() => {}); } );
+                                    document.getElementById("album-name").addEventListener("change", e => { form.albumName = e.target.value; chrome.storage.local.set({ form: form }).then(() => {}); } );
+                                });
                             } else {
                                 document.getElementById("choose-loading").classList.remove("is-hidden");
                                 document.getElementById("choose-loading").innerHTML = chrome.i18n.getMessage("youtubeOnly") + "<br>" + chrome.i18n.getMessage("youtubeReload");
@@ -134,7 +154,6 @@ document.onreadystatechange = async function () {
 
         for (const tr of document.getElementsByClassName("tr"))
         {
-            console.log(tr.innerHTML);
             tr.innerHTML = chrome.i18n.getMessage(tr.innerHTML);
         }
     }

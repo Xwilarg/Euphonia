@@ -6,7 +6,7 @@ chrome.runtime.onMessage.addListener(
             try
             {
                 url = location.href;
-                artist = document.querySelector(".ytd-channel-name > a").innerHTML;
+                artist = document.querySelector("#text").title;
                 name = document.querySelector("#title yt-formatted-string.ytd-watch-metadata").innerHTML;
                 const linkTarget = document.querySelector("#shelf-container .yt-video-attribute-view-model__secondary-subtitle > span");
                 const linkName = linkTarget.querySelector("a");
