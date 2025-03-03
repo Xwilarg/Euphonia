@@ -97,9 +97,26 @@ With docker, update the files and run `docker compose build --no-cache` then run
 Login as an admin using the hamburger menu at the top left of the website \
 Once his is done, a new button will appear at the top left, click on it and fill the form with your music info
 
-#### From the extension
-TODO: Explain chrome extension
+#### From the extension (Chrome)
+Download the chrome extension and go on `chrome://extensions/` \
+Toggle `Developer mode` on the top right then click on `Load unpacked` and select the folder of the extension
+
+You can then click on the extension popup, first enter your website (since my website is `https://euphonia.zirk.eu/` I will write `euphonia.zirk.eu`) \
+Then enter your admin token
+
+From that you can go on any YouTube song and fields should be prefilled with the page data
 
 ## Website customization
-You can change some metadata of your website in `web/data/metadata.json` \
-You can also change its style on `web/css/customize.cs`
+
+### Configuration
+You can change the following fields in `metadata.json`:
+- name: Name displayed on the website
+- readme: Additional information shown inside the side panel
+- showGithub: Show link to the GitHub in the side panel
+- showDebug: Show additional debug information in the side panel
+- allowDownload: Allow for songs to be downloaded
+- allowShare: Allow for songs to be shared
+- showAllPlaylist: If true, when going to playlist selection, will show a playlist called "All"
+
+### Styling
+You can also change the website CSS in `customize.cs`

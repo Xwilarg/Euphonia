@@ -30,12 +30,13 @@ public class EuphoniaCredentials
 
 public class EuphoniaMetadata
 {
+    public string Name { set; get; } = "Euphonia";
     public string[] Readme { set; get; } = [];
-    public bool ShowGithub { set; get; } = false;
-    public bool ShowDebug { set; get; } = false;
-    public bool AllowDownload { set; get; } = false;
-    public bool AllowShare { set; get; } = false;
-    public bool ShowAllPlaylist { set; get; } = false;
+    public bool ShowGithub { set; get; } = true;
+    public bool ShowDebug { set; get; } = true;
+    public bool AllowDownload { set; get; } = true;
+    public bool AllowShare { set; get; } = true;
+    public bool ShowAllPlaylist { set; get; } = true;
 }
 
 public class EuphoniaInfo
