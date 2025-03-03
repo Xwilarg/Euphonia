@@ -57,7 +57,7 @@ class MusicFragment : Fragment() {
 
         requireActivity()
             .onBackPressedDispatcher
-            .addCallback(this, object : OnBackPressedCallback(true) {
+            .addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
                 override fun handleOnBackPressed() {
                     if (pView.currentPlaylist != null) {
                         pView.currentPlaylist = null
