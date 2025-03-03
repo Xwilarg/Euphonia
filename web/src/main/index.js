@@ -3,7 +3,6 @@
  */
 
 import { musics_initAsync } from "./getMusics"
-import { lastfm_initAsync } from "./lastfm"
 import { api_initAsync } from "../common/api"
 import { upload_initAsync } from "./upload"
 import { navbar_initAsync } from "./navbar"
@@ -17,7 +16,6 @@ async function initAsync() {
     await navbar_initAsync();
     await api_initAsync();
     await musics_initAsync();
-    await lastfm_initAsync();
     await upload_initAsync();
     await modal_initAsync();
 }

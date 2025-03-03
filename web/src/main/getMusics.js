@@ -5,7 +5,6 @@
  */
 
 import * as wanakana from 'wanakana';
-import { registerNowPlayingAsync, registerScrobbleAsync } from "./lastfm"
 import { archiveSong, createPlaylist, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 import { showNotification } from './notification';
@@ -22,8 +21,6 @@ let currSong = null;
 let timeListened = 0;
 // Every update of timeListened we store the last index in song duration
 let lastTimeUpdate = 0;
-// Actual song duration, updated when metadata are loaded
-let trackDuration = 0;
 let timeStarted;
 
 // Next songs to play
@@ -113,7 +110,6 @@ function nextSong() {
     currSong = elem;
     timeListened = 0;
     lastTimeUpdate = 0;
-    trackDuration = 0;
     timeStarted = Math.floor(Date.now() / 1000);
 
     // Update player
@@ -401,16 +397,6 @@ function addZero(nb) {
 }
 
 let oldRanges = "";
-
-async function updateScrobblerAsync() {
-    // last.fm documentation says a song can be srobbled if we listended for more than its halve, or more than 4 minutes
-    console.log(`[Song] Last song was listened for a duration of ${timeListened} out of ${trackDuration} seconds`);
-    if (currSong !== null && trackDuration != 0 && (timeListened > trackDuration / 2 || timeListened > 240))
-    {
-        registerScrobbleAsync(currSong.name, currSong.artist, currSong.album, trackDuration, timeStarted);
-    }
-}
-
 function loadPage() {
     const url = new URL(window.location.href);
 

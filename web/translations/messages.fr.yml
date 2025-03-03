@@ -11,10 +11,6 @@ navbar:
     useRaw: Utiliser les audio non-normalisés
   readme:
     title: Lisez-moi
-  lastfm:
-    login: Se connecter avec last.fm
-    cookie: Ceci utilisera vos cookies pour stocker votre token de connection
-    status: Status last.fm
   download:
     title: Téléchargements
   logs:

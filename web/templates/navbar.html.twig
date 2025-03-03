@@ -22,16 +22,6 @@
                 </div>
             </fieldset>
             {% endif %}
-            {% if metadata.showLastfm %}
-            <fieldset class="box">
-                <legend class="label has-text-centered">last.fm</legend>
-                <div>
-                    <button class="button" id="lastfmLogin" disabled>{{ "navbar.lastfm.login" | trans }}</button><br/>
-                    <small>{{ "navbar.lastfm.cookie" | trans }}</small><br/>
-                    {{ "navbar.lastfm.status" | trans }}: <span id="lastfmStatus"></span><br/>
-                </div>
-            </fieldset>
-            {% endif %}
             <fieldset class="box">
                 <legend class="label has-text-centered">{{ "navbar.download.title" | trans }}</legend>
                 <div id="download-progress" class="requires-admin">

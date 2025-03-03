@@ -11,10 +11,6 @@ navbar:
     useRaw: Use raw audio instead of normalized
   readme:
     title: Readme
-  lastfm:
-    login: Login with last.fm
-    cookie: This will use cookies to store your token
-    status: last.fm status
   download:
     title: Download
   logs:
