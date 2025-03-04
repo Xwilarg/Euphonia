@@ -63,6 +63,8 @@ export function spawnPlaylistNode(id, name, json, nodeId, allowDeletion) {
 
     if (!allowDeletion) {
         node.querySelector(".dropdown").remove();
+    } else if (!isLoggedIn()) {
+        node.querySelector(".dropdown").classList.add("is-hidden");
     }
     
     document.getElementById(nodeId).appendChild(node);
