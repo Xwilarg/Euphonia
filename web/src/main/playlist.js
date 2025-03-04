@@ -3,7 +3,7 @@
 import { createPlaylist, isLoggedIn, removePlaylist } from "../common/api";
 import { displayPlaylists, getAlbumImage, sanitize } from "./getMusics";
 
-export function spawnPlaylistNode(id, name, json, nodeId) {
+export function spawnPlaylistNode(id, name, json, nodeId, allowDeletion) {
     let template = document.getElementById("template-playlist");
     const node = template.content.cloneNode(true);
 
@@ -60,6 +60,10 @@ export function spawnPlaylistNode(id, name, json, nodeId) {
     node.querySelector(".playlist-img-container").innerHTML = htmlImgs;
 
     node.querySelector(".card-content > p").innerHTML = `${sanitize(name)}<br>${count} songs`;
+
+    if (!allowDeletion) {
+        node.querySelector(".dropdown").remove();
+    }
     
     document.getElementById(nodeId).appendChild(node);
 }

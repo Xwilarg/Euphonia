@@ -191,16 +191,16 @@ export function getAlbumImage(elem) {
 
 export function displayPlaylists(playlists, id, filter) {
     if (metadataJson.showAllPlaylist && json.musics.length > 0) {
-        spawnPlaylistNode("all", "All", json, id);
+        spawnPlaylistNode("all", "All", json, id, false);
     }
     for (let elem in playlists) {
         const p = playlists[elem];
         if (filter === "" || sanitize(p.name).toLowerCase().includes(filter)) {
-            spawnPlaylistNode(elem, p.name, json, id);
+            spawnPlaylistNode(elem, p.name, json, id, true);
         }
     }
     if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlists.length === 0) && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
-        spawnPlaylistNode("default", "Unnamed", json, id);
+        spawnPlaylistNode("default", "Unnamed", json, id, false);
     }
     spawnNewPlaylistNode(id, json);
 }
