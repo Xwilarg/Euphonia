@@ -6,10 +6,11 @@ export function spawnPlaylistNode(id, name, json, nodeId) {
     
     let template = document.getElementById("template-playlist");
     const node = template.content.cloneNode(true);
+    node.querySelector(".playlist").id = id;
 
     // Set click callback
     // For some wizardry just assigning onclick doesn't work
-    node.querySelector(".playlist").setAttribute("onclick", `window.location=window.location.origin + window.location.pathname + '?playlist=${id}';`)
+    node.querySelector(".card-image").setAttribute("onclick", `window.location=window.location.origin + window.location.pathname + '?playlist=${id}';`)
 
     // Prepare images to display inside
     let mostPresents = {};
@@ -46,6 +47,11 @@ export function spawnPlaylistNode(id, name, json, nodeId) {
     node.querySelector(".playlist-img-container").innerHTML = htmlImgs;
 
     node.querySelector(".card-content > p").innerHTML = `${sanitize(name)}<br>${count} songs`;
+
+    node.querySelector(".playlist-archive").addEventListener("click", (e) => {
+        e.preventDefault();
+        console.log("aaaaa");
+    });
     
     document.getElementById(nodeId).appendChild(node);
 }

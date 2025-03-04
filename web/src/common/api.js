@@ -327,3 +327,27 @@ export async function createPlaylist(name, onSuccess, onFailure) {
         onFailure();
     });
 }
+
+export async function removePlaylist(name, onSuccess, onFailure) {
+    fetch(`${apiTarget}playlist/remove`, {
+        method: 'DELETE',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        },
+        body: JSON.stringify(name)
+    })
+    .then(handleFetchResponse)
+    .then(json => {
+        if (json.success) {
+            onSuccess();
+        } else {
+            alert(`Failed to delete playlist: ${json.reason}`);
+            onFailure();
+        }
+    })
+    .catch((err) => {
+        alert(`Failed to delete playlist: ${err}`);
+        console.error(err);
+        onFailure();
+    });
+}

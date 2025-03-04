@@ -25,6 +25,10 @@ navbar:
 login:
   password: Enter your password
   cancel: Cancel
+playlist:
+  settings:
+    delete: Delete
+    notEmpty: This playlist is not empty, are you sure you want to continue?
 song:
   settings:
     edit: Edit

@@ -4,5 +4,21 @@
     <div class="card-content has-text-centered">
         <p>
         </p>
+        <div class="has-text-left">
+            <div class="dropdown is-hoverable requires-admin">
+                <div class="dropdown-trigger">
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu4">
+                        <span class="material-symbols-outlined">settings</span>
+                    </button>
+                </div>
+                <div class="dropdown-menu" id="dropdown-menu4" role="menu">
+                    <div class="dropdown-content">
+                        <div class="dropdown-item">
+                            <button class="button is-fullwidth playlist-archive">{{ "playlist.settings.delete" | trans }}</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
