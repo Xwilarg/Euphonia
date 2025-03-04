@@ -25,6 +25,35 @@ public class PlaylistController : ControllerBase
         _client = client;
     }
 
+    [HttpDelete("remove")]
+    [Authorize]
+    public IActionResult RemovePlaylist([FromForm] string name)
+    {
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
+
+        var key = HttpUtility.UrlEncode(name);
+
+        if (!info.Playlists.Any(x => x.Key == key))
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+            {
+                Success = false,
+                Reason = "There is no playlist with that name"
+            });
+        }
+
+        info.Playlists.Remove(key);
+
+        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+
+        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
+        {
+            Success = true,
+            Reason = null
+        });
+    }
+
     [HttpPost("add")]
     [Authorize]
     public IActionResult CreatePlaylist([FromForm] PlaylistForm data)
