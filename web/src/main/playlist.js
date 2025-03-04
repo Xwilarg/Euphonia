@@ -76,7 +76,7 @@ export function spawnNewPlaylistNode(nodeId, json) {
     node.querySelector(".card-image").onclick = () => { createNewPlaylist(nodeId, json); };
     node.querySelector(".card-image").classList.add("requires-admin");
     if (!isLoggedIn()) {
-        node.querySelector(".card-image").classList.add("is-hidden");
+        node.querySelector(".card").classList.add("is-hidden");
     }
 
     node.querySelector(".dropdown").remove();
@@ -90,7 +90,7 @@ function createNewPlaylist(nodeId, json)
     if (playlistName) {
         document.getElementById(nodeId).innerHTML = "";
         createPlaylist(playlistName, () => {
-            json.playlists[playlistName] = {
+            json.playlists[playlistName.toLowerCase()] = {
                 name: playlistName,
                 description: null
             };

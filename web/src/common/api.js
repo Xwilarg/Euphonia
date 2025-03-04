@@ -303,7 +303,8 @@ export async function validateIntegrity() {
 
 export async function createPlaylist(name, onSuccess, onFailure) {
     const data = new FormData();
-    data.append("Name", name);
+    data.append("Name", name.toLowerCase());
+    data.append("FullName", name);
 
     fetch(`${apiTarget}playlist/add`, {
         method: 'POST',
