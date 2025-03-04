@@ -91,13 +91,11 @@ With docker, update the files and run `docker compose build --no-cache` then run
 
 ## How to add songs
 
-### Add songs
-
-#### From the website
+### From the website
 Login as an admin using the hamburger menu at the top left of the website \
 Once his is done, a new button will appear at the top left, click on it and fill the form with your music info
 
-#### From the extension (Chrome)
+### From the extension (Chrome)
 Download the chrome extension and go on `chrome://extensions/` \
 Toggle `Developer mode` on the top right then click on `Load unpacked` and select the folder of the extension
 
