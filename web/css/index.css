@@ -20,7 +20,7 @@
 }
 
 /* Elements we can click */
-.song-img, h2 {
+.song-img, h2, .playlist {
     cursor: pointer;
 }
 

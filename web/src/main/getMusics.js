@@ -9,6 +9,7 @@ import { archiveSong, createPlaylist, favoriteSong, getApiToken, getDownloadProc
 import { spawnSongNode } from './song';
 import { modal_askPassword, modal_showNotification } from './modal';
 import { doesUseRawAudio, isMinimalistMode } from './settings';
+import { spawnPlaylistNode } from './playlist';
 
 let json;
 let metadataJson;
@@ -168,7 +169,7 @@ function playSingleSong(index) {
 }
 
 // Sanitize a name so the user can't inject HTML with the title
-function sanitize(text) {
+export function sanitize(text) {
     if (text === null) return "";
     return text
         .replaceAll('<', '&lt;')
@@ -181,76 +182,27 @@ function sanitize(text) {
 
 // #region On page load
 
-function getAlbumImage(elem) {
+export function getAlbumImage(elem) {
     if (elem.album === null || elem.album === undefined || !(elem.album in json.albums) || json.albums[elem.album].path === null) {
         return "/img/CD.png";
     }
     return "/data/icon/" + json.albums[elem.album].path;
 }
 
-function getPlaylistHtml(id, name) {
-    let mostPresents = {};
-    let count = 0;
-    for (let elem of json.musics) {
-        if (!elem.playlists.includes(id) && id !== "all") { // We filter by playlist (except if current playlist is "all")
-            continue;
-        }
-        count++;
-        if (elem.album === null) { // TODO: Should also check playlist path
-            continue;
-        }
-        let img = getAlbumImage(elem);
-        if (mostPresents[img] === undefined) {
-            mostPresents[img] = 1;
-        } else {
-            mostPresents[img]++;
-        }
-    }
-    let imgs = Object.keys(mostPresents).map(function(key) {
-        return [key, mostPresents[key]];
-    }).sort(function(a, b) {
-        return b[1] - a[1];
-    }).slice(0, 4);
-
-    let htmlImgs = "";
-    if (imgs.length === 0) {
-        htmlImgs = `<img class="image" src="/img/CD.png"/ draggable="false">`;
-    } else {
-        for (let img of imgs) {
-            htmlImgs += `<img class="image" src="${img[0]}"/ draggable="false">`;
-        }
-    }
-
-    return `
-    <div class="song card" onclick="window.location=window.location.origin + window.location.pathname + '?playlist=${id}';">
-        <div class="is-flex is-flex-wrap-wrap is-gap-0 playlist-img-container card-image">
-        ${htmlImgs}
-        </div>
-        <div class="card-content has-text-centered">
-            <p>
-                ${sanitize(name)}<br/>
-                ${count} songs
-            </p>
-        </div>
-    </div>
-    `;
-}
-
 function displayPlaylists(playlists, id, filter) {
-    let html = "";
     if (metadataJson.showAllPlaylist && json.musics.length > 0) {
-        html += getPlaylistHtml("all", "All");
+        spawnPlaylistNode("all", "All", json, id);
     }
     for (let elem in playlists) {
         const p = playlists[elem];
         if (filter === "" || sanitize(p.name).toLowerCase().includes(filter)) {
-            html += getPlaylistHtml(elem, p.name);
+            spawnPlaylistNode(elem, p.name, json, id);
         }
     }
     if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlists.length === 0) && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
-        html += getPlaylistHtml("default", "Unnamed");
+        spawnPlaylistNode("default", "Unnamed", json, id);
     }
-    html += `
+    document.getElementById(id).innerHTML += `
     <div id="new-playlist" class="song card requires-admin ${isLoggedIn() ? "" : "is-hidden"}">
         <div class="card-content has-text-centered">
             <div class="is-flex is-flex-wrap-wrap is-gap-0 playlist-img-container card-image"></div>
@@ -260,7 +212,6 @@ function displayPlaylists(playlists, id, filter) {
         </div>
     </div>
     `;
-    document.getElementById(id).innerHTML = html;
 
     document.getElementById("new-playlist").addEventListener("click", createNewPlaylist);
 }
