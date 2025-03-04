@@ -337,7 +337,7 @@ export async function removePlaylist(name, onSuccess, onFailure) {
         headers: {
             'Authorization': `Bearer ${adminToken}`
         },
-        body: JSON.stringify(name)
+        body: data
     })
     .then(handleFetchResponse)
     .then(json => {

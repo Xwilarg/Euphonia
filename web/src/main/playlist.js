@@ -7,6 +7,8 @@ export function spawnPlaylistNode(id, name, json, nodeId) {
     let template = document.getElementById("template-playlist");
     const node = template.content.cloneNode(true);
 
+    node.querySelector(".playlist").id = `playlist-${id}`;
+
     // Set click callbacks
     node.querySelector(".card-image").onclick = () => {
         window.location=window.location.origin + window.location.pathname + `?playlist=${id}`;
@@ -16,10 +18,10 @@ export function spawnPlaylistNode(id, name, json, nodeId) {
         if (json.musics.some(x => x.playlists.includes(id))) {
             if (confirm("This playlist contains songs, are you sure you want to delete it?"))
             {
-                removePlaylist(id);
+                removePlaylist(id, () => { document.getElementById(`playlist-${id}`).remove(); }, () => {});
             }
         } else {
-            removePlaylist(id);
+            removePlaylist(id, () => { document.getElementById(`playlist-${id}`).remove(); }, () => {});
         }
     }
 
@@ -67,19 +69,22 @@ export function spawnNewPlaylistNode(nodeId, json) {
     const node = template.content.cloneNode(true);
 
     node.querySelector(".card-content > p").innerHTML = `Create new playlist`;
-    node.querySelector(".card-image").onclick = () => { createNewPlaylist(json); };
+    node.querySelector(".card-image").onclick = () => { createNewPlaylist(nodeId, json); };
     node.querySelector(".card-image").classList.add("requires-admin");
     if (!isLoggedIn()) {
         node.querySelector(".card-image").classList.add("is-hidden");
     }
 
+    node.querySelector(".dropdown").remove();
+
     document.getElementById(nodeId).appendChild(node);
 }
 
-function createNewPlaylist(json)
+function createNewPlaylist(nodeId, json)
 {
     var playlistName = window.prompt("Enter new playlist name");
     if (playlistName) {
+        document.getElementById(nodeId).innerHTML = "";
         createPlaylist(playlistName, () => {
             json.playlists[playlistName] = {
                 name: playlistName,
