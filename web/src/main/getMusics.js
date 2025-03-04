@@ -9,7 +9,7 @@ import { archiveSong, createPlaylist, favoriteSong, getApiToken, getDownloadProc
 import { spawnSongNode } from './song';
 import { modal_askPassword, modal_showNotification } from './modal';
 import { doesUseRawAudio, isMinimalistMode } from './settings';
-import { spawnPlaylistNode } from './playlist';
+import { spawnNewPlaylistNode, spawnPlaylistNode } from './playlist';
 
 let json;
 let metadataJson;
@@ -202,33 +202,9 @@ function displayPlaylists(playlists, id, filter) {
     if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlists.length === 0) && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
         spawnPlaylistNode("default", "Unnamed", json, id);
     }
-    document.getElementById(id).innerHTML += `
-    <div id="new-playlist" class="song card requires-admin ${isLoggedIn() ? "" : "is-hidden"}">
-        <div class="card-content has-text-centered">
-            <div class="is-flex is-flex-wrap-wrap is-gap-0 playlist-img-container card-image"></div>
-            <p>
-                Create new playlist
-            </p>
-        </div>
-    </div>
-    `;
-
-    document.getElementById("new-playlist").addEventListener("click", createNewPlaylist);
+    spawnNewPlaylistNode(id);
 }
 
-function createNewPlaylist(_)
-{
-    var playlistName = window.prompt("Enter new playlist name");
-    if (playlistName) {
-        createPlaylist(playlistName, () => {
-            json.playlists[playlistName] = {
-                name: playlistName,
-                description: null
-            };
-            displayPlaylists(json.playlists, "playlistlist", "");
-        }, () => {});
-    }
-}
 
 /// Update the song HTML of the element given in parameter
 export function updateSingleSongDisplay(node, elem) {
