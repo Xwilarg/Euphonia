@@ -86,7 +86,7 @@ public class PlaylistController : ControllerBase
 
         info.Playlists.Add(key, new()
         {
-            Name = (data.FullName ?? data.Name).ToLowerInvariant(),
+            Name = data.FullName ?? data.Name,
             Description = data.Description,
             ImageUrl = data.ImageUrl == null ? null : $"{Utils.CleanPath(data.Name)}.webp"
         });
