@@ -1,20 +1,26 @@
 // module "playlist.js"
 
-import { isLoggedIn } from "../common/api";
-import { getAlbumImage, sanitize } from "./getMusics";
+import { createPlaylist, isLoggedIn, removePlaylist } from "../common/api";
+import { displayPlaylists, getAlbumImage, sanitize } from "./getMusics";
 
 export function spawnPlaylistNode(id, name, json, nodeId) {
     let template = document.getElementById("template-playlist");
     const node = template.content.cloneNode(true);
 
-    // Set click callback
-    // For some wizardry just assigning onclick doesn't work
+    // Set click callbacks
     node.querySelector(".card-image").onclick = () => {
         window.location=window.location.origin + window.location.pathname + `?playlist=${id}`;
     }
 
     node.querySelector(".playlist-archive").onclick = () => {
-        console.log("aaaaa");
+        if (json.musics.some(x => x.playlists.includes(id))) {
+            if (confirm("This playlist contains songs, are you sure you want to delete it?"))
+            {
+                removePlaylist(id);
+            }
+        } else {
+            removePlaylist(id);
+        }
     }
 
     // Prepare images to display inside
@@ -56,12 +62,12 @@ export function spawnPlaylistNode(id, name, json, nodeId) {
     document.getElementById(nodeId).appendChild(node);
 }
 
-export function spawnNewPlaylistNode(nodeId) {
+export function spawnNewPlaylistNode(nodeId, json) {
     let template = document.getElementById("template-playlist");
     const node = template.content.cloneNode(true);
 
     node.querySelector(".card-content > p").innerHTML = `Create new playlist`;
-    node.querySelector(".card-image").onclick = createNewPlaylist;
+    node.querySelector(".card-image").onclick = () => { createNewPlaylist(json); };
     node.querySelector(".card-image").classList.add("requires-admin");
     if (!isLoggedIn()) {
         node.querySelector(".card-image").classList.add("is-hidden");
@@ -70,7 +76,7 @@ export function spawnNewPlaylistNode(nodeId) {
     document.getElementById(nodeId).appendChild(node);
 }
 
-function createNewPlaylist()
+function createNewPlaylist(json)
 {
     var playlistName = window.prompt("Enter new playlist name");
     if (playlistName) {

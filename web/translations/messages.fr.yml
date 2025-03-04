@@ -25,6 +25,9 @@ navbar:
 login:
   password: Entrez votre mot de passe
   cancel: Annuler
+playlist:
+  settings:
+    delete: Supprimer
 song:
   settings:
     edit: Modifier

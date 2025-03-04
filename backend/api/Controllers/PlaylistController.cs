@@ -27,12 +27,12 @@ public class PlaylistController : ControllerBase
 
     [HttpDelete("remove")]
     [Authorize]
-    public IActionResult RemovePlaylist([FromForm] string name)
+    public IActionResult RemovePlaylist([FromForm] SongIdentifier form)
     {
         var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
         var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
-        var key = HttpUtility.UrlEncode(name);
+        var key = HttpUtility.UrlEncode(form.Key);
 
         if (!info.Playlists.Any(x => x.Key == key))
         {

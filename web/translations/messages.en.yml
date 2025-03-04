@@ -28,7 +28,6 @@ login:
 playlist:
   settings:
     delete: Delete
-    notEmpty: This playlist is not empty, are you sure you want to continue?
 song:
   settings:
     edit: Edit

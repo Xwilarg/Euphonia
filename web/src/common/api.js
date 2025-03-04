@@ -329,6 +329,9 @@ export async function createPlaylist(name, onSuccess, onFailure) {
 }
 
 export async function removePlaylist(name, onSuccess, onFailure) {
+    const data = new FormData();
+    data.append("Key", name);
+
     fetch(`${apiTarget}playlist/remove`, {
         method: 'DELETE',
         headers: {

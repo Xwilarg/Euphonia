@@ -189,7 +189,7 @@ export function getAlbumImage(elem) {
     return "/data/icon/" + json.albums[elem.album].path;
 }
 
-function displayPlaylists(playlists, id, filter) {
+export function displayPlaylists(playlists, id, filter) {
     if (metadataJson.showAllPlaylist && json.musics.length > 0) {
         spawnPlaylistNode("all", "All", json, id);
     }
@@ -202,7 +202,7 @@ function displayPlaylists(playlists, id, filter) {
     if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlists.length === 0) && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
         spawnPlaylistNode("default", "Unnamed", json, id);
     }
-    spawnNewPlaylistNode(id);
+    spawnNewPlaylistNode(id, json);
 }
 
 
