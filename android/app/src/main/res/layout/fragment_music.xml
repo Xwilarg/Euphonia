@@ -6,6 +6,16 @@
     android:layout_height="match_parent"
     tools:context=".ui.MusicFragment">
 
+    <Button
+        android:id="@+id/random"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/sort_random"
+        app:layout_constraintBottom_toTopOf="@+id/mainGuideline"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/guideline" />
+
     <EditText
         android:id="@+id/searchBar"
         android:layout_width="wrap_content"
@@ -15,7 +25,7 @@
         android:imeOptions="actionDone"
         android:inputType="text"
         android:minHeight="48dp"
-        app:layout_constraintBottom_toTopOf="@+id/mainGuideline"
+        app:layout_constraintBottom_toTopOf="@+id/guideline"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -27,6 +37,13 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent=".2" />
 
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_percent=".1" />
+
     <ListView
         android:id="@+id/musicData"
         android:layout_width="0dp"
@@ -35,6 +52,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/mainGuideline" />
+        app:layout_constraintTop_toTopOf="@+id/mainGuideline" >
+
+    </ListView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

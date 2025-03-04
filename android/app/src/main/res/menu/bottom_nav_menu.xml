@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_music"
         android:icon="@drawable/baseline_music_note_24"
-        android:title="@string/title_music" />
+        android:title="@string/title_music"/>
 
     <item
         android:id="@+id/navigation_settings"

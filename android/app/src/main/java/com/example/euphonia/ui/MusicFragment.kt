@@ -12,6 +12,7 @@ import android.text.Editable
 import android.text.TextWatcher
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
 import androidx.activity.OnBackPressedCallback
@@ -81,6 +82,8 @@ class MusicFragment : Fragment() {
             }
         }
 
+        view.findViewById<Button>(R.id.random).setOnClickListener { onRandom() }
+
         updateList()
 
         return view
@@ -93,15 +96,16 @@ class MusicFragment : Fragment() {
     lateinit var searchBar: EditText
     var searchFilter: String = ""
 
-    /*fun onRandom(v: View) {
-        val filteredData = displayedData.filter { currentPlaylist == null || it.playlist == currentPlaylist }
-        val selectedMusics = filteredData.map { songToItem(data, it) }.shuffled().toMutableList()
+    fun onRandom() {
+        val filteredData = getCurrentMusics()
 
-        controllerFuture.get().setMediaItems(selectedMusics)
+        val selectedMusics = filteredData.shuffled().map { songToItem(pView.data, it) }.toMutableList()
 
-        controllerFuture.get().prepare()
-        controllerFuture.get().play()
-    }*/
+        pView.controllerFuture!!.get().setMediaItems(selectedMusics)
+
+        pView.controllerFuture!!.get().prepare()
+        pView.controllerFuture!!.get().play()
+    }
 
     fun onRandomFromSong(position: Int) {
         val filteredData = getCurrentMusics()
