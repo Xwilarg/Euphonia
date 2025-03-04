@@ -61,6 +61,9 @@ server {
 	location /data/ {
 		alias /home/backend/euphonia/data/euphonia.zirk.eu/;
 	}
+
+	# Fix size limit with file upload
+	client_max_body_size 100M;
 }
 ```
 

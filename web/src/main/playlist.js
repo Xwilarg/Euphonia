@@ -74,7 +74,7 @@ export function spawnNewPlaylistNode(nodeId, json) {
 
     node.querySelector(".card-content > p").innerHTML = `Create new playlist`;
     node.querySelector(".card-image").onclick = () => { createNewPlaylist(nodeId, json); };
-    node.querySelector(".card-image").classList.add("requires-admin");
+    node.querySelector(".card").classList.add("requires-admin");
     if (!isLoggedIn()) {
         node.querySelector(".card").classList.add("is-hidden");
     }
