@@ -17,7 +17,7 @@ Since my domain is `https://euphonia.zirk.eu/` I also added a `data/` folder the
 
 You will then need to link your data folder in your web config, we will do that again in the frontend explanations so don't worry too much about that right now, just remember what folder you created right before \
 (Example with Nginx)
-```
+```nginx
 location /data/ {
 	alias /home/backend/euphonia/data/euphonia.zirk.eu/;
 }
@@ -32,7 +32,7 @@ Configure your webserver to have your website ready and the backend on /api/ \
 In these examples, my domain is `https://euphonia.zirk.eu/` my web files are installed in `/home/web/euphonia/` and my backend at `/home/backend/euphonia/`
 
 #### Nginx
-```
+```nginx
 server {
 	root /home/web/euphonia;
 
@@ -72,7 +72,7 @@ If you want to restart your backend automatically you can use a tool like system
 As before my backend files are at `/home/backend/euphonia/`
 
 Throw your backend somewhere and create a systemctl file to keep it running:
-```
+```ini
 [Unit]
 Description=Euphonia backend
 After=network-online.target
