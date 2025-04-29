@@ -32,7 +32,7 @@ public class PlaylistController : ControllerBase
         var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
         var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
-        var key = HttpUtility.UrlEncode(form.Key);
+        var key = HttpUtility.UrlEncode(form.Key.Replace(" ", "").ToLowerInvariant());
 
         if (!info.Playlists.Any(x => x.Key == key))
         {
@@ -61,7 +61,7 @@ public class PlaylistController : ControllerBase
         var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
         var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
-        var key = HttpUtility.UrlEncode(data.Name);
+        var key = HttpUtility.UrlEncode(data.Name.Replace(" ", "").ToLowerInvariant());
 
         if (info.Playlists.Any(x => x.Key == key))
         {
