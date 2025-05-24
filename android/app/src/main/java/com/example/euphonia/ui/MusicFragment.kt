@@ -64,7 +64,7 @@ class MusicFragment : Fragment() {
                         pView.currentPlaylist = null
                         updateList()
                     } else {
-                        requireActivity().onBackPressed()
+                        requireActivity().onBackPressedDispatcher.onBackPressed()
                     }
                 }
             })
