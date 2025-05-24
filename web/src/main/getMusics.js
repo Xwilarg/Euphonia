@@ -5,7 +5,7 @@
  */
 
 import * as wanakana from 'wanakana';
-import { archiveSong, createPlaylist, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, validateIntegrity } from '../common/api';
+import { archiveSong, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 import { modal_askPassword, modal_showNotification } from './modal';
 import { doesUseRawAudio, isMinimalistMode } from './settings';
@@ -476,7 +476,11 @@ function loadPage() {
     });
 
     document.getElementById("currentImage").addEventListener("error", (err) => {
-        document.getElementById("error-log").innerHTML += `<div class="error">Loading "${currSong.name}" by "${currSong.artist}" thumbnail failed: ${err.target.src}</div>`;
+        if (!currSong) {
+            document.getElementById("error-log").innerHTML += `<div class="error">Loading thumbnail failed: ${err.target.src}</div>`;
+        } else {
+            document.getElementById("error-log").innerHTML += `<div class="error">Loading "${currSong.name}" by "${currSong.artist}" thumbnail failed: ${err.target.src}</div>`;
+        }
     });
     player.addEventListener("error", (err) => {
         document.getElementById("error-log").innerHTML += `<div class="error">Loading "${currSong.name}" by "${currSong.artist}" music failed: ${err.target.src}</div>`;
