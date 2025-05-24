@@ -215,6 +215,7 @@ public class DownloadController : ControllerBase
 
     [HttpPost("upload/local")]
     [Authorize]
+    [RequestSizeLimit(20_000_000)]
     public async Task<IActionResult> UploadSongLocal([FromForm] LocalFileForm data)
     {
         var sc = UploadSongInternal(data, out string folder, out Song song, out string rawSongPath, out string normSongPath, Path.GetExtension(data.LocalFile.FileName));
