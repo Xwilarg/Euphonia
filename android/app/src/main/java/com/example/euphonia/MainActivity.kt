@@ -22,6 +22,7 @@ import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
 import com.example.euphonia.data.MusicData
+import com.example.euphonia.data.Metadata
 import com.example.euphonia.data.Song
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
@@ -50,6 +51,7 @@ class MainActivity : AppCompatActivity() {
     var downloaded: MutableList<Song> = mutableListOf()
 
     lateinit var data: MusicData
+    lateinit var metadata: Metadata
 
     fun init() {
         // Ensure remote server is init
@@ -106,6 +108,7 @@ class MainActivity : AppCompatActivity() {
             data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
             data.musics = data.musics.filter { !it.isArchived }.toTypedArray()
             downloaded = data.musics.toMutableList()
+            metadata = Gson().fromJson(File(filesDir, "${currUrl}metadata.json").readText(), Metadata::class.java)
         }
         catch (e: Exception) { }
 
@@ -149,9 +152,19 @@ class MainActivity : AppCompatActivity() {
                 data.musics = data.musics.filter { !it.isArchived }.toTypedArray()
             } catch (e: Exception) {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    Toast.makeText(applicationContext, "Failed to update JSON", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(applicationContext, "Failed to update info JSON", Toast.LENGTH_SHORT).show()
                 }
                 return@execute
+            }
+
+            try {
+                val metadataText = URL("https://${currUrl}/data/metadata.json").readText()
+                File(filesDir, "${currUrl}metadata.json").writeText(metadataText)
+                metadata = Gson().fromJson(File(filesDir, "${currUrl}metadata.json").readText(), Metadata::class.java)
+            } catch (e: Exception) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    Toast.makeText(applicationContext, "Failed to update metadata JSON", Toast.LENGTH_SHORT).show()
+                }
             }
 
             // Download missing songs

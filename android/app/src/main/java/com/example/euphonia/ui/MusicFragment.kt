@@ -73,8 +73,17 @@ class MusicFragment : Fragment() {
         // Callback when we click on a song
         list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
             if (!shouldDisplaySongs()) {
+                var pIndex = position
+                if (pView.metadata.showAllPlaylist == true) {
+                    pIndex -= 1
+                }
+
                 // Clicked on a playlist element
-                pView.currentPlaylist = pView.data.playlists!!.keys.elementAt(position)
+                pView.currentPlaylist =
+                    if (pIndex == -1) // Show all
+                        "All"
+                    else
+                        pView.data.playlists!!.keys.elementAt(pIndex)
                 updateList()
             } else {
                 // Clicked on a song
@@ -154,7 +163,7 @@ class MusicFragment : Fragment() {
     fun getCurrentMusics(): List<Song> {
         val tmp = mutableListOf<Song>()
         tmp.addAll(pView.downloaded)
-        return tmp.filter { !it.isArchived && (pView.currentPlaylist == null || it.playlists.contains(pView.currentPlaylist)) }
+        return tmp.filter { !it.isArchived && (pView.currentPlaylist == null || pView.currentPlaylist == "All" || it.playlists.contains(pView.currentPlaylist)) }
     }
 
     fun updateList() {
@@ -178,7 +187,12 @@ class MusicFragment : Fragment() {
                     SongAdapter(requireContext(), displayedData.map { ExtendedSong(it, pView.data.albums[it.album]) }, pView.currUrl!!)
                 } else {
                     searchBar.visibility = View.INVISIBLE
-                    ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, pView.data.playlists!!.map { it.value.name })
+                    val data = mutableListOf<String>()
+                    if (pView.metadata.showAllPlaylist == true) {
+                        data.add("All")
+                    }
+                    data.addAll(pView.data.playlists!!.map { it.value.name }.toMutableList())
+                    ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, data)
                 }
             list.adapter = adapter
         }
