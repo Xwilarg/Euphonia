@@ -159,6 +159,11 @@ export function spawnSongNode(json, curr, id) {
             }
         }
     });
+    const editPlaylist = node.querySelector(".edit-playlist");
+    node.querySelector(".song-playlist-reset").addEventListener("click", (e) => {
+        e.preventDefault();
+        editPlaylist.selectedIndex = -1;
+    });
     node.querySelector(".song-archive").addEventListener("click", () => {
         // TODO: Dupplicated code from getMusics.js
         let res = confirm("Are you sure you want to archive this song?");
