@@ -33,4 +33,5 @@
     <string name="invalid_song_text">Estás seguro de querer re-descargar esta canción: %s</string>
     <string name="song_redownload_info">Está canción será re-descargada cuando reinicies la aplicación</string>
     <string name="music_updated_with_value">%d Canciones fueron actualizadas</string>
+    <string name="song_already_deleted">Esta canción ya fue eliminada, por favor reinicia tu aplicación para volver a descargarla</string>
 </resources>
