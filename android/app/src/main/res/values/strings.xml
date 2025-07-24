@@ -29,4 +29,9 @@
     <string name="admin_login_wrong_password">Invalid password</string>
     <string name="by">by</string>
     <string name="pref_play_order">Music play order</string>
+    <string name="invalid_song_title">Redownload song</string>
+    <string name="invalid_song_text">Are you sure you want to redownload this song: %s</string>
+    <string name="song_redownload_info">This song will be redownloaded the next time you restart the app</string>
+    <string name="music_updated_with_value">%d music were updated</string>
+    <string name="song_already_deleted">This song was already deleted, please restart your application to redownload it</string>
 </resources>

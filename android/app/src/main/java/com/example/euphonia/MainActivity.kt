@@ -142,6 +142,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         executor.execute {
+            var songDownloaded = 0
             var newDownloads = mutableListOf<Song>()
             // Update data from remove server
             val text: String
@@ -179,6 +180,7 @@ class MainActivity : AppCompatActivity() {
                                 stream.copyTo(output)
                             }
                         }
+                        songDownloaded++
                     }
                     catch (_: Exception)
                     { }
@@ -204,7 +206,7 @@ class MainActivity : AppCompatActivity() {
             downloaded.reverse()
             newDownloads = downloaded
             builder
-                .setContentText(resources.getString(R.string.music_updated))
+                .setContentText(if (songDownloaded == 0) resources.getString(R.string.music_updated) else resources.getString(R.string.music_updated_with_value, songDownloaded))
                 .setSilent(false)
                 .setOngoing(false)
             notificationManager.notify(1, builder.build())

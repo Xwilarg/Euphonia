@@ -28,4 +28,9 @@
     <string name="admin_login_success">Has iniciado sesión como administrador</string>
     <string name="admin_login_wrong_password">Contraseña inválida</string>
     <string name="by">por</string>
+    <string name="pref_play_order">Orden de reproducción de música</string>
+    <string name="invalid_song_title">Re-descargar canción</string>
+    <string name="invalid_song_text">Estás seguro de querer re-descargar esta canción: %s</string>
+    <string name="song_redownload_info">Está canción será re-descargada cuando reinicies la aplicación</string>
+    <string name="music_updated_with_value">%d Canciones fueron actualizadas</string>
 </resources>

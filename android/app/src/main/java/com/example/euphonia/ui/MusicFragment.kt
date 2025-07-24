@@ -1,5 +1,7 @@
 package com.example.euphonia.ui
 
+import android.app.AlertDialog
+import android.content.Context.MODE_PRIVATE
 import android.net.Uri
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -15,7 +17,10 @@ import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ListView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
+import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.preference.PreferenceManager
@@ -25,6 +30,11 @@ import com.example.euphonia.data.ExtendedSong
 import com.example.euphonia.data.MusicData
 import com.example.euphonia.data.Song
 import com.example.euphonia.MainActivity
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
 
 class MusicFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,6 +80,46 @@ class MusicFragment : Fragment() {
             })
 
         list = view.findViewById(R.id.musicData)
+        list.onItemLongClickListener = AdapterView.OnItemLongClickListener { parent, v, position, id ->
+
+            val ctx = requireContext()
+
+            val sharedPref = ctx.getSharedPreferences("settings", MODE_PRIVATE)
+            val index = sharedPref.getInt("currentServer", -1)
+
+            val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
+            val currUrl = servers.elementAt(index)
+
+            val song = displayedData[position]
+
+            val target = File(ctx.filesDir, "${currUrl}music/${song.path}")
+
+            if (target.exists()) {
+                val builder = AlertDialog.Builder(ctx)
+                builder.setTitle(R.string.invalid_song_title)
+                builder.setCancelable(true)
+
+                val et = TextView(ctx)
+                et.setText(ctx.resources.getString(R.string.invalid_song_text, song.name))
+                builder.setView(et)
+
+                builder.setPositiveButton(android.R.string.ok) { _, _ ->
+
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        Files.delete(target.toPath())
+                        Toast.makeText(ctx, ctx.resources.getString(R.string.song_redownload_info), Toast.LENGTH_LONG).show()
+                    }
+                }
+                builder.setNegativeButton(android.R.string.cancel) {
+                        _, _ -> { }
+                }
+                builder.show()
+            } else {
+                Toast.makeText(ctx, ctx.resources.getString(R.string.song_already_deleted), Toast.LENGTH_LONG).show()
+            }
+
+            true
+        }
         // Callback when we click on a song
         list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
             if (!shouldDisplaySongs()) {

@@ -29,4 +29,9 @@
     <string name="admin_login_wrong_password">Mauvais mot de passe</string>
     <string name="by">par</string>
     <string name="pref_play_order">Mode de lecture des musiques</string>
+    <string name="invalid_song_title">Retélécharger une musique</string>
+    <string name="invalid_song_text">Êtes-vous sûr de vouloir re-télécharger cette musique : %s</string>
+    <string name="song_redownload_info">Cette musique sera re-téléchargé la prochaine fois que vous redémarrerez l\'application</string>
+    <string name="music_updated_with_value">%d musiques ont été mise à jour</string>
+    <string name="song_already_deleted">Cette musique à déjà été supprimé, veuillez redémarrer votre application pour la retélécharger</string>
 </resources>
