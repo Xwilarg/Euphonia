@@ -17,6 +17,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content">
         </ListPreference>
+
+        <ListPreference
+            android:defaultValue="RANDOM"
+            android:entries="@array/play_order_mode_key"
+            android:entryValues="@array/play_order_mode_value"
+            android:key="play_mode"
+            android:title="@string/pref_play_order"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </ListPreference>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_data_source">

@@ -13,4 +13,14 @@
         <item>DATE</item>
         <item>RANDOM</item>
     </array>
+
+    <array name="play_order_mode_key">
+        <item>@string/sort_random</item>
+        <item>@string/sort_date</item>
+    </array>
+
+    <array name="play_order_mode_value">
+        <item>RANDOM</item>
+        <item>DATE</item>
+    </array>
 </resources>

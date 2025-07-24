@@ -106,9 +106,15 @@ class MusicFragment : Fragment() {
     var searchFilter: String = ""
 
     fun onRandom() {
+        val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val sort = pref.getString("play_mode", "RANDOM")
+
         val filteredData = getCurrentMusics()
 
-        val selectedMusics = filteredData.shuffled().map { songToItem(pView.data, it) }.toMutableList()
+        var selectedMusics = filteredData.map { songToItem(pView.data, it) }
+        if (sort == "RANDOM") {
+            selectedMusics = selectedMusics.shuffled()
+        }
 
         pView.controllerFuture!!.get().setMediaItems(selectedMusics)
 
@@ -117,11 +123,20 @@ class MusicFragment : Fragment() {
     }
 
     fun onRandomFromSong(position: Int) {
+        val pref = PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val sort = pref.getString("play_mode", "RANDOM")
+
         val filteredData = getCurrentMusics()
         val song = displayedData[position]
 
-        val selectedMusics = filteredData.filter { it.path != song.path }.shuffled().map { songToItem(pView.data, it) }.toMutableList()
-        selectedMusics.add(0, songToItem(pView.data, song))
+        var selectedMusics: MutableList<MediaItem>
+        if (sort == "RANDOM") {
+            selectedMusics = filteredData.filter { it.path != song.path }.shuffled().map { songToItem(pView.data, it) }.toMutableList()
+            selectedMusics.add(0, songToItem(pView.data, song))
+        } else { // Play in order
+            selectedMusics = filteredData.map { songToItem(pView.data, it) }.toMutableList()
+            selectedMusics.drop(position)
+        }
 
         pView.controllerFuture!!.get().setMediaItems(selectedMusics)
 
