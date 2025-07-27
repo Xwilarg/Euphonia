@@ -45,9 +45,31 @@ class PlayFragment : Fragment() {
     fun showMedia(view: View, metadata: MediaMetadata?, med: MediaController?) {
         val player =  view.findViewById<ImageView>(R.id.playerImage)
         val desc = view.findViewById<TextView>(R.id.playerDescription)
+
         if (player != null) {
-            val sharedPref = context?.getSharedPreferences("settings", MODE_PRIVATE) // When we click around too fast, sometimes the context is missing
-            val adminToken = sharedPref?.getString("adminToken", null)
+            player.setImageBitmap(null)
+            val bmp = BitmapFactory.decodeFile(metadata?.artworkUri?.path)
+            if (bmp != null) {
+                player.setImageBitmap(bmp)
+            }
+
+            if (context === null) { // Context somehow isn't available, so we just display what we can
+                player.setImageBitmap(null)
+                desc.text = "${metadata?.title} by ${metadata?.artist}"
+
+                view.findViewById<ImageButton>(R.id.archive).visibility = View.INVISIBLE
+                view.findViewById<ImageButton>(R.id.share).visibility = View.INVISIBLE
+                return
+            }
+
+            val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
+            val adminToken = sharedPref.getString("adminToken", null)
+
+            if (metadata?.title != null) {
+                desc.text = "${metadata?.title} ${resources.getString(R.string.by)} ${metadata?.artist}"
+            } else {
+                desc.text = ""
+            }
 
             view.findViewById<ImageButton>(R.id.archive).visibility = if (adminToken == null) {
                 View.GONE
@@ -60,7 +82,6 @@ class PlayFragment : Fragment() {
                 if (key != null) {
                     val okHttpClient = OkHttpClient()
 
-                    val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
                     val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
                     val index = sharedPref.getInt("currentServer", -1)
 
@@ -90,6 +111,8 @@ class PlayFragment : Fragment() {
                 }
             }
 
+            view.findViewById<ImageButton>(R.id.share).visibility = View.VISIBLE
+
             view.findViewById<ImageButton>(R.id.share).setOnClickListener {
                 val key = metadata?.displayTitle
                 if (key != null) {
@@ -105,17 +128,7 @@ class PlayFragment : Fragment() {
                 }
             }
 
-            player.setImageBitmap(null)
-            val bmp = BitmapFactory.decodeFile(metadata?.artworkUri?.path)
-            if (bmp != null) {
-                player.setImageBitmap(bmp)
-            }
 
-            if (metadata?.title != null) {
-                desc.text = "${metadata?.title} ${resources.getString(R.string.by)} ${metadata?.artist}"
-            } else {
-                desc.text = ""
-            }
         }
     }
 
