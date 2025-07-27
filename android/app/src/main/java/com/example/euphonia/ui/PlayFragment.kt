@@ -46,8 +46,8 @@ class PlayFragment : Fragment() {
         val player =  view.findViewById<ImageView>(R.id.playerImage)
         val desc = view.findViewById<TextView>(R.id.playerDescription)
         if (player != null) {
-            val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
-            val adminToken = sharedPref.getString("adminToken", null)
+            val sharedPref = context?.getSharedPreferences("settings", MODE_PRIVATE) // When we click around too fast, sometimes the context is missing
+            val adminToken = sharedPref?.getString("adminToken", null)
 
             view.findViewById<ImageButton>(R.id.archive).visibility = if (adminToken == null) {
                 View.GONE
@@ -60,6 +60,7 @@ class PlayFragment : Fragment() {
                 if (key != null) {
                     val okHttpClient = OkHttpClient()
 
+                    val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
                     val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!
                     val index = sharedPref.getInt("currentServer", -1)
 

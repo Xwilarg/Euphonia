@@ -184,8 +184,7 @@ class MusicFragment : Fragment() {
             selectedMusics = filteredData.filter { it.path != song.path }.shuffled().map { songToItem(pView.data, it) }.toMutableList()
             selectedMusics.add(0, songToItem(pView.data, song))
         } else { // Play in order
-            selectedMusics = filteredData.map { songToItem(pView.data, it) }.toMutableList()
-            selectedMusics.drop(position)
+            selectedMusics = filteredData.map { songToItem(pView.data, it) }.drop(position).toMutableList()
         }
 
         pView.controllerFuture!!.get().setMediaItems(selectedMusics)

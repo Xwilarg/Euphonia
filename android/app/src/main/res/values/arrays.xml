@@ -16,11 +16,11 @@
 
     <array name="play_order_mode_key">
         <item>@string/sort_random</item>
-        <item>@string/sort_date</item>
+        <item>@string/sort_keep_order</item>
     </array>
 
     <array name="play_order_mode_value">
         <item>RANDOM</item>
-        <item>DATE</item>
+        <item>KEEP_ORDER</item>
     </array>
 </resources>
