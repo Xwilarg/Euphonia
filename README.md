@@ -1,6 +1,8 @@
 # Euphonia
 An easy way to store and listen to your music
 
+![Logo](android/app/src/main/res/mipmap-xxxhdpi/ic_launcher.webp)
+
 ## Installing Euphonia
 Download the backend and the frontend then follow these steps:
 
