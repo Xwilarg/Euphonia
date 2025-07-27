@@ -67,25 +67,6 @@ server {
 }
 ```
 
-### Systemctl
-If you want to restart your backend automatically you can use a tool like systemctl \
-As before my backend files are at `/home/backend/euphonia/`
-
-Throw your backend somewhere and create a systemctl file to keep it running:
-```ini
-[Unit]
-Description=Euphonia backend
-After=network-online.target
-
-[Service]
-ExecStart=dotnet /home/backend/euphonia/Euphonia.API.dll
-WorkingDirectory=/home/backend/euphonia/
-Restart=on-failure
-
-[Install]
-WantedBy=multi-user.target
-```
-
 ### Create admin password
 Once this is done, open your website and go to /tools.php and enter your password, then write the value returned in your data folder, in credentials.json
 
