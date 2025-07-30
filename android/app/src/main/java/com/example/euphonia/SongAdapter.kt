@@ -33,10 +33,10 @@ class SongAdapter(private val mContext: Context, list: List<ExtendedSong>, url: 
         val currentSong = songList[position]
 
         val image = listItem!!.findViewById<View>(R.id.imageView_poster) as ImageView
-        if (currentSong.album == null) {
+        if (currentSong.imagePath == null) {
             image.setImageResource(R.drawable.album)
         } else {
-            image.setImageURI(Uri.fromFile(File("${mContext.filesDir}/${currUrl}icon/${currentSong.album?.path}")))
+            image.setImageURI(Uri.fromFile(File("${mContext.filesDir}/${currUrl}icon/${currentSong.imagePath}")))
         }
 
         val name = listItem.findViewById<View>(R.id.textView_name) as TextView

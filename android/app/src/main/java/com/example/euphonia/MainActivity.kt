@@ -95,7 +95,7 @@ class MainActivity : AppCompatActivity() {
 
         downloaded = mutableListOf()
 
-        data = MusicData(arrayOf<Song>(), arrayOf<String>(), emptyMap(), emptyMap())
+        data = MusicData(arrayOf<Song>(), arrayOf<String>(), emptyMap(), emptyMap(), emptyMap())
 
         if (!File(filesDir, "${currUrl}info.json").exists()) {
             // Somehow the target file is missing? We need the user to go by the setup phase again
@@ -185,19 +185,37 @@ class MainActivity : AppCompatActivity() {
                     catch (_: Exception)
                     { }
                 }
-                val albumPath = data.albums[song.album]?.path
-                if (song.album != null && !File(filesDir, "${currUrl}icon/${albumPath}").exists()) {
-                    notificationManager.notify(1, builder.build())
-                    try
-                    {
-                        URL("https://${currUrl}data/icon/${albumPath}").openStream().use { stream ->
-                            FileOutputStream(File(filesDir, "${currUrl}icon/${albumPath}")).use { output ->
-                                stream.copyTo(output)
+                if (data.albumHashes != null && song.thumbnailHash != null) {
+                    val hashPath = data.albumHashes!![song.thumbnailHash]
+                    if (!File(filesDir, "${currUrl}icon/${hashPath}").exists()) {
+                        notificationManager.notify(1, builder.build())
+                        try
+                        {
+                            URL("https://${currUrl}data/icon/${hashPath}").openStream().use { stream ->
+                                FileOutputStream(File(filesDir, "${currUrl}icon/${hashPath}")).use { output ->
+                                    stream.copyTo(output)
+                                }
                             }
                         }
+                        catch (_: Exception)
+                        { }
                     }
-                    catch (_: Exception)
-                    { }
+                }
+                else if (song.album != null) {
+                    val albumPath = data.albums[song.album]?.path
+                    if (!File(filesDir, "${currUrl}icon/${albumPath}").exists()) {
+                        notificationManager.notify(1, builder.build())
+                        try
+                        {
+                            URL("https://${currUrl}data/icon/${albumPath}").openStream().use { stream ->
+                                FileOutputStream(File(filesDir, "${currUrl}icon/${albumPath}")).use { output ->
+                                    stream.copyTo(output)
+                                }
+                            }
+                        }
+                        catch (_: Exception)
+                        { }
+                    }
                 }
                 newDownloads.add(0, song)
                 // TODO: Update list

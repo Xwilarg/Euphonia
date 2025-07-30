@@ -248,7 +248,14 @@ class MusicFragment : Fragment() {
 
                     displayedData = displayedData.filter { it.name.uppercase().contains(searchFilter) || (it.artist != null && it.artist.uppercase().contains(searchFilter)) }
 
-                    SongAdapter(requireContext(), displayedData.map { ExtendedSong(it, pView.data.albums[it.album]) }, pView.currUrl!!)
+                    SongAdapter(requireContext(), displayedData.map { ExtendedSong(it,
+                    if (it.thumbnailHash != null) {
+                        pView.data.albumHashes!![it.thumbnailHash]
+                    } else if (it.album != null) {
+                        pView.data.albums[it.album]?.path
+                    } else {
+                        null
+                    }) }, pView.currUrl!!)
                 } else {
                     searchBar.visibility = View.INVISIBLE
                     val data = mutableListOf<String>()
