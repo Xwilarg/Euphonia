@@ -21,7 +21,7 @@
         "message": "Nom de l'album"
     },
     "albumUrl": {
-        "message": "Lien vers l'image de l'album"
+        "message": "Lien vers l'image de la musique"
     },
     "songType": {
         "message": "Type de la musique"

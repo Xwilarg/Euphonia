@@ -1,12 +1,26 @@
 ﻿using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Euphonia.API.Controllers
 {
     public static class Utils
     {
+        // https://stackoverflow.com/a/17001289
+        public static String Sha256(string value)
+        {
+            StringBuilder Sb = new();
+            Encoding enc = Encoding.UTF8;
+            byte[] result = SHA256.HashData(enc.GetBytes(value));
+
+            foreach (byte b in result)
+                Sb.Append(b.ToString("x2"));
+
+            return Sb.ToString();
+        }
+
         public static string CleanPath(string name)
         {
             var forbidden = new[] { '<', '>', ':', '\\', '/', '"', '|', '?', '*', '#', '&', '%' };
@@ -45,7 +59,7 @@ namespace Euphonia.API.Controllers
             startInfo.RedirectStandardOutput = true;
             startInfo.UseShellExecute = false;
 
-            var p = Process.Start(startInfo);
+            var p = Process.Start(startInfo)!;
             Task t = Task.Run(async () =>
             {
                 for (int i = 0; i < 600000; i += 1000)

@@ -47,7 +47,8 @@ namespace Euphonia.API.Services
                 Error = null,
                 RawPath = rawPath,
                 NormPath = normPath,
-                DownloadUrl = url
+                DownloadUrl = url,
+                LastUpdate = DateTime.UtcNow
             });
         }
 
@@ -60,7 +61,8 @@ namespace Euphonia.API.Services
                 Error = null,
                 RawPath = rawPath,
                 NormPath = normPath,
-                DownloadUrl = null
+                DownloadUrl = null,
+                LastUpdate = DateTime.UtcNow
             });
         }
 
@@ -70,7 +72,7 @@ namespace Euphonia.API.Services
                 .._erroredData.Where(x => (DateTime.UtcNow - x.LastUpdate).TotalHours < 10).Select(x => new SongDownloadData() { SongName = x.Song.Name, SongArtist = x.Song.Artist, CurrentState = x.CurrentState, Error = x.Error })];
         }
 
-        public string DownloadSong(DownloadSongData data)
+        public string? DownloadSong(DownloadSongData data)
         {
             int code; string err;
             if (data.CurrentState == DownloadState.Downloading) // If current state is normalizing, it means we don't have anything to download

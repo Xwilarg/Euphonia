@@ -5,8 +5,8 @@ namespace Euphonia.API.Models.Request
     public class RegisterData
     {
         [Required]
-        public string Key { set; get; }
+        public required string Key { set; get; }
         [Required]
-        public string Path { set; get; }
+        public required string Path { set; get; }
     }
 }

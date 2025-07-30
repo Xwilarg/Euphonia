@@ -4,13 +4,13 @@ namespace Euphonia.API.Models.Response;
 
 public class SongDownloadResponse : BaseResponse
 {
-    public SongDownloadData[] Data { set; get; }
+    public required SongDownloadData[] Data { set; get; }
 }
 
 public class SongDownloadData
 {
-    public string SongName { set; get; }
-    public string SongArtist { set; get; }
-    public DownloadState CurrentState { set; get; }
-    public string Error { set; get; }
+    public required string SongName { set; get; }
+    public required string? SongArtist { set; get; }
+    public required DownloadState CurrentState { set; get; }
+    public required string? Error { set; get; }
 }

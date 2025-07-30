@@ -33,7 +33,7 @@ public class DownloadController : ControllerBase
     [Authorize]
     public IActionResult GetProgress()
     {
-        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
 
         return StatusCode(StatusCodes.Status200OK, new SongDownloadResponse()
         {
@@ -45,7 +45,7 @@ public class DownloadController : ControllerBase
 
     private Song? LookupSong(string key, out string folder, out EuphoniaInfo info)
     {
-        folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
         info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
         // ID Lookup
@@ -72,9 +72,17 @@ public class DownloadController : ControllerBase
             });
         }
 
-        if (song.Source == "localfile")
+        if (song.Source == null)
         {
-            var rawPath = GetRawMusicPath(folder, song.RawPath);
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+            {
+                Success = false,
+                Reason = "Song source isn't set"
+            });
+        }
+        else if (song.Source == "localfile")
+        {
+            var rawPath = GetRawMusicPath(folder, song.RawPath ?? song.Path);
             var normPath = GetNormalizedMusicPath(folder, song.Path);
             System.IO.File.Delete(normPath);
 
@@ -82,7 +90,7 @@ public class DownloadController : ControllerBase
         }
         else
         {
-            var rawPath = GetRawMusicPath(folder, song.RawPath);
+            var rawPath = GetRawMusicPath(folder, song.RawPath ?? song.Path);
             var normPath = GetNormalizedMusicPath(folder, song.Path);
             System.IO.File.Delete(rawPath);
             System.IO.File.Delete(normPath);
@@ -97,15 +105,16 @@ public class DownloadController : ControllerBase
         });
     }
 
-    private IActionResult UploadSongInternal(AUploadForm data, out string folder, out Song song, out string rawSongPath, out string normSongPath, string extension)
+    private IActionResult? UploadSongInternal(AUploadForm data, out string folder, out Song? song, out string? rawSongPath, out string? normSongPath, string extension)
     {
-        folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
 
+        string? thumbnailHash;
         // Download album image
-        var albumName = data.AlbumName == null ? null : GetAlbumName(data.Artist, data.AlbumName);
-        if (albumName != null && !string.IsNullOrWhiteSpace(data.AlbumUrl))
+        if (data.CoverUrl != null)
         {
-            if (!Utils.SaveUrlAsImage(_client, data.AlbumUrl, GetImagePath(folder, albumName, "webp"), out var error))
+            thumbnailHash = Utils.Sha256(data.CoverUrl);
+            if (!Utils.SaveUrlAsImage(_client, data.CoverUrl, GetImagePath(folder, thumbnailHash, "webp"), out var error))
             {
                 song = null;
                 rawSongPath = null;
@@ -117,6 +126,7 @@ public class DownloadController : ControllerBase
                 });
             }
         }
+        else thumbnailHash = null;
 
         // Prepare to download the rest
         var rawKey = GetMusicKey(data.Name, data.Artist, data.SongType, extension);
@@ -151,41 +161,28 @@ public class DownloadController : ControllerBase
         var artist = data.Artist?.Trim();
         var songType = data.SongType?.Trim();
         var album = data.AlbumName?.Trim();
-        var albumUrl = data.AlbumUrl?.Trim();
         if (string.IsNullOrWhiteSpace(songType)) songType = null;
-
-        // Format album data
-        string? albumKey = null;
-        var hasAlbum = !string.IsNullOrWhiteSpace(albumUrl);
-        if (hasAlbum)
-        {
-            albumKey = GetAlbumName(artist, album);
-        }
 
         // Create Song class
         song = new Song
         {
             Key = Guid.NewGuid().ToString(),
-            Album = albumKey,
             Artist = artist,
+            AlbumName = album,
             Name = songName,
             RawPath = rawKey,
             Path = normKey,
             Playlists = data.Playlists == null ? [] : data.Playlists,
             Source = data is YoutubeForm ytForm ? ytForm.Youtube : "localfile",
-            Type = songType
+            Type = songType,
+            ThumbnailHash = thumbnailHash
         };
         info.Musics.Add(song);
 
         // If album exists we add it to the JSON too
-        if (hasAlbum && !info.Albums.ContainsKey(albumKey))
+        if (thumbnailHash != null && !info.AlbumHashes.ContainsKey(thumbnailHash))
         {
-            info.Albums.Add(albumKey, new()
-            {
-                Name = album,
-                Path = $"{albumKey}.webp",
-                Source = albumUrl
-            });
+            info.AlbumHashes.Add(thumbnailHash, $"{thumbnailHash}.webp");
         }
 
         System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
@@ -197,14 +194,14 @@ public class DownloadController : ControllerBase
     [Authorize]
     public IActionResult UploadSongYoutube([FromForm] YoutubeForm data)
     {
-        var sc = UploadSongInternal(data, out string folder, out Song song, out string rawSongPath, out string normSongPath, AudioFormat);
+        var sc = UploadSongInternal(data, out string folder, out Song? song, out string? rawSongPath, out string? normSongPath, AudioFormat);
 
         if (sc != null)
         {
             return sc;
         }
 
-        _download.Get(folder).QueueToDownload(song, data.Youtube, rawSongPath, normSongPath);
+        _download.Get(folder).QueueToDownload(song!, data.Youtube, rawSongPath!, normSongPath!);
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
@@ -218,7 +215,7 @@ public class DownloadController : ControllerBase
     [RequestSizeLimit(20_000_000)]
     public async Task<IActionResult> UploadSongLocal([FromForm] LocalFileForm data)
     {
-        var sc = UploadSongInternal(data, out string folder, out Song song, out string rawSongPath, out string normSongPath, Path.GetExtension(data.LocalFile.FileName));
+        var sc = UploadSongInternal(data, out string folder, out Song? song, out string? rawSongPath, out string? normSongPath, Path.GetExtension(data.LocalFile.FileName));
 
         if (sc != null)
         {
@@ -226,11 +223,11 @@ public class DownloadController : ControllerBase
         }
 
         // Save file to disk
-        using Stream fileStream = new FileStream(rawSongPath, FileMode.Create);
+        using Stream fileStream = new FileStream(rawSongPath!, FileMode.Create);
         await data.LocalFile.CopyToAsync(fileStream);
 
         // Queue normalization
-        _download.Get(folder).QueueToNormalize(song, rawSongPath, normSongPath);
+        _download.Get(folder).QueueToNormalize(song!, rawSongPath!, normSongPath!);
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -241,7 +238,7 @@ public class DownloadController : ControllerBase
 
     public string AudioFormat => WebsiteDownloaderManager.AudioFormat;
 
-    private string GetMusicKey(string songName, string artist, string songType, string extension)
+    private string GetMusicKey(string songName, string? artist, string? songType, string extension)
     {
         var outMusicPath = GetSongName(songName, artist);
         if (!string.IsNullOrWhiteSpace(songType))
@@ -251,9 +248,6 @@ public class DownloadController : ControllerBase
         outMusicPath += $".{extension}";
         return outMusicPath;
     }
-
-    public static string GetAlbumName(string? artist, string album)
-        => $"{Utils.CleanPath(artist?.Trim() ?? "unknown")}_{Utils.CleanPath(album.Trim())}";
 
     public static string GetSongName(string song, string? artist)
         => $"{Utils.CleanPath(song.Trim())}_{Utils.CleanPath(artist?.Trim() ?? "unknown")}";

@@ -18,7 +18,7 @@ namespace Euphonia.API.Services
             _endpoints.Add(key, path);
         }
 
-        public string AdminTokenLookup(string hashedPwd)
+        public string? AdminTokenLookup(string hashedPwd)
         {
             if (string.IsNullOrWhiteSpace(hashedPwd)) return null;
             foreach (var e in _endpoints)

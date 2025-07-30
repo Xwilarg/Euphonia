@@ -46,11 +46,10 @@ song:
     youtubeUrlDesc: YouTube URL of the song
     localFile: "Song file"
     localFileDesc: "Choose a file..."
-    albumKey: Album Key
     albumName: Album Name
     albumNameDesc: Name of the album
-    albumUrl: Album URL
-    albumUrlDesc: URL to an image of the album
+    musicUrl: Image URL
+    musicUrlDesc: URL to an image of the music
     songType: Song Type
     songTypeDesc: Is it a cover, live, alternative version...
     uploadTitle: Upload new song

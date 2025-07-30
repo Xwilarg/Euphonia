@@ -40,7 +40,7 @@ public class RootController : ControllerBase
     [Authorize]
     public IActionResult Integrity()
     {
-        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value);
         if (!System.IO.File.Exists($"{folder}/info.json"))
         {
             return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponse()

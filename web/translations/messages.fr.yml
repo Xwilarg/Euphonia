@@ -46,11 +46,10 @@ song:
     youtubeUrlDesc: Lien YouTube vers la musique
     localFile: "Fichier musical"
     localFileDesc: "Choisir un fichier..."
-    albumKey: Clé d'album
     albumName: Nom de l'album
     albumNameDesc: Nom de l'album
-    albumUrl: Lien vers l'image de l'album
-    albumUrlDesc: Lien vers une image qui illustre l'album
+    musicUrl: Lien vers l'image de la musique
+    musicUrlDesc: Lien vers une image qui illustre la musique
     songType: Type de la musique
     songTypeDesc: S'agit-il d'une cover, version live...
     uploadTitle: Télécharger une nouvelle musique

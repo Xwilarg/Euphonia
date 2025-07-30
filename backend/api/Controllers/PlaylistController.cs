@@ -29,7 +29,7 @@ public class PlaylistController : ControllerBase
     [Authorize]
     public IActionResult RemovePlaylist([FromForm] SongIdentifier form)
     {
-        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value);
         var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
         var key = HttpUtility.UrlEncode(form.Key.Replace(" ", "").ToLowerInvariant());
@@ -58,7 +58,7 @@ public class PlaylistController : ControllerBase
     [Authorize]
     public IActionResult CreatePlaylist([FromForm] PlaylistForm data)
     {
-        var folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        var folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value);
         var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
         var key = HttpUtility.UrlEncode(data.Name.Replace(" ", "").ToLowerInvariant());

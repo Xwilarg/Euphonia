@@ -45,11 +45,10 @@ song:
     youtubeUrlDesc: Descripción de enlace de YouTube 
     localFile: Archivo de la canción
     localFileDesc: "Selecciona un archivo..."
-    albumKey: Clave del álbum
     albumName: Nombre del álbum
     albumNameDesc: Descripción de nombre del álbum
-    albumUrl: Enlace del álbum
-    albumUrlDesc: Descripción de Enlace del álbum
+    musicUrl: URL de la imagen
+    musicUrlDesc: URL de una imagen de la música
     songType: Tipo de canción
     songTypeDesc: Es un cover, en vivo, una versión alternativa...
     uploadTitle: Subir nueva canción

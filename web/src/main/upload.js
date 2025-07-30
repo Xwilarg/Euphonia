@@ -98,8 +98,8 @@ export async function upload_initAsync() {
             document.getElementById("upload-yt-player").src = `https://www.youtube-nocookie.com/embed/${r[3]}`;
         }
     });
-    document.getElementById("album-url").addEventListener("change", (e) => {
-        const value = document.getElementById("album-url").value;
+    document.getElementById("music-url").addEventListener("change", (e) => {
+        const value = document.getElementById("music-url").value;
         if (value) {
             document.getElementById("upload-album-preview").classList.remove("is-hidden");
             document.getElementById("upload-album-preview").src = value;

@@ -2,5 +2,5 @@
 
 public class TokenResponse : BaseResponse
 {
-    public string Token { set; get; }
+    public required string Token { set; get; }
 }

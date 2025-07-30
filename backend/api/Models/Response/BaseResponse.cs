@@ -2,6 +2,6 @@
 
 public class BaseResponse
 {
-    public bool Success { set; get; }
-    public string? Reason { set; get; }
+    public required bool Success { set; get; }
+    public required string? Reason { set; get; }
 }

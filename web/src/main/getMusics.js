@@ -183,7 +183,10 @@ export function sanitize(text) {
 // #region On page load
 
 export function getAlbumImage(elem) {
-    if (elem.album === null || elem.album === undefined || !(elem.album in json.albums) || json.albums[elem.album].path === null) {
+    if (elem.thumbnailHash && json.albumHashes && elem.thumbnailHash in json.albumHashes) {
+        return "/data/icon/" + json.albumHashes[elem.thumbnailHash];
+    }
+    if (!elem.album || !(elem.album in json.albums) || json.albums[elem.album].path === null) {
         return "/img/CD.png";
     }
     return "/data/icon/" + json.albums[elem.album].path;

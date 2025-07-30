@@ -5,7 +5,9 @@ namespace Euphonia.Common;
 
 public static class Serialization
 {
+#pragma warning disable CS8618
     private static JsonSerializerOptions _option;
+#pragma warning restore CS8618
     private static JsonSerializerOptions Option
     {
         get
@@ -19,7 +21,7 @@ public static class Serialization
         }
     }
 
-    public static T Deserialize<T>(string text) => JsonSerializer.Deserialize<T>(text, Option);
+    public static T Deserialize<T>(string text) => JsonSerializer.Deserialize<T>(text, Option)!;
     public static string Serialize<T>(T data) => JsonSerializer.Serialize(data, Option);
 }
 
@@ -43,15 +45,17 @@ public class EuphoniaInfo
 {
     public Dictionary<string, Playlist> Playlists { set; get; } = [];
     public List<Song> Musics { set; get; } = [];
-    public Dictionary<string, Album> Albums { set; get; } = [];
+    public Dictionary<string, string> AlbumHashes { set; get; } = [];
+    [Obsolete("Use AlbumHashes instead")] public Dictionary<string, Album> Albums { set; get; } = [];
     public string[] Tags { set; get; } = [];
 }
 
+[Obsolete]
 public class Album
 {
-    public string Path { set; get; }
-    public string Name { set; get; }
-    public string Source { set; get; }
+    public string? Path { set; get; }
+    public string? Name { set; get; }
+    public string? Source { set; get; }
 }
 
 public class Song
@@ -59,27 +63,23 @@ public class Song
     /// <summary>
     /// Unique song identifier
     /// </summary>
-    public string Key { set; get; }
+    public string? Key { set; get; }
     /// <summary>
     /// Name of the song
     /// </summary>
-    public string Name { set; get; }
+    public required string Name { set; get; }
     /// <summary>
     /// Name of the song under its raw format
     /// </summary>
-    public string RawPath { set; get; }
+    public string? RawPath { set; get; }
     /// <summary>
     /// Name of the song under its normalized format
     /// </summary>
-    public string Path { set; get; }
+    public required string Path { set; get; }
     /// <summary>
     /// Artists of the song
     /// </summary>
-    public string Artist { set; get; }
-    /// <summary>
-    /// Key of the album of the song
-    /// </summary>
-    public string Album { set; get; }
+    public string? Artist { set; get; }
     /// <summary>
     /// Which playlists is this song stored in
     /// </summary>
@@ -87,11 +87,11 @@ public class Song
     /// <summary>
     /// Where is this song coming from (YouTube link of "localfile")
     /// </summary>
-    public string Source { set; get; }
+    public string? Source { set; get; }
     /// <summary>
     /// Type of the song (cover, instrumental, etc...)
     /// </summary>
-    public string Type { set; get; }
+    public string? Type { set; get; }
     /// <summary>
     /// User tags attached to the song
     /// </summary>
@@ -99,16 +99,29 @@ public class Song
     /// <summary>
     /// Archived songs are songs that we don't display to the users anymore
     /// </summary>
-    public bool IsArchived { set; get; }
+    public bool IsArchived { set; get; } = false;
     /// <summary>
     /// If the song was favorited by the user
     /// </summary>
-    public bool IsFavorite { set; get; }
+    public bool IsFavorite { set; get; } = false;
+    /// <summary>
+    /// Name of the album this song belong to
+    /// </summary>
+    public string? AlbumName { set; get; }
+    /// <summary>
+    /// Hash to the thumbnail
+    /// </summary>
+    public string? ThumbnailHash { set; get; }
+
+    /// <summary>
+    /// Key of the album of the song
+    /// </summary>
+    [Obsolete("")] public string? Album { set; get; }
 }
 
 public class Playlist
 {
-    public string Name { set; get; }
-    public string Description { set; get; }
-    public string ImageUrl { set; get; }
+    public string? Name { set; get; }
+    public string? Description { set; get; }
+    public string? ImageUrl { set; get; }
 }

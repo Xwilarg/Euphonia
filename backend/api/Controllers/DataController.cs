@@ -26,7 +26,7 @@ public class DataController : ControllerBase
 
     private Song? LookupSong(string key, out string folder, out EuphoniaInfo info)
     {
-        folder = _manager.GetPath((User.Identity as ClaimsIdentity).FindFirst(x => x.Type == ClaimTypes.UserData).Value);
+        folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
         info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
 
         // ID Lookup
@@ -105,82 +105,31 @@ public class DataController : ControllerBase
             });
         }
 
-        song.Tags = data.Tags;
+        song.Tags = data.Tags ?? [];
         song.Source = data.Source;
         song.Name = data.Name;
         song.Artist = data.Artist;
         if (data.Playlists != null) song.Playlists = data.Playlists;
 
-        Album albumData;
-
-        if (data.AlbumUrl == null && data.AlbumName == null) // No album name, no URL, we have no album
+        if (data.CoverUrl == null) // No album name, no URL, we have no album
         {
-            song.Album = string.IsNullOrWhiteSpace(data.AlbumKey) ? null : data.AlbumKey; // In case we only updated the key
-            albumData = null;
+            song.ThumbnailHash = null;
         }
         else
         {
-            var albName = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName;
-            string key;
-            if (string.IsNullOrWhiteSpace(data.AlbumKey))
+            var hash = Utils.Sha256(data.CoverUrl);
+            song.ThumbnailHash = hash;
+            if (!info.AlbumHashes.ContainsKey(hash)) // Image not downloaded yet
             {
-                key = song.Album != null && info.Albums.ContainsKey(song.Album)
-                        ? song.Album // The album already exists, so we use it
-                        : DownloadController.GetAlbumName(song.Artist, albName ?? Guid.NewGuid().ToString()); // Else we generate one
-            }
-            else
-            {
-                key = data.AlbumKey;
-            }
-            song.Album = Utils.CleanPath(key);
-
-            var source = string.IsNullOrWhiteSpace(data.AlbumUrl) ? null : data.AlbumUrl;
-            if (!info.Albums.ContainsKey(key)) // New album we don't have before, let's add it
-            {
-                albumData = new()
+                if (!Utils.SaveUrlAsImage(_client, data.CoverUrl, DownloadController.GetImagePath(folder, hash, "webp"), out var error))
                 {
-                    Name = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName,
-                    Path = source == null ? null : $"{key}.webp",
-                    Source = source
-                };
-                info.Albums.Add(key, albumData);
-                if (source != null) // Album have a source, we try to download the image
-                {
-                    if (!Utils.SaveUrlAsImage(_client, source, DownloadController.GetImagePath(folder, key, "webp"), out var error))
+                    return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                     {
-                        return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
-                        {
-                            Success = false,
-                            Reason = $"Image URL is invalid: {error}"
-                        });
-                    }
+                        Success = false,
+                        Reason = $"Image URL is invalid: {error}"
+                    });
                 }
-            }
-            else // Album already exists
-            {
-                if (info.Albums[key].Source != null) // We only attempt to update sources if one was provided
-                {
-                    info.Albums[key].Path = source == null ? null : $"{key}.webp";
-
-                    var oldSource = info.Albums[key].Source;
-                    info.Albums[key].Source = source;
-                    if (source != null && oldSource != source) // Source image changed
-                    {
-                        if (!Utils.SaveUrlAsImage(_client, source, DownloadController.GetImagePath(folder, key, "webp"), out var error))
-                        {
-                            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
-                            {
-                                Success = false,
-                                Reason = $"Image URL is invalid: {error}"
-                            });
-                        }
-                    }
-                }
-                if (data.AlbumName != null) // Was name provided?
-                {
-                    info.Albums[key].Name = string.IsNullOrWhiteSpace(data.AlbumName) ? null : data.AlbumName;
-                }
-                albumData = info.Albums[key];
+                info.AlbumHashes.Add(hash, $"{hash}.webp");
             }
         }
 
@@ -193,12 +142,9 @@ public class DataController : ControllerBase
 
             Name = song.Name,
             Artist = song.Artist,
-            Tags = song.Tags,
+            Tags = song.Tags ?? [],
 
-            AlbumKey = song.Album,
-            AlbumName = albumData?.Name,
-            AlbumSource = albumData?.Source,
-            AlbumPath = albumData?.Path
+            Thumnail = song.ThumbnailHash
         });
     }
 }
