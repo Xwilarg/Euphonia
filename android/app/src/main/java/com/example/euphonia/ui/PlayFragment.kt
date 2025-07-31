@@ -78,7 +78,7 @@ class PlayFragment : Fragment() {
             }
 
             view.findViewById<ImageButton>(R.id.archive).setOnClickListener {
-                val key = metadata?.displayTitle // Display title is not used so store the song key
+                val key = metadata?.description // Display title is not used so store the song key
                 if (key != null) {
                     val okHttpClient = OkHttpClient()
 
@@ -114,7 +114,7 @@ class PlayFragment : Fragment() {
             view.findViewById<ImageButton>(R.id.share).visibility = View.VISIBLE
 
             view.findViewById<ImageButton>(R.id.share).setOnClickListener {
-                val key = metadata?.displayTitle
+                val key = metadata?.description
                 if (key != null) {
                     val sharedPref = requireContext().getSharedPreferences("settings", MODE_PRIVATE)
                     val servers = sharedPref.getStringSet("remoteServers", setOf<String>())!!

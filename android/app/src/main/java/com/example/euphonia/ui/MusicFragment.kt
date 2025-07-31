@@ -34,7 +34,6 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File
 import java.nio.file.Files
-import java.nio.file.Path
 
 class MusicFragment : Fragment() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -194,9 +193,15 @@ class MusicFragment : Fragment() {
     }
 
     fun songToItem(data: MusicData, song: Song): MediaItem {
-        val albumPath = data.albums[song.album]?.path
+        val albumPath = if (song.thumbnailHash != null) {
+            data.albumHashes!![song.thumbnailHash]
+        } else if (song.album != null) {
+            data.albums[song.album]?.path
+        } else {
+            null
+        }
         val builder = MediaMetadata.Builder()
-        if (song.album != null) {
+        if (albumPath != null) {
             builder.setArtworkUri(Uri.parse("${requireContext().filesDir}/${pView.currUrl}icon/${albumPath}"))
             builder.setAlbumTitle(data.albums[song.album]?.name)
         } else {
@@ -207,7 +212,7 @@ class MusicFragment : Fragment() {
             .setMediaMetadata(
                 builder
                     .setTitle(song.name)
-                    .setDisplayTitle(if (song.key != null) {
+                    .setDescription(if (song.key != null) {
                         song.key
                     } else {
                         "${song.name}_${song.artist ?: ""}_${song.type ?: ""}"
