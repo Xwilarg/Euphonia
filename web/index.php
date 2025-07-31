@@ -36,7 +36,10 @@ if (isset($_GET["song"])) {
             if ($m["artist"] !== null) {
                 $name .= " by " . $m["artist"];
             }
-            if ($m["album"] !== null && array_key_exists($m["album"], $info["albums"])) {
+            if ($m["thumbnailHash"] !== null && array_key_exists($m["thumbnailHash"], $info["albumHashes"])) {
+                $image = "https://$_SERVER[HTTP_HOST]/data/icon/" . $info["albumHashes"][$m["thumbnailHash"]];
+            }
+            else if ($m["album"] !== null && array_key_exists($m["album"], $info["albums"])) {
                 $image = "https://$_SERVER[HTTP_HOST]/data/icon/" . $info["albums"][$m["album"]]["path"];
             }
         }
