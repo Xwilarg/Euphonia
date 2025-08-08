@@ -260,7 +260,7 @@ class MusicFragment : Fragment() {
                         pView.data.albums[it.album]?.path
                     } else {
                         null
-                    }) }, pView.currUrl!!)
+                    }) }, pView.currUrl ?: "")
                 } else {
                     searchBar.visibility = View.INVISIBLE
                     val data = mutableListOf<String>()

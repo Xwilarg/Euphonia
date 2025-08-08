@@ -35,4 +35,5 @@
     <string name="music_updated_with_value">%d music were updated</string>
     <string name="song_already_deleted">This song was already deleted, please restart your application to redownload it</string>
     <string name="sort_keep_order">Keep order</string>
+    <string name="no_song_available">No music available, download some songs first</string>
 </resources>

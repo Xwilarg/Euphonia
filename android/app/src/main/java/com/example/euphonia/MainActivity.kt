@@ -50,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     // List of songs that were downloaded
     var downloaded: MutableList<Song> = mutableListOf()
 
-    lateinit var data: MusicData
+    var data: MusicData = MusicData(arrayOf(), arrayOf(), null, mapOf(), null)
     lateinit var metadata: Metadata
 
     fun init() {
@@ -150,6 +150,17 @@ class MainActivity : AppCompatActivity() {
                 text = URL("https://${currUrl}?json=1").readText()
                 File(filesDir, "${currUrl}info.json").writeText(text)
                 data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
+                if (data.musics === null) { // No music available, nothing to do for now!
+                    lifecycleScope.launch(Dispatchers.Main) {
+                        Toast.makeText(
+                            applicationContext,
+                            applicationContext.getString(R.string.no_song_available),
+                            Toast.LENGTH_LONG
+                        ).show()
+                        data.musics = arrayOf()
+                    }
+                    return@execute
+                }
                 data.musics = data.musics.filter { !it.isArchived }.toTypedArray()
             } catch (e: Exception) {
                 lifecycleScope.launch(Dispatchers.Main) {
