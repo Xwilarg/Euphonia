@@ -158,6 +158,7 @@ class MainActivity : AppCompatActivity() {
                             Toast.LENGTH_LONG
                         ).show()
                         data.musics = arrayOf()
+                        notificationManager.cancel(1)
                     }
                     return@execute
                 }
@@ -165,6 +166,7 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     Toast.makeText(applicationContext, "Failed to update info JSON", Toast.LENGTH_SHORT).show()
+                    notificationManager.cancel(1)
                 }
                 return@execute
             }
@@ -176,7 +178,9 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     Toast.makeText(applicationContext, "Failed to update metadata JSON", Toast.LENGTH_SHORT).show()
+                    notificationManager.cancel(1)
                 }
+                return@execute
             }
 
             // Download missing songs
@@ -234,11 +238,15 @@ class MainActivity : AppCompatActivity() {
 
             downloaded.reverse()
             newDownloads = downloaded
-            builder
-                .setContentText(if (songDownloaded == 0) resources.getString(R.string.music_updated) else resources.getString(R.string.music_updated_with_value, songDownloaded))
-                .setSilent(false)
-                .setOngoing(false)
-            notificationManager.notify(1, builder.build())
+            if (songDownloaded == 0) {
+                notificationManager.cancel(1)
+            } else {
+                builder
+                    .setContentText(resources.getString(R.string.music_updated_with_value, songDownloaded))
+                    .setSilent(false)
+                    .setOngoing(false)
+                notificationManager.notify(1, builder.build())
+            }
         }
     }
 

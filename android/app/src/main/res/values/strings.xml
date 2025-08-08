@@ -21,7 +21,6 @@
     <string name="pref_source_remove">Remove current data source</string>
     <string name="pref_source_remove_confirm">Are you sure you want to remove the current data source?</string>
     <string name="pref_deletion_confirm">Click again to confirm deletion</string>
-    <string name="music_updated">All music are now up to date</string>
     <string name="admin_login">Login as admin</string>
     <string name="admin_logoff">Logoff from admin</string>
     <string name="admin_enter_password">Enter admin password</string>

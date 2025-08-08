@@ -21,7 +21,6 @@
     <string name="pref_source_remove">Eliminar fuente de datos actual</string>
     <string name="pref_source_remove_confirm">¿Estás seguro de que quieres eliminar la fuente de datos actual?</string>
     <string name="pref_deletion_confirm">Haz clic nuevamente para confirmar la eliminación</string>
-    <string name="music_updated">Toda la música está actualizada</string>
     <string name="admin_login">Iniciar sesión como administrador</string>
     <string name="admin_logoff">Cerrar sesión de administrador</string>
     <string name="admin_enter_password">Ingresa la contraseña de administrador</string>
