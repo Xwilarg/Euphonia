@@ -32,32 +32,35 @@ export function spawnSongNode(json, curr, id) {
             prepareShuffle(curr.id);
         }
     }
-    let target = node.querySelector(".edit-content");
-    let form = node.querySelector("form");
+    let target = document.getElementById("edit-content");
+    let form = target.querySelector("form");
 
     node.querySelector(".song-edit").addEventListener("click", () => {
-        target.hidden = !target.hidden;
-        if (!target.hidden) {
-            form.reset();
+        form.dataset.curr = getSongKey(curr);
+        if (!target.classList.contains("is-hidden"))
+        {
+            target.classList.add("is-hidden");
+            return;
+        }
+        target.classList.remove("is-hidden");
+        form.reset();
 
-            for (var i = 0, len = form.elements.length; i < len; ++i) {
-                form.elements[i].disabled = false;
-            }
+        for (var i = 0, len = form.elements.length; i < len; ++i) {
+            form.elements[i].disabled = false;
+        }
 
-            if (json.playlists) {
-                const editPlaylist = form.getElementsByClassName("edit-playlist")[0];
-                for (let [key, value] of Object.entries(json.playlists)) {
-                    editPlaylist.innerHTML += `<option value="${key}"${curr.playlists.includes(key) ? " selected" : ""}>${value.name}</option>`;
-                }
+        if (json.playlists) {
+            const editPlaylist = document.getElementById("edit-playlist");
+            for (let [key, value] of Object.entries(json.playlists)) {
+                editPlaylist.innerHTML += `<option value="${key}"${curr.playlists.includes(key) ? " selected" : ""}>${value.name}</option>`;
             }
-            form.getElementsByClassName("edit-source")[0].value = curr.source;
-            form.getElementsByClassName("edit-name")[0].value = curr.name;
-            form.getElementsByClassName("edit-artist")[0].value = curr.artist;
-            if (curr.album) {
-                form.getElementsByClassName("edit-album-name")[0].value = json.albums[curr.album].name ?? curr.album;
-                form.getElementsByClassName("edit-album-url")[0].value = json.albums[curr.album].source;
-                form.getElementsByClassName("edit-album-key")[0].placeholder = curr.album;
-            }
+        }
+        document.getElementById("edit-source").value = curr.source;
+        document.getElementById("edit-name").value = curr.name;
+        document.getElementById("edit-artist").value = curr.artist;
+        if (curr.album) {
+            document.getElementById("edit-album-name").value = json.albums[curr.album].name ?? curr.album;
+            document.getElementById("edit-album-url").value = json.albums[curr.album].source;
         }
     });
     node.querySelector(".song-repair").addEventListener("click", () => {
@@ -75,8 +78,8 @@ export function spawnSongNode(json, curr, id) {
             }
         }
     });
-    const editPlaylist = node.querySelector(".edit-playlist");
-    node.querySelector(".song-playlist-reset").addEventListener("click", (e) => {
+    const editPlaylist = document.getElementById("edit-playlist");
+    document.getElementById("song-playlist-reset").addEventListener("click", (e) => {
         e.preventDefault();
         editPlaylist.selectedIndex = -1;
     });
@@ -90,29 +93,6 @@ export function spawnSongNode(json, curr, id) {
                 alert("The song was archived");
             }, () => { });
         }
-    });
-    form.addEventListener("submit", (e) => {
-        e.preventDefault();
-
-        const data = new FormData(e.target);
-        data.append("Key", getSongKey(curr));
-
-        for (var i = 0, len = form.elements.length; i < len; ++i) {
-            form.elements[i].disabled = true;
-        }
-        updateSong(data, (json) => { // TODO: Use json to update data
-            target.hidden = true;
-
-            if (data.get("Tags") !== undefined) {
-                curr.tags = data.get("Tags");
-            }
-            curr.name = data.get("Name");
-            curr.artist = data.get("Artist");
-
-            updateSingleSongDisplay(document.getElementById(idContainer), curr);
-        }, () => {
-            target.hidden = true;
-        });
     });
 
     updateSingleSongDisplay(node, curr);

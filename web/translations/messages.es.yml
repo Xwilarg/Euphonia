@@ -33,6 +33,7 @@ song:
     edit: Editar
     redownload: Volver a descargar
     archive: Archivar
+    cancel: Cancelar
   upload:
     default: Predeterminado
     tags: Etiquetas

@@ -5,7 +5,7 @@
  */
 
 import * as wanakana from 'wanakana';
-import { archiveSong, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, validateIntegrity } from '../common/api';
+import { archiveSong, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, updateSong, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 import { modal_askPassword, modal_showNotification } from './modal';
 import { doesUseRawAudio, isMinimalistMode } from './settings';
@@ -213,13 +213,13 @@ export function displayPlaylists(playlists, id, filter) {
 export function updateSingleSongDisplay(node, elem) {
     let selectTags = "";
     let currentTags = "";
-    if (json.tags)
+    /*if (json.tags)
     {
         for (let tag of json.tags)
         {
             selectTags += `<option value="${tag}">${tag}</option>`;
         }
-    }
+    }*/
     if (elem.tags)
     {
         for (let tag of elem.tags)
@@ -234,7 +234,7 @@ export function updateSingleSongDisplay(node, elem) {
     node.querySelector("img").src = albumImg;
     node.querySelector("p").innerHTML = `${sanitize(elem.name)}<br/>${sanitize(elem.artist)}`;
     node.querySelector(".tags-container").innerHTML = currentTags;
-    node.querySelector("select").innerHTML = selectTags;
+    //node.querySelector("select").innerHTML = selectTags; // TODO: Tags are broken
     if (isMinimalistMode())
     {
         node.querySelector(".song-img").classList.add("is-hidden");
@@ -635,6 +635,36 @@ export async function musics_initAsync() {
                 })
             });
         }
+    });
+
+    // Edit form
+    document.getElementById("edit-cancel").addEventListener("click", () => {
+        document.getElementById("edit-content").classList.add("is-hidden");
+    });
+    document.getElementById("song-edit-form").addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const data = new FormData(e.target);
+        data.append("Key", e.target.dataset.curr);
+
+        for (var i = 0, len = e.target.elements.length; i < len; ++i) {
+            e.target.elements[i].disabled = true;
+        }
+        updateSong(data, (json) => { // TODO: Use json to update data
+            for (var i = 0, len = e.target.elements.length; i < len; ++i) {
+                e.target.elements[i].disabled = false;
+            }
+
+            /*if (data.get("Tags") !== undefined) {
+                curr.tags = data.get("Tags");
+            }
+            curr.name = data.get("Name");
+            curr.artist = data.get("Artist");
+
+            updateSingleSongDisplay(document.getElementById(idContainer), curr);*/ // TODO: Add this back when moving to react
+        }, () => {
+            target.classList.add("is-hidden");
+        });
     });
 
     if (json.playlists) {

@@ -51,7 +51,7 @@
         </div>
         {% endif %}
         <div class="is-flex">
-            <div id="settings-dropdown" class="is-hidden">
+            <div id="settings-dropdown" class="is-hidden"> <!-- General settings -->
                 <fieldset class="box">
                     <legend class="label has-text-centered">{{ "navbar.general.settings" | trans }}</legend>
                     <button class="button" id="toggleAdmin" disabled>{{ "navbar.general.toggleAdmin" | trans }}</button><br>
@@ -96,7 +96,7 @@
                 </fieldset>
                 {% endif %}
             </div>
-            <div class="container">
+            <div class="container"> <!-- Main content -->
                 <div class="has-text-centered is-flex is-justify-content-center">
                     <div id="full-player" class="is-hidden">
                         {% include 'player.html.twig' %}
@@ -140,6 +140,66 @@
                 </div>
                 {% endif %}
             </div>
+            <div id="edit-content" class="is-hidden"> <!-- Edit a song data -->
+                <form id="song-edit-form">
+                    <div class="field">
+                        <label class="label">{{ "song.upload.tags" | trans }}</label>
+                        <div class="control select is-multiple">
+                            <select name="Tags" multiple>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">{{ "song.upload.playlist" | trans }}</label>
+                        <div class="control select is-multiple">
+                            <select id="edit-playlist" name="Playlists" multiple>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <button class="button" id="song-playlist-reset">{{ "song.settings.reset" | trans }}</button>
+                    </div>
+                    <div class="field">
+                        <label class="label">{{ "song.upload.name" | trans }}</label>
+                        <div class="control">
+                            <input class="input" id="edit-name" type="text" name="Name" placeholder="Name of the song"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">{{ "song.upload.artistName" | trans }}</label>
+                        <div class="control">
+                            <input class="input" id="edit-artist" type="text" name="Artist" placeholder="Name of the artist"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">{{ "song.upload.youtubeUrl" | trans }}</label>
+                        <div class="control">
+                            <input class="input" id="edit-source" type="text" name="Source" placeholder="Source"/>
+                        </div>
+                        <p class="help">If you edit this you'll still need<br>to trigger a manual redownload</p>
+                    </div>
+                    <div class="field">
+                        <label class="label">{{ "song.upload.albumName" | trans }}</label>
+                        <div class="control">
+                            <input class="input" id="edit-album-name" type="text" name="AlbumName" placeholder="Name of the album"/>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">{{ "song.upload.musicUrl" | trans }}</label>
+                        <div class="control">
+                            <input class="input" id="edit-album-url" type="text" name="CoverUrl" placeholder="URL to an image of the album"/>
+                        </div>
+                    </div>
+                    <div class="field is-grouped">
+                        <div class="control">
+                            <input class="button is-link" type="submit"/>
+                        </div>
+                        <div>
+                            <button class="button is-danger" id="edit-cancel">{{ "song.settings.cancel" | trans }}</button>
+                        </div>
+                    </div>
+                </form>
             </div>
+        </div>
     </body>
 </html>
