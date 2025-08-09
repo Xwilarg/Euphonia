@@ -4,51 +4,6 @@
         <button class="navbar-link" id="toggle-settings">
             <span class="material-symbols-outlined">menu</span>
         </button>
-        <div id="settings-dropdown" class="navbar-dropdown is-hidden">
-            <fieldset class="box">
-                <legend class="label has-text-centered">{{ "navbar.general.settings" | trans }}</legend>
-                <button class="button" id="toggleAdmin" disabled>{{ "navbar.general.toggleAdmin" | trans }}</button><br>
-                <div class="field">
-                    <input id="use-minimalist" type="checkbox" class="switch is-rounded"/>
-                    <label for="use-minimalist">{{ "navbar.general.minimalistMode" | trans }}</label>
-                </div>
-                <div class="field">
-                    <input id="use-raw" type="checkbox" class="switch is-rounded"/>
-                    <label for="use-raw">{{ "navbar.general.useRaw" | trans }}</label>
-                </div>
-            </fieldset>
-            {% if metadata.readme is not empty %}
-            <fieldset class="box">
-                <legend class="label has-text-centered">{{ "navbar.readme.title" | trans }}</legend>
-                <div id="readme">
-                    {{ metadata.readme | map(x => x | replace({'<': '&lt;' })) | join('<br>') | raw }}
-                </div>
-            </fieldset>
-            {% endif %}
-            <fieldset class="box">
-                <legend class="label has-text-centered">{{ "navbar.download.title" | trans }}</legend>
-                <div id="download-progress" class="requires-admin">
-                </div>
-            </fieldset>
-            <fieldset class="box">
-                <legend class="label has-text-centered">{{ "navbar.logs.title" | trans }}</legend>
-                <p id="error-log"></p>
-            </fieldset>
-            {% if metadata.showGitHub %}
-            <fieldset class="box">
-                <legend class="label has-text-centered">{{ "navbar.sourceCode.title" | trans }}</legend>
-                <a class="button" target="_blank" href="https://github.com/Xwilarg/Euphonia">GitHub</a>
-            </fieldset>
-            {% endif %}
-            {% if metadata.showDebug %}
-            <fieldset class="box">
-                <span>{{ "navbar.advanced.local" | trans }}: {{ local }}</span><br>
-                <legend class="label has-text-centered">{{ "navbar.advanced.title" | trans }}</legend>
-                {{ "navbar.advanced.apiLocation" | trans }}: <span id="apiTarget"></span><br>
-                <button class="button requires-admin" id="check-integrity">{{ "navbar.advanced.integrity" | trans }}</button>
-            </fieldset>
-            {% endif %}
-        </div>
     </div>
     <button class="navbar-item" id="back">
         <span class="material-symbols-outlined">arrow_back</span>
