@@ -123,7 +123,7 @@ class MusicFragment : Fragment() {
         list.onItemClickListener = AdapterView.OnItemClickListener { parent, v, position, id ->
             if (!shouldDisplaySongs()) {
                 var pIndex = position
-                if (pView.metadata.showAllPlaylist == true) {
+                if (pView.metadata.showAllPlaylist == true || getCurrentMusics().any { it.playlists.count() == 0 }) {
                     pIndex -= 1
                 }
 
