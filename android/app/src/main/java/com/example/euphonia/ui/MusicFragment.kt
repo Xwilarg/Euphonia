@@ -130,7 +130,11 @@ class MusicFragment : Fragment() {
                 // Clicked on a playlist element
                 pView.currentPlaylist =
                     if (pIndex == -1) // Show all
-                        "All"
+                        if (pView.metadata.showAllPlaylist == true) {
+                            "All"
+                        } else {
+                            "Default"
+                        }
                     else
                         pView.data.playlists!!.keys.elementAt(pIndex)
                 updateList()
@@ -232,7 +236,7 @@ class MusicFragment : Fragment() {
     fun getCurrentMusics(): List<Song> {
         val tmp = mutableListOf<Song>()
         tmp.addAll(pView.downloaded)
-        return tmp.filter { !it.isArchived && (pView.currentPlaylist == null || pView.currentPlaylist == "All" || it.playlists.contains(pView.currentPlaylist)) }
+        return tmp.filter { !it.isArchived && (pView.currentPlaylist == null || pView.currentPlaylist == "All" || (pView.currentPlaylist == "Default" && it.playlists.count() == 0) || it.playlists.contains(pView.currentPlaylist)) }
     }
 
     fun updateList() {
@@ -266,6 +270,9 @@ class MusicFragment : Fragment() {
                     val data = mutableListOf<String>()
                     if (pView.metadata.showAllPlaylist == true) {
                         data.add("All")
+                    } else if ((pView.metadata.showAllPlaylist == null || pView.metadata.showAllPlaylist == false)
+                        && getCurrentMusics().any { it.playlists.count() == 0 }) {
+                        data.add("Default")
                     }
                     data.addAll(pView.data.playlists!!.map { it.value.name }.toMutableList())
                     ArrayAdapter(requireContext(), android.R.layout.simple_list_item_1, data)

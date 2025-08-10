@@ -198,11 +198,11 @@ public class MainViewModel : ViewModelBase
         // Create Song class
         var m = new Song
         {
-            Album = albumKey,
+            AlbumName = albumKey,
             Artist = artist,
             Name = songName,
             Path = outMusicPath,
-            Playlist = playlistIndex == 0 ? "default" : Data.Playlists.Keys.ElementAt(playlistIndex - 1),
+            //Playlist = playlistIndex == 0 ? "default" : Data.Playlists.Keys.ElementAt(playlistIndex - 1),
             Source = source,
             Type = songType
         };
