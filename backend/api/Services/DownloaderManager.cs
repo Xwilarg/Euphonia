@@ -78,10 +78,10 @@ namespace Euphonia.API.Services
             if (data.CurrentState == DownloadState.Downloading) // If current state is normalizing, it means we don't have anything to download
             {
                 data.LastUpdate = DateTime.UtcNow;
-                Utils.ExecuteProcess(new("yt-dlp", $"{data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist"), out code, out err);
+                Utils.ExecuteProcess(new("yt-dlp", $"{data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist --no-cache-dir"), out code, out err);
                 if (code != 0)
                 {
-                    return $"yt-dlp {data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist failed:\n{string.Join("", err.TakeLast(1000))}";
+                    return $"yt-dlp {data.DownloadUrl} -o \"{data.RawPath}\" -x --audio-format {AudioFormat} -q --progress --no-playlist --no-cache-dir failed:\n{string.Join("", err.TakeLast(1000))}";
                 }
                 data.CurrentState = DownloadState.Normalizing;
             }
