@@ -18,14 +18,16 @@ public class DownloadController : ControllerBase
     private WebsiteManager _manager;
     private DownloaderManager _download;
     private HttpClient _client;
+    private ExportManager _export;
 
-    public DownloadController(ILogger<DownloadController> logger, WebsiteManager manager, HttpClient client, DownloaderManager download)
+    public DownloadController(ILogger<DownloadController> logger, WebsiteManager manager, HttpClient client, DownloaderManager download, ExportManager export)
     {
         _logger = logger;
         _manager = manager;
         _client = client;
 
         _download = download;
+        _export = export;
     }
 
 
@@ -35,11 +37,18 @@ public class DownloadController : ControllerBase
     {
         var folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
 
+        var exportData = _export.GetExportPath(folder);
+
         return StatusCode(StatusCodes.Status200OK, new SongDownloadResponse()
         {
             Success = true,
             Reason = null,
-            Data = _download.Get(folder).GetProgress()
+            Data = _download.Get(folder).GetProgress(),
+            Export = (exportData == null || exportData.IsBusy == ExportStatus.None) ? null : new()
+            {
+                ExportPath = exportData.LastFile,
+                Status = exportData.IsBusy
+            }
         });
     }
 

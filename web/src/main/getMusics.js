@@ -5,7 +5,7 @@
  */
 
 import * as wanakana from 'wanakana';
-import { archiveSong, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, updateSong, validateIntegrity } from '../common/api';
+import { archiveSong, exportMusic, favoriteSong, getApiToken, getDownloadProcess, isLoggedIn, logOff, updateSong, validateIntegrity } from '../common/api';
 import { spawnSongNode } from './song';
 import { modal_askPassword, modal_showNotification } from './modal';
 import { doesUseRawAudio, isMinimalistMode } from './settings';
@@ -446,6 +446,14 @@ function loadPage() {
         document.getElementById("check-integrity")?.addEventListener("click", _ => {
             validateIntegrity();
         });
+
+        document.getElementById("export-progress-btn")?.addEventListener("click", _ => {
+            const btn = document.getElementById("export-progress-btn");
+            btn.disabled = true;
+            exportMusic(() => {
+                btn.disabled = false;
+            });
+        });
     }
 
     // Player callbacks
@@ -575,7 +583,7 @@ function chooseDisplay() {
     // If parameter is not set or set to a wrong value
     if (playlist != "none" && (!metadataJson.showAllPlaylist || playlist !== "all") && (playlist === null || playlist === undefined || json["playlists"] === undefined || json["playlists"][playlist] === undefined)) {
         // If there is no playlist we just display the default one
-        if (json.musics !== undefined && json.musics.some(x => x.playlists.length > 0)) {
+        if (json.musics !== undefined && json.musics.some(x => x.playlists && x.playlists.length > 0)) {
             if (playlist === "default") {
                 playlist = "default";
             } else {
@@ -598,7 +606,7 @@ function chooseDisplay() {
         document.getElementById("back").classList.remove("is-hidden");
         if (json.musics !== undefined)
         {
-            json.musics = json.musics.filter(x => playlist === "all" || x.playlists.includes(playlist) || (playlist === "default" && x.playlists.length === 0));
+            json.musics = json.musics.filter(x => x.playlists && (playlist === "all" || x.playlists.includes(playlist) || (playlist === "default" && x.playlists.length === 0)));
             for (let id in json.musics) {
                 json.musics[id].id = id;
             }
@@ -689,13 +697,22 @@ export async function musics_initAsync() {
 
     function updateProgress() {
         if (isLoggedIn()) {
-            getDownloadProcess((data) => {
+            getDownloadProcess((json) => {
                 let html = "";
-                for (let elem of data)
+                for (let elem of json.data)
                 {
                     html += `<p>${elem.songName} by ${elem.songArtist} (${elem.currentState}): ${elem.error}</p>`;
                 }
                 document.getElementById("download-progress").innerHTML = html;
+
+                if (json.export) {
+                    if (json.export.status === 1) {
+                        document.getElementById("export-progress-btn").disabled = true;
+                        document.getElementById("export-progress-comment").innerHTML = "Your files are getting exported...";
+                    } else {
+                        document.getElementById("export-progress-comment").innerHTML = `<a href="/data/export/${json.export.exportPath}">Get your file</a>`;
+                    }
+                }
             });
         }
     }

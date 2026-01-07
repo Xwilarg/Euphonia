@@ -78,6 +78,13 @@
                     </div>
                 </fieldset>
                 <fieldset class="box">
+                    <legend class="label has-text-centered">{{ "navbar.export.title" | trans }}</legend>
+                    <div id="export-progress" class="requires-admin">
+                        <button id="export-progress-btn" class="button">{{ "navbar.export.button" | trans }}</button>
+                        <div id="export-progress-comment"></div>
+                    </div>
+                </fieldset>
+                <fieldset class="box">
                     <legend class="label has-text-centered">{{ "navbar.logs.title" | trans }}</legend>
                     <p id="error-log"></p>
                 </fieldset>

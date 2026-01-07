@@ -13,6 +13,9 @@ navbar:
     title: Lisez-moi
   download:
     title: Téléchargements
+  export:
+    title: Exports
+    button: Exporter mes musiques
   logs:
     title: Rapports d'erreurs
   sourceCode:

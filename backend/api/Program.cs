@@ -40,6 +40,7 @@ namespace Euphonia.API
 #endif
             builder.Services.AddSingleton(manager);
             builder.Services.AddSingleton<DownloaderManager>();
+            builder.Services.AddSingleton<ExportManager>();
             builder.Services.AddHttpClient();
 
             // Add services to the container.

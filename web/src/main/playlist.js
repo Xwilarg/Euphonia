@@ -29,7 +29,7 @@ export function spawnPlaylistNode(id, name, json, nodeId, allowDeletion) {
     let mostPresents = {};
     let count = 0;
     for (let elem of json.musics) {
-        if (((id === "default" && elem.playlists.length > 0) || (id !== "default" && !elem.playlists.includes(id))) && id !== "all") { // We filter by playlist (except if current playlist is "all")
+        if (!elem.playlists || (((id === "default" && elem.length > 0) || (id !== "default" && !elem.playlists.includes(id))) && id !== "all")) { // We filter by playlist (except if current playlist is "all")
             continue;
         }
         count++;

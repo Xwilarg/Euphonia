@@ -13,6 +13,9 @@ navbar:
     title: Readme
   download:
     title: Download
+  export:
+    title: Export
+    button: Export my music
   logs:
     title: Error Logs
   sourceCode:

@@ -2,7 +2,6 @@
 using Euphonia.API.Models.Data;
 using Euphonia.API.Models.Response;
 using Euphonia.Common;
-using System;
 using System.Collections.Concurrent;
 
 namespace Euphonia.API.Services

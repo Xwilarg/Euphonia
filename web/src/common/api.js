@@ -84,7 +84,7 @@ export async function getDownloadProcess(onSuccess)
     .then(handleFetchResponse)
     .then(json => {
         if (json.success) {
-            onSuccess(json.data);
+            onSuccess(json);
         }
     })
     .catch((err) => {});
@@ -277,6 +277,28 @@ export async function updateSong(data, onSuccess, onFailure) {
         alert(`Failed to update song: ${err}`);
         console.error(err);
         onFailure();
+    });
+}
+
+export async function exportMusic(onDone) {
+    fetch(`${apiTarget}export/prepare`, {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        }
+    })
+    .then(resp =>
+    {
+        if (resp.ok)
+            return resp.text();
+        throw new Error();
+    })
+    .then(text => {
+        onDone();
+        alert(`Your music are getting exported, please wait...`);
+    })
+    .catch((err) => {
+        alert(`An export is already in progress`);
     });
 }
 
