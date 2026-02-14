@@ -6,14 +6,6 @@ import { isMinimalistMode } from "./settings";
 
 let isRepairOngoing;
 
-function cleanPath(name) {
-    const arr = ['<', '>', ':', '\\', '/', '"', '|', '?', '*', '#', '&', '%'];
-    for (let a of arr) {
-        name = name.replace(a, "");
-    }
-    return name;
-}
-
 export function spawnSongNode(json, curr, id) {
     let template = document.getElementById("template-song");
     const node = template.content.cloneNode(true);
@@ -49,6 +41,7 @@ export function spawnSongNode(json, curr, id) {
 
         if (json.playlists) {
             const editPlaylist = document.getElementById("edit-playlist");
+            editPlaylist.innerHTML = "";
             for (let [key, value] of Object.entries(json.playlists)) {
                 editPlaylist.innerHTML += `<option value="${key}"${curr.playlists.includes(key) ? " selected" : ""}>${value.name}</option>`;
             }
@@ -95,5 +88,51 @@ export function spawnSongNode(json, curr, id) {
 
     updateSingleSongDisplay(node, curr);
     document.getElementById(id).appendChild(node);
-    updateSingleSongDisplay(document.getElementById(idContainer), curr);
+    const newContainer = document.getElementById(idContainer);
+    updateSingleSongDisplay(newContainer, curr);
+
+    function updatePlaylistMove()
+    {
+        const playlistMoveContainer = newContainer.querySelector(".dropdown-menu5 .dropdown-content");
+        playlistMoveContainer.innerHTML = "";
+        for (let [key, value] of Object.entries(json.playlists)) {
+            playlistMoveContainer.innerHTML += `
+                <div class="dropdown-item">
+                    <button class="button is-fullwidth move-playlist-${key}">${
+                        curr.playlists.includes(key)
+                            ? '<span class="material-symbols-outlined">check</span>'
+                            : ""
+                    } ${value.name}</button>
+                </div>
+            `;
+        }
+        for (let [key, value] of Object.entries(json.playlists)) {
+            playlistMoveContainer.querySelector(`.move-playlist-${key}`).addEventListener("click", () => {
+                const data = new FormData();
+
+                data.append("Key", getSongKey(curr));
+                data.append("Name", curr.name);
+
+                if (curr.playlists.includes(key)) curr.playlists.splice(curr.playlists.indexOf(key), 1);
+                else curr.playlists.push(key);
+
+                for (let [key2, value2] of Object.entries(json.playlists)) {
+                    if (curr.playlists.includes(key2))
+                    {
+                        data.append("Playlists", key2);
+                    }
+                }
+                playlistMoveContainer.disabled = true;
+
+                updateSong(data, () => {
+                    updatePlaylistMove();
+                    playlistMoveContainer.disabled = false;
+                }, () => {
+                    alert("Failed to update playlist, please refresh the page and try again");
+                });
+            })
+        }
+    }
+
+    updatePlaylistMove();
 }

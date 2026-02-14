@@ -33,6 +33,7 @@ playlist:
     delete: Delete
 song:
   settings:
+    playlist: Move to playlist >
     edit: Edit
     redownload: Redownload
     archive: Archive

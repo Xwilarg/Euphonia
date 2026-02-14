@@ -175,3 +175,12 @@
     transform: translateX(-50%);
     z-index: 4;
 }
+
+/* Buttons that indicate things but is not clickable */
+.button-hint {
+    cursor: default !important;
+}
+
+.dropdown-menu5 {
+    margin-left: 195px;
+}
