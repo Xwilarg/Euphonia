@@ -25,6 +25,25 @@ let playlistIndex;
 
 let replayMode = 0;
 
+// Edit panel
+let editPanelCurrentOpen = null;
+export function closeEditPanel()
+{
+    document.getElementById("edit-content").classList.add("is-hidden");
+}
+
+export function openEditPanel(key)
+{
+    if(editPanelCurrentOpen === key)
+    {
+        closeEditPanel();
+        return false;
+    }
+    editPanelCurrentOpen = key;
+    document.getElementById("edit-content").classList.remove("is-hidden");
+    return true;
+}
+
 // #region Music management
 
 // Start playing if audio player is paused, else pause it
@@ -647,7 +666,7 @@ export async function musics_initAsync() {
 
     // Edit form
     document.getElementById("edit-cancel").addEventListener("click", () => {
-        document.getElementById("edit-content").classList.add("is-hidden");
+        closeEditPanel();
     });
     document.getElementById("song-edit-form").addEventListener("submit", (e) => {
         e.preventDefault();

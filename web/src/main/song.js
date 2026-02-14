@@ -1,7 +1,7 @@
 // module "song.js"
 
 import { archiveSong, repairSong, updateSong } from "../common/api";
-import { getSongKey, prepareShuffle, updateSingleSongDisplay } from "./getMusics";
+import { getSongKey, openEditPanel, prepareShuffle, updateSingleSongDisplay } from "./getMusics";
 import { isMinimalistMode } from "./settings";
 
 let isRepairOngoing;
@@ -37,12 +37,10 @@ export function spawnSongNode(json, curr, id) {
 
     node.querySelector(".song-edit").addEventListener("click", () => {
         form.dataset.curr = getSongKey(curr);
-        if (!target.classList.contains("is-hidden"))
+        if (!openEditPanel(form.dataset.curr))
         {
-            target.classList.add("is-hidden");
             return;
         }
-        target.classList.remove("is-hidden");
         form.reset();
 
         for (var i = 0, len = form.elements.length; i < len; ++i) {

@@ -33,7 +33,7 @@ public class ExportManager
     public InstanceExportInfo? GetExportPath(string path)
         => _exports.TryGetValue(path, out var exportPath) ? exportPath : null;
 
-    public bool DownloadAllMusic(string path)
+    public bool DownloadAllMusic(ILogger logger, string path)
     {
         InstanceExportInfo info;
         lock(_exports)
@@ -60,34 +60,44 @@ public class ExportManager
 
         Task.Run(() =>
         {
-            var exportPath = Path.Combine(path, "export");
-            if (!Directory.Exists(exportPath))
+            string file = null;
+            try
             {
-                Directory.CreateDirectory(exportPath);
-            }
-            else
-            {
-                // Just in case
-                foreach (var f in Directory.GetFiles(exportPath))
+                var exportPath = Path.Combine(path, "export");
+                if (!Directory.Exists(exportPath))
                 {
-                    File.Delete(f);
+                    Directory.CreateDirectory(exportPath);
+                }
+                else
+                {
+                    // Just in case
+                    foreach (var f in Directory.GetFiles(exportPath))
+                    {
+                        File.Delete(f);
+                    }
+                }
+
+                file = $"{DateTime.UtcNow:yyyyMMddHHmmss}.zip";
+                using var zip = ZipFile.Open($"{path}export/{file}", ZipArchiveMode.Create);
+                foreach (var m in info.InstanceInfo.Musics)
+                {
+                    if (!m.IsArchived && File.Exists($"{path}normalized/{m.Path}"))
+                    {
+                        zip.CreateEntryFromFile($"{path}normalized/{m.Path}", m.Path);
+                    }
                 }
             }
-
-            var file = $"{DateTime.UtcNow:yyyyMMddHHmmss}.zip";
-            using var zip = ZipFile.Open($"{path}export/{file}", ZipArchiveMode.Create);
-            foreach (var m in info.InstanceInfo.Musics)
+            catch (Exception ex)
             {
-                if (!m.IsArchived)
-                {
-                    zip.CreateEntryFromFile($"{path}normalized/{m.Path}", m.Path);
-                }
+                logger.LogError(ex, ex.Message);
             }
-
-            lock (_exports)
+            finally
             {
-                _exports[path].IsBusy = ExportStatus.Ready;
-                _exports[path].LastFile = file;
+                lock (_exports)
+                {
+                    _exports[path].IsBusy = ExportStatus.Ready;
+                    _exports[path].LastFile = file;
+                }
             }
         });
 

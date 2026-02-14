@@ -28,7 +28,7 @@ public class ExportController : ControllerBase
     {
         var folder = _website.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
 
-        if (_export.DownloadAllMusic(folder))
+        if (_export.DownloadAllMusic(_logger, folder))
         {
             return StatusCode(StatusCodes.Status204NoContent);
         }
