@@ -1,10 +1,13 @@
-﻿using System.IO.Compression;
+﻿using Euphonia.Common;
+using System.IO.Compression;
 
 namespace Euphonia.API.Services;
 
 public class InstanceExportInfo
 {
     public string? LastFile { set; get; } = null;
+    public EuphoniaInfo InstanceInfo { set; get; }
+    public string BaseFolder { set; get; }
     public ExportStatus IsBusy { set; get; } = ExportStatus.None;
 }
 
@@ -32,13 +35,18 @@ public class ExportManager
 
     public bool DownloadAllMusic(string path)
     {
+        InstanceExportInfo info;
         lock(_exports)
         {
-            if (_exports.TryGetValue(path, out var info) && info.IsBusy == ExportStatus.Building) return false;
+            if (_exports.TryGetValue(path, out info) && info.IsBusy == ExportStatus.Building) return false;
 
             if (info == null)
             {
-                info = new();
+                info = new()
+                {
+                    BaseFolder = path,
+                    InstanceInfo = Serialization.Deserialize<EuphoniaInfo>(File.ReadAllText($"{path}/info.json"))
+                };
                 _exports.Add(path, info);
             }
             else if (info.LastFile != null)
@@ -67,7 +75,14 @@ public class ExportManager
             }
 
             var file = $"{DateTime.UtcNow:yyyyMMddHHmmss}.zip";
-            ZipFile.CreateFromDirectory($"{path}normalized/", $"{path}/export/{file}");
+            using var zip = ZipFile.Open($"{path}export/{file}", ZipArchiveMode.Create);
+            foreach (var m in info.InstanceInfo.Musics)
+            {
+                if (!m.IsArchived)
+                {
+                    zip.CreateEntryFromFile($"{path}normalized/{m.Path}", m.Path);
+                }
+            }
 
             lock (_exports)
             {
