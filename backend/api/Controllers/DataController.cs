@@ -90,6 +90,27 @@ public class DataController : ControllerBase
         });
     }
 
+    [HttpPatch("playlist")]
+    [Authorize]
+    public IActionResult UpdateSongPlaylists([FromForm] SongFormPatchPlaylist data)
+    {
+        var song = LookupSong(data.Key, out var folder, out var info);
+
+        if (song == null)
+        {
+            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
+            {
+                Success = false,
+                Reason = "Can't find a song with the given key"
+            });
+        }
+
+        if (data.Playlists != null) song.Playlists = data.Playlists;
+
+
+        return StatusCode(StatusCodes.Status204NoContent);
+    }
+
     [HttpPost("update")]
     [Authorize]
     public IActionResult UpdateSong([FromForm] SongForm data)

@@ -33,7 +33,7 @@ export function spawnPlaylistNode(id, name, json, nodeId, allowDeletion) {
             continue;
         }
         count++;
-        if (elem.album === null) { // TODO: Should also check playlist path
+        if (elem.album === null && elem.thumbnailHash === null) { // TODO: Should also check playlist path
             continue;
         }
         let img = getAlbumImage(elem);

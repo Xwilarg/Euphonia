@@ -280,6 +280,28 @@ export async function updateSong(data, onSuccess, onFailure) {
     });
 }
 
+export async function updateSongPlaylists(data, onSuccess, onFailure) {
+    fetch(`${apiTarget}data/playlist`, {
+        method: 'PATCH',
+        headers: {
+            'Authorization': `Bearer ${adminToken}`
+        },
+        body: data
+    })
+    .then(handleFetchResponse)
+    .then(json => {
+        if (json.success) {
+            onSuccess(json);
+        } else {
+            onFailure();
+        }
+    })
+    .catch((err) => {
+        console.error(err);
+        onFailure();
+    });
+}
+
 export async function exportMusic(onDone) {
     fetch(`${apiTarget}export/prepare`, {
         method: 'POST',
