@@ -107,6 +107,7 @@ public class DataController : ControllerBase
 
         if (data.Playlists != null) song.Playlists = data.Playlists;
 
+        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
 
         return StatusCode(StatusCodes.Status204NoContent);
     }

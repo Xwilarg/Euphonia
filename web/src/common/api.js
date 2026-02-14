@@ -67,6 +67,8 @@ function handleFetchResponse(resp)
     const contentType = resp.headers.get("content-type");
     if (contentType && contentType.indexOf("application/json") !== -1) {
         return resp.json();
+    } else if (resp.status === 204) {
+        return resp.text();
     } else {
         return Promise.reject(`Code ${resp.status}`);
     }
@@ -289,12 +291,8 @@ export async function updateSongPlaylists(data, onSuccess, onFailure) {
         body: data
     })
     .then(handleFetchResponse)
-    .then(json => {
-        if (json.success) {
-            onSuccess(json);
-        } else {
-            onFailure();
-        }
+    .then(text => {
+        onSuccess();
     })
     .catch((err) => {
         console.error(err);

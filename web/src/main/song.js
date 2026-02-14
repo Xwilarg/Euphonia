@@ -1,6 +1,6 @@
 // module "song.js"
 
-import { archiveSong, repairSong, updateSong } from "../common/api";
+import { archiveSong, repairSong, updateSongPlaylists } from "../common/api";
 import { getSongKey, openEditPanel, prepareShuffle, updateSingleSongDisplay } from "./getMusics";
 import { isMinimalistMode } from "./settings";
 
@@ -124,7 +124,7 @@ export function spawnSongNode(json, curr, id) {
                 }
                 playlistMoveContainer.disabled = true;
 
-                updateSong(data, () => {
+                updateSongPlaylists(data, () => {
                     updatePlaylistMove();
                     playlistMoveContainer.disabled = false;
                 }, () => {
