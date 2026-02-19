@@ -1,10 +1,8 @@
 ﻿using Euphonia.API.Models.Request;
 using Euphonia.API.Models.Response;
-using Euphonia.API.Services;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Euphonia.API.Controllers;
 
@@ -14,20 +12,17 @@ public class DataController : ControllerBase
 {
 
     private readonly ILogger<DataController> _logger;
-    private WebsiteManager _manager;
     private HttpClient _client;
 
-    public DataController(ILogger<DataController> logger, WebsiteManager manager, HttpClient client)
+    public DataController(ILogger<DataController> logger, HttpClient client)
     {
         _logger = logger;
-        _manager = manager;
         _client = client;
     }
 
-    private Song? LookupSong(string key, out string folder, out EuphoniaInfo info)
+    private Song? LookupSong(string key, out EuphoniaInfo info)
     {
-        folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
-        info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
+        info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText("/data/info.json"));
 
         // ID Lookup
         Song? song = info.Musics.FirstOrDefault(x => x.Key == key);
@@ -38,11 +33,23 @@ public class DataController : ControllerBase
         return song;
     }
 
+    [HttpGet("info")]
+    public IActionResult GetInfo()
+    {
+        return StatusCode(StatusCodes.Status200OK, System.IO.File.ReadAllText("/data/info.json"));
+    }
+
+    [HttpGet("metadata")]
+    public IActionResult GetMetadata()
+    {
+        return StatusCode(StatusCodes.Status200OK, System.IO.File.ReadAllText("/data/metadata.json"));
+    }
+
     [HttpPost("favorite")]
     [Authorize]
     public IActionResult FavoriteSong([FromForm] SongToggleAction data)
     {
-        var song = LookupSong(data.Key, out var folder, out var info);
+        var song = LookupSong(data.Key, out var info);
 
         if (song == null)
         {
@@ -55,7 +62,7 @@ public class DataController : ControllerBase
 
         song.IsFavorite = data.IsOn;
 
-        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+        System.IO.File.WriteAllText($"/data/info.json", Serialization.Serialize(info));
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -68,7 +75,7 @@ public class DataController : ControllerBase
     [Authorize]
     public IActionResult ArchiveSong([FromForm] SongIdentifier data)
     {
-        var song = LookupSong(data.Key, out var folder, out var info);
+        var song = LookupSong(data.Key, out var info);
 
         if (song == null)
         {
@@ -81,7 +88,7 @@ public class DataController : ControllerBase
 
         song.IsArchived = true;
 
-        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+        System.IO.File.WriteAllText($"/data/info.json", Serialization.Serialize(info));
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -94,7 +101,7 @@ public class DataController : ControllerBase
     [Authorize]
     public IActionResult UpdateSongPlaylists([FromForm] SongFormPatchPlaylist data)
     {
-        var song = LookupSong(data.Key, out var folder, out var info);
+        var song = LookupSong(data.Key, out var info);
 
         if (song == null)
         {
@@ -107,7 +114,7 @@ public class DataController : ControllerBase
 
         if (data.Playlists != null) song.Playlists = data.Playlists;
 
-        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+        System.IO.File.WriteAllText($"/data/info.json", Serialization.Serialize(info));
 
         return StatusCode(StatusCodes.Status204NoContent);
     }
@@ -116,7 +123,7 @@ public class DataController : ControllerBase
     [Authorize]
     public IActionResult UpdateSong([FromForm] SongForm data)
     {
-        var song = LookupSong(data.Key, out var folder, out var info);
+        var song = LookupSong(data.Key, out var info);
 
         if (song == null)
         {
@@ -143,7 +150,7 @@ public class DataController : ControllerBase
             song.ThumbnailHash = hash;
             if (!info.AlbumHashes.ContainsKey(hash)) // Image not downloaded yet
             {
-                if (!Utils.SaveUrlAsImage(_client, data.CoverUrl, DownloadController.GetImagePath(folder, hash, "webp"), out var error))
+                if (!Utils.SaveUrlAsImage(_client, data.CoverUrl, DownloadController.GetImagePath(hash, "webp"), out var error))
                 {
                     return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                     {
@@ -155,7 +162,7 @@ public class DataController : ControllerBase
             }
         }
 
-        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+        System.IO.File.WriteAllText($"/data/info.json", Serialization.Serialize(info));
 
         return StatusCode(StatusCodes.Status200OK, new SongResponse()
         {

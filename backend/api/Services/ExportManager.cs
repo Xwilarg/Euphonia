@@ -20,42 +20,30 @@ public enum ExportStatus
 
 public class ExportManager
 {
-    private Dictionary<string, InstanceExportInfo> _exports = new();
+    InstanceExportInfo _export = new();
 
     ~ExportManager()
     {
-        foreach (var e in _exports.Values)
-        {
-            if (e.LastFile != null) File.Delete(e.LastFile);
-        }
+        if (_export.LastFile != null) File.Delete(_export.LastFile);
     }
 
-    public InstanceExportInfo? GetExportPath(string path)
-        => _exports.TryGetValue(path, out var exportPath) ? exportPath : null;
+    public InstanceExportInfo? GetExportPath()
+        => _export;
 
-    public bool DownloadAllMusic(ILogger logger, string path)
+    public bool DownloadAllMusic(ILogger logger)
     {
-        InstanceExportInfo info;
-        lock(_exports)
+        lock(_export)
         {
-            if (_exports.TryGetValue(path, out info) && info.IsBusy == ExportStatus.Building) return false;
+            if (_export.IsBusy == ExportStatus.Building) return false;
 
-            if (info == null)
+            _export.InstanceInfo = Serialization.Deserialize<EuphoniaInfo>(File.ReadAllText($"/data/info.json"));
+            if (_export.LastFile != null)
             {
-                info = new()
-                {
-                    BaseFolder = path,
-                    InstanceInfo = Serialization.Deserialize<EuphoniaInfo>(File.ReadAllText($"{path}/info.json"))
-                };
-                _exports.Add(path, info);
-            }
-            else if (info.LastFile != null)
-            {
-                File.Delete(info.LastFile);
-                info.LastFile = null;
+                File.Delete(_export.LastFile);
+                _export.LastFile = null;
             }
 
-            info.IsBusy = ExportStatus.Building;
+            _export.IsBusy = ExportStatus.Building;
         }
 
         Task.Run(() =>
@@ -63,7 +51,7 @@ public class ExportManager
             string file = null;
             try
             {
-                var exportPath = Path.Combine(path, "export");
+                var exportPath = "/data/export/";
                 if (!Directory.Exists(exportPath))
                 {
                     Directory.CreateDirectory(exportPath);
@@ -78,12 +66,12 @@ public class ExportManager
                 }
 
                 file = $"{DateTime.UtcNow:yyyyMMddHHmmss}.zip";
-                using var zip = ZipFile.Open($"{path}export/{file}", ZipArchiveMode.Create);
-                foreach (var m in info.InstanceInfo.Musics)
+                using var zip = ZipFile.Open($"/data/export/{file}", ZipArchiveMode.Create);
+                foreach (var m in _export.InstanceInfo.Musics)
                 {
-                    if (!m.IsArchived && File.Exists($"{path}normalized/{m.Path}"))
+                    if (!m.IsArchived && File.Exists($"/data/normalized/{m.Path}"))
                     {
-                        zip.CreateEntryFromFile($"{path}normalized/{m.Path}", m.Path);
+                        zip.CreateEntryFromFile($"/data/normalized/{m.Path}", m.Path);
                     }
                 }
             }
@@ -93,10 +81,10 @@ public class ExportManager
             }
             finally
             {
-                lock (_exports)
+                lock (_export)
                 {
-                    _exports[path].IsBusy = ExportStatus.Ready;
-                    _exports[path].LastFile = file;
+                    _export.IsBusy = ExportStatus.Ready;
+                    _export.LastFile = file;
                 }
             }
         });

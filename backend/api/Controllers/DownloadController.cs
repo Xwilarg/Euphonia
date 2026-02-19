@@ -5,7 +5,6 @@ using Euphonia.API.Services;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 
 namespace Euphonia.API.Controllers;
 
@@ -15,15 +14,13 @@ public class DownloadController : ControllerBase
 {
 
     private readonly ILogger<DownloadController> _logger;
-    private WebsiteManager _manager;
     private DownloaderManager _download;
     private HttpClient _client;
     private ExportManager _export;
 
-    public DownloadController(ILogger<DownloadController> logger, WebsiteManager manager, HttpClient client, DownloaderManager download, ExportManager export)
+    public DownloadController(ILogger<DownloadController> logger, HttpClient client, DownloaderManager download, ExportManager export)
     {
         _logger = logger;
-        _manager = manager;
         _client = client;
 
         _download = download;
@@ -35,15 +32,13 @@ public class DownloadController : ControllerBase
     [Authorize]
     public IActionResult GetProgress()
     {
-        var folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
-
-        var exportData = _export.GetExportPath(folder);
+        var exportData = _export.GetExportPath();
 
         return StatusCode(StatusCodes.Status200OK, new SongDownloadResponse()
         {
             Success = true,
             Reason = null,
-            Data = _download.Get(folder).GetProgress(),
+            Data = _download.GetProgress(),
             Export = (exportData == null || exportData.IsBusy == ExportStatus.None) ? null : new()
             {
                 ExportPath = exportData.LastFile,
@@ -52,10 +47,9 @@ public class DownloadController : ControllerBase
         });
     }
 
-    private Song? LookupSong(string key, out string folder, out EuphoniaInfo info)
+    private Song? LookupSong(string key, out EuphoniaInfo info)
     {
-        folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
-        info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
+        info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"/data/info.json"));
 
         // ID Lookup
         Song? song = info.Musics.FirstOrDefault(x => x.Key == key);
@@ -70,7 +64,7 @@ public class DownloadController : ControllerBase
     [Authorize]
     public IActionResult RepairSong([FromForm] SongIdentifier data)
     {
-        var song = LookupSong(data.Key, out var folder, out var info);
+        var song = LookupSong(data.Key, out var info);
 
         if (song == null)
         {
@@ -91,20 +85,20 @@ public class DownloadController : ControllerBase
         }
         else if (song.Source == "localfile")
         {
-            var rawPath = GetRawMusicPath(folder, song.RawPath ?? song.Path);
-            var normPath = GetNormalizedMusicPath(folder, song.Path);
+            var rawPath = GetRawMusicPath(song.RawPath ?? song.Path);
+            var normPath = GetNormalizedMusicPath(song.Path);
             System.IO.File.Delete(normPath);
 
-            _download.Get(folder).QueueToNormalize(song, rawPath, normPath);
+            _download.QueueToNormalize(song, rawPath, normPath);
         }
         else
         {
-            var rawPath = GetRawMusicPath(folder, song.RawPath ?? song.Path);
-            var normPath = GetNormalizedMusicPath(folder, song.Path);
+            var rawPath = GetRawMusicPath(song.RawPath ?? song.Path);
+            var normPath = GetNormalizedMusicPath(song.Path);
             System.IO.File.Delete(rawPath);
             System.IO.File.Delete(normPath);
 
-            _download.Get(folder).QueueToDownload(song, song.Source, rawPath, normPath);
+            _download.QueueToDownload(song, song.Source, rawPath, normPath);
         }
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
@@ -114,16 +108,14 @@ public class DownloadController : ControllerBase
         });
     }
 
-    private IActionResult? UploadSongInternal(AUploadForm data, out string folder, out Song? song, out string? rawSongPath, out string? normSongPath, string extension)
+    private IActionResult? UploadSongInternal(AUploadForm data, out Song? song, out string? rawSongPath, out string? normSongPath, string extension)
     {
-        folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value)!;
-
         string? thumbnailHash;
         // Download album image
         if (data.CoverUrl != null)
         {
             thumbnailHash = Utils.Sha256(data.CoverUrl);
-            if (!Utils.SaveUrlAsImage(_client, data.CoverUrl, GetImagePath(folder, thumbnailHash, "webp"), out var error))
+            if (!Utils.SaveUrlAsImage(_client, data.CoverUrl, GetImagePath(thumbnailHash, "webp"), out var error))
             {
                 song = null;
                 rawSongPath = null;
@@ -141,9 +133,9 @@ public class DownloadController : ControllerBase
         var rawKey = GetMusicKey(data.Name, data.Artist, data.SongType, extension);
         var normKey = GetMusicKey(data.Name, data.Artist, data.SongType, AudioFormat);
 
-        rawSongPath = GetRawMusicPath(folder, rawKey);
-        normSongPath = GetNormalizedMusicPath(folder, normKey);
-        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
+        rawSongPath = GetRawMusicPath(rawKey);
+        normSongPath = GetNormalizedMusicPath(normKey);
+        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"/data/info.json"));
 
 
         if (System.IO.File.Exists(normSongPath) || System.IO.File.Exists(rawSongPath))
@@ -163,7 +155,7 @@ public class DownloadController : ControllerBase
 
         // Save to json
 
-        info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json")); // Load again for concurency issues
+        info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"/data/info.json")); // Load again for concurency issues
 
         // We sanitize user inputs just in case
         var songName = data.Name.Trim();
@@ -194,7 +186,7 @@ public class DownloadController : ControllerBase
             info.AlbumHashes.Add(thumbnailHash, $"{thumbnailHash}.webp");
         }
 
-        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+        System.IO.File.WriteAllText($"/data/info.json", Serialization.Serialize(info));
 
         return null;
     }
@@ -203,14 +195,14 @@ public class DownloadController : ControllerBase
     [Authorize]
     public IActionResult UploadSongYoutube([FromForm] YoutubeForm data)
     {
-        var sc = UploadSongInternal(data, out string folder, out Song? song, out string? rawSongPath, out string? normSongPath, AudioFormat);
+        var sc = UploadSongInternal(data, out Song? song, out string? rawSongPath, out string? normSongPath, AudioFormat);
 
         if (sc != null)
         {
             return sc;
         }
 
-        _download.Get(folder).QueueToDownload(song!, data.Youtube, rawSongPath!, normSongPath!);
+        _download.QueueToDownload(song!, data.Youtube, rawSongPath!, normSongPath!);
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
             Success = true,
@@ -224,7 +216,7 @@ public class DownloadController : ControllerBase
     [RequestSizeLimit(20_000_000)]
     public async Task<IActionResult> UploadSongLocal([FromForm] LocalFileForm data)
     {
-        var sc = UploadSongInternal(data, out string folder, out Song? song, out string? rawSongPath, out string? normSongPath, Path.GetExtension(data.LocalFile.FileName));
+        var sc = UploadSongInternal(data, out Song? song, out string? rawSongPath, out string? normSongPath, Path.GetExtension(data.LocalFile.FileName));
 
         if (sc != null)
         {
@@ -236,7 +228,7 @@ public class DownloadController : ControllerBase
         await data.LocalFile.CopyToAsync(fileStream);
 
         // Queue normalization
-        _download.Get(folder).QueueToNormalize(song!, rawSongPath!, normSongPath!);
+        _download.QueueToNormalize(song!, rawSongPath!, normSongPath!);
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -245,7 +237,7 @@ public class DownloadController : ControllerBase
         });
     }
 
-    public string AudioFormat => WebsiteDownloaderManager.AudioFormat;
+    public string AudioFormat => DownloaderManager.AudioFormat;
 
     private string GetMusicKey(string songName, string? artist, string? songType, string extension)
     {
@@ -261,12 +253,12 @@ public class DownloadController : ControllerBase
     public static string GetSongName(string song, string? artist)
         => $"{Utils.CleanPath(song.Trim())}_{Utils.CleanPath(artist?.Trim() ?? "unknown")}";
 
-    public static string GetImagePath(string dataFolder, string albumName, string ext)
-        => $"{dataFolder}icon/{albumName}.{ext}";
+    public static string GetImagePath(string albumName, string ext)
+        => $"/data/icon/{albumName}.{ext}";
 
-    public static string GetRawMusicPath(string dataFolder, string musicKey)
-        => $"{dataFolder}raw/{musicKey}";
+    public static string GetRawMusicPath(string musicKey)
+        => $"/data/raw/{musicKey}";
 
-    public static string GetNormalizedMusicPath(string dataFolder, string musicKey)
-        => $"{dataFolder}normalized/{musicKey}";
+    public static string GetNormalizedMusicPath(string musicKey)
+        => $"/data/normalized/{musicKey}";
 }

@@ -12,11 +12,11 @@ $loader = new FilesystemLoader(["templates", "templates/modals"]);
 $twig = new Environment($loader);
 $json = isset($_GET["json"]) && $_GET["json"] === "1";
 
-$basePath = (str_starts_with($_SERVER['HTTP_HOST'], 'localhost') ? "" : (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/") . "data";
+$basePath = (str_starts_with($_SERVER['HTTP_HOST'], 'localhost') ? "" : (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/api/data");
 
-$rawInfo = file_get_contents("$basePath/info.json");
+$rawInfo = file_get_contents("$basePath/info");
 $info = json_decode($rawInfo, true);
-$rawMetadata = file_get_contents("$basePath/metadata.json");
+$rawMetadata = file_get_contents("$basePath/metadata");
 $metadata = json_decode($rawMetadata, true);
 
 $name = $metadata["name"];

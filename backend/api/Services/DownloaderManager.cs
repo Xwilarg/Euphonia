@@ -3,27 +3,11 @@ using Euphonia.API.Models.Data;
 using Euphonia.API.Models.Response;
 using Euphonia.Common;
 using System.Collections.Concurrent;
+using System.Text.Json;
 
 namespace Euphonia.API.Services
 {
     public class DownloaderManager
-    {
-        private Dictionary<string, WebsiteDownloaderManager> _downloads = new();
-
-        public WebsiteDownloaderManager Get(string s)
-        {
-            if (_downloads.TryGetValue(s, out var value))
-            {
-                return value;
-            }
-
-            var newValue = new WebsiteDownloaderManager();
-            _downloads.Add(s, newValue);
-            return newValue;
-        }
-    }
-
-    public class WebsiteDownloaderManager
     {
         private Thread _downloadThread;
 
@@ -31,8 +15,12 @@ namespace Euphonia.API.Services
         private ConcurrentQueue<DownloadSongData> _erroredData = new();
         public static string AudioFormat => "mp3";
 
-        public WebsiteDownloaderManager()
+        private EuphoniaMetadata _metadata;
+
+        public DownloaderManager()
         {
+            _metadata = JsonSerializer.Deserialize<EuphoniaMetadata>(File.ReadAllText("/data/metadata.json"))!;
+
             _downloadThread = new(new ThreadStart(DownloadThread));
             _downloadThread.Start();
         }
@@ -85,7 +73,7 @@ namespace Euphonia.API.Services
                 data.CurrentState = DownloadState.Normalizing;
             }
             data.LastUpdate = DateTime.UtcNow;
-            Utils.ExecuteProcess(new("ffmpeg-normalize", $"\"{data.RawPath}\" -pr -ext {AudioFormat} -o \"{data.NormPath}\" -c:a libmp3lame"), out code, out err);
+            Utils.ExecuteProcess(new("ffmpeg-normalize", $"\"{data.RawPath}\" -pr -ext {AudioFormat} -o \"{data.NormPath}\" -t {_metadata.NormalizationLoudness} -c:a libmp3lame"), out code, out err);
             if (code != 0)
             {
                 return $"ffmpeg-normalize \"{data.RawPath}\" -pr -ext {AudioFormat} -o \"{data.NormPath}\" -c:a libmp3lame failed:\n{string.Join("", err.TakeLast(1000))}";

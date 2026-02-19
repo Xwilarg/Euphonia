@@ -212,7 +212,7 @@ export function getAlbumImage(elem) {
 }
 
 export function displayPlaylists(playlists, id, filter) {
-    if (metadataJson.showAllPlaylist && json.musics.length > 0) {
+    if (json.musics && metadataJson.showAllPlaylist && json.musics.length > 0) {
         spawnPlaylistNode("all", "All", json, id, false);
     }
     for (let elem in playlists) {
@@ -221,7 +221,7 @@ export function displayPlaylists(playlists, id, filter) {
             spawnPlaylistNode(elem, p.name, json, id, true);
         }
     }
-    if (!metadataJson.showAllPlaylist && json.musics.some(x => x.playlists.length === 0) && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
+    if (json.musics && !metadataJson.showAllPlaylist && json.musics.some(x => x.playlists.length === 0) && (filter === "" || sanitize("Unnamed").toLowerCase().includes(filter))) {
         spawnPlaylistNode("default", "Unnamed", json, id, false);
     }
     spawnNewPlaylistNode(id, json);
@@ -634,9 +634,14 @@ function chooseDisplay() {
     loadPage();
 }
 
+function tryParseJson(str) {
+    if (str.trim() === "") return {};
+    return JSON.parse(str);
+}
+
 export async function musics_initAsync() {
-    json = JSON.parse(document.getElementById("data").innerText);
-    metadataJson = JSON.parse(document.getElementById("metadata").innerText);
+    json = tryParseJson(document.getElementById("data").innerText);
+    metadataJson = tryParseJson(document.getElementById("metadata").innerText);
     if (json.musics) {
         json.musics = json.musics.filter(x => !x.isArchived);
     }

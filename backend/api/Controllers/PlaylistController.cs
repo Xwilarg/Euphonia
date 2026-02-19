@@ -1,10 +1,8 @@
 ﻿using Euphonia.API.Models.Request;
 using Euphonia.API.Models.Response;
-using Euphonia.API.Services;
 using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Web;
 
 namespace Euphonia.API.Controllers;
@@ -15,13 +13,11 @@ public class PlaylistController : ControllerBase
 {
 
     private readonly ILogger<PlaylistController> _logger;
-    private WebsiteManager _manager;
     private HttpClient _client;
 
-    public PlaylistController(ILogger<PlaylistController> logger, WebsiteManager manager, HttpClient client)
+    public PlaylistController(ILogger<PlaylistController> logger, HttpClient client)
     {
         _logger = logger;
-        _manager = manager;
         _client = client;
     }
 
@@ -29,8 +25,7 @@ public class PlaylistController : ControllerBase
     [Authorize]
     public IActionResult RemovePlaylist([FromForm] SongIdentifier form)
     {
-        var folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value);
-        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
+        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"/data/info.json"));
 
         var key = HttpUtility.UrlEncode(form.Key.Replace(" ", "").ToLowerInvariant());
 
@@ -45,7 +40,7 @@ public class PlaylistController : ControllerBase
 
         info.Playlists.Remove(key);
 
-        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+        System.IO.File.WriteAllText($"/data/info.json", Serialization.Serialize(info));
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {
@@ -58,8 +53,7 @@ public class PlaylistController : ControllerBase
     [Authorize]
     public IActionResult CreatePlaylist([FromForm] PlaylistForm data)
     {
-        var folder = _manager.GetPath((User.Identity as ClaimsIdentity)!.FindFirst(x => x.Type == ClaimTypes.UserData)!.Value);
-        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"{folder}/info.json"));
+        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"/data/info.json"));
 
         var key = HttpUtility.UrlEncode(data.Name.Replace(" ", "").ToLowerInvariant());
 
@@ -74,7 +68,7 @@ public class PlaylistController : ControllerBase
 
         if (data.ImageUrl != null)
         {
-            if (!Utils.SaveUrlAsImage(_client, data.ImageUrl, $"{folder}icon/playlist/{Utils.CleanPath(data.Name)}.webp", out var error))
+            if (!Utils.SaveUrlAsImage(_client, data.ImageUrl, $"/datA/icon/playlist/{Utils.CleanPath(data.Name)}.webp", out var error))
             {
                 return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
                 {
@@ -91,7 +85,7 @@ public class PlaylistController : ControllerBase
             ImageUrl = data.ImageUrl == null ? null : $"{Utils.CleanPath(data.Name)}.webp"
         });
 
-        System.IO.File.WriteAllText($"{folder}/info.json", Serialization.Serialize(info));
+        System.IO.File.WriteAllText($"/data/info.json", Serialization.Serialize(info));
 
         return StatusCode(StatusCodes.Status200OK, new BaseResponse()
         {

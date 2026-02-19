@@ -8,37 +8,26 @@ namespace Euphonia.API
 {
     public class Program
     {
-        public static void InitPath(WebsiteManager manager, string key, string path)
+        public static void InitPath()
         {
-            manager.Add(key, path);
 
-            if (!path.EndsWith('/') && !path.EndsWith('\\')) path += '/';
-            if (!Directory.Exists($"{path}raw")) Directory.CreateDirectory($"{path}raw");
-            if (!Directory.Exists($"{path}normalized")) Directory.CreateDirectory($"{path}normalized");
-            if (!Directory.Exists($"{path}icon")) Directory.CreateDirectory($"{path}icon");
-            if (!Directory.Exists($"{path}icon/playlist")) Directory.CreateDirectory($"{path}icon/playlist");
-            if (!File.Exists($"{path}info.json")) File.WriteAllText($"{path}info.json", "{}");
-            if (!File.Exists($"{path}credentials.json")) File.WriteAllText($"{path}credentials.json", Serialization.Serialize<EuphoniaCredentials>(new()));
-            if (!File.Exists($"{path}metadata.json")) File.WriteAllText($"{path}metadata.json", Serialization.Serialize<EuphoniaMetadata>(new()));
+            if (!Directory.Exists($"/data/raw")) Directory.CreateDirectory($"/data/raw");
+            if (!Directory.Exists($"/data/normalized")) Directory.CreateDirectory($"/data/normalized");
+            if (!Directory.Exists($"/data/icon")) Directory.CreateDirectory($"/data/icon");
+            if (!Directory.Exists($"/data/icon/playlist")) Directory.CreateDirectory($"/data/icon/playlist");
+            if (!File.Exists($"/data/info.json")) File.WriteAllText($"/data/info.json", "{}");
+            if (!File.Exists($"/data/credentials.json")) File.WriteAllText($"/data/credentials.json", Serialization.Serialize<EuphoniaCredentials>(new()));
+            if (!File.Exists($"/data/metadata.json")) File.WriteAllText($"/data/metadata.json", Serialization.Serialize<EuphoniaMetadata>(new()));
         }
 
         public static void Main(string[] args)
         {
-            var manager = new WebsiteManager();
-            if (Directory.Exists("/euphonia/data"))
-            {
-                foreach (var dir in Directory.GetDirectories("/euphonia/data"))
-                {
-                    var di = new DirectoryInfo(dir);
-                    InitPath(manager, di.Name, dir);
-                }
-            }
+            InitPath();
 
             var builder = WebApplication.CreateBuilder(args);
 #if DEBUG
             builder.Logging.AddConsole();
 #endif
-            builder.Services.AddSingleton(manager);
             builder.Services.AddSingleton<DownloaderManager>();
             builder.Services.AddSingleton<ExportManager>();
             builder.Services.AddHttpClient();

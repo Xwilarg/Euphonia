@@ -11,27 +11,12 @@ Download the backend and the frontend then follow these steps:
 #### Docker
 Move the content of backend in a folder
 
-We then need to create a folder to contains our data there, for that you'll need to create a `data/` folder and put another folder inside with the name of your website
-
-In that case, my backend files are in `/home/backend/euphonia/` (I have the `api/`, `common/` folders there)
-
-Since my domain is `https://euphonia.zirk.eu/` I also added a `data/` folder there, and inside of it, created a `euphonia.zirk.eu` folder that will contains my final data
-
-You will then need to link your data folder in your web config, we will do that again in the frontend explanations so don't worry too much about that right now, just remember what folder you created right before \
-(Example with Nginx)
-```nginx
-location /data/ {
-	alias /home/backend/euphonia/data/euphonia.zirk.eu/;
-}
-```
+We then need to create a folder to contains our data there, for that you'll need to create a `data/` folder
 
 Once you're done, run `docker compose up -d`
 
 ### Installing the frontend
 Just grab everything in the frontend folder and throw it in your server
-
-Configure your webserver to have your website ready and the backend on /api/ \
-In these examples, my domain is `https://euphonia.zirk.eu/` my web files are installed in `/home/web/euphonia/` and my backend at `/home/backend/euphonia/`
 
 #### Nginx
 ```nginx
@@ -54,15 +39,14 @@ server {
 		fastcgi_pass unix:/run/php/php8.3-fpm.sock;
 	}
 
-	location ~ (/(vendor|node_module)/|\.json$) {
+	location ~ /(vendor|node_module)/ {
 		deny all;
 	}
 
-	# This is the part we spoke of in the backend explanations
-	# The path here is the one you created before
+	# Path to the data folder of your backend
 	location /data/ {
-		alias /home/backend/euphonia/data/euphonia.zirk.eu/;
-	}
+    	alias /home/backend/euphonia/data/;
+    }
 
 	# Fix size limit with file upload
 	client_max_body_size 100M;

@@ -1,13 +1,10 @@
-using Euphonia.API.Models;
 using Euphonia.API.Models.Request;
 using Euphonia.API.Models.Response;
-using Euphonia.API.Services;
+using Euphonia.Common;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Claims;
 using System.Text;
-using System.Text.Json;
 
 namespace Euphonia.API.Controllers;
 
@@ -17,12 +14,10 @@ public class AuthController : ControllerBase
 {
 
     private readonly ILogger<AuthController> _logger;
-    private WebsiteManager _manager;
 
-    public AuthController(ILogger<AuthController> logger, WebsiteManager manager)
+    public AuthController(ILogger<AuthController> logger)
     {
         _logger = logger;
-        _manager = manager;
     }
 
     // Thanks Indra
@@ -35,68 +30,29 @@ public class AuthController : ControllerBase
     }
 
     /// <summary>
-    /// Register a path to a local website to be used later on by admins
-    /// </summary>
-    /// <param name="path">Path to the website</param>
-    [HttpPost("register")]
-    public IActionResult RegisterEndpoint([FromBody]RegisterData data)
-    {
-        if (_manager.GetPath(data.Key) != null) // Was endpoint already added
-        {
-            return StatusCode(StatusCodes.Status200OK, new BaseResponse()
-            {
-                Success = true,
-                Reason = null
-            });
-        }
-
-        if (!Directory.Exists(data.Path))
-        {
-            return StatusCode(StatusCodes.Status400BadRequest, new BaseResponse()
-            {
-                Success = false,
-                Reason = $"Path doesn't exists"
-            });
-        }
-        Program.InitPath(_manager, data.Key, data.Path);
-        return StatusCode(StatusCodes.Status200OK, new BaseResponse()
-        {
-            Success = true,
-            Reason = null
-        });
-    }
-
-    /// <summary>
     /// Authentification and return a session token
     /// </summary>
     /// <param name="password">Admin password</param>
     [HttpPost("token")]
     public IActionResult GetToken([FromBody]string password)
     {
+        if (string.IsNullOrWhiteSpace(password)) return StatusCode(StatusCodes.Status400BadRequest);
+
         var hashed = HashPassword(password, "Effy");
-        var key = _manager.AdminTokenLookup(hashed);
-        if (key == null)
-        {
-            return StatusCode(StatusCodes.Status401Unauthorized, new BaseResponse()
-            {
-                Success = false,
-                Reason = "No admin account match the given password"
-            });
-        }
+
+        if (!System.IO.File.Exists("/data/credentials.json")) return StatusCode(StatusCodes.Status401Unauthorized);
+
+        if (Serialization.Deserialize<EuphoniaCredentials>(System.IO.File.ReadAllText("/data/credentials.json"))?.AdminPwd != hashed)
+            return StatusCode(StatusCodes.Status401Unauthorized);
 
         var data = Encoding.UTF8.GetBytes("EffyIsLoveYouButPleaseINeedABetterPassword");
         var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(data);
-
-        var claims = new List<Claim>
-        {
-            new(ClaimTypes.UserData, key)
-        };
 
         var algorithms = Microsoft.IdentityModel.Tokens.SecurityAlgorithms.HmacSha256Signature;
         var credentials = new Microsoft.IdentityModel.Tokens.SigningCredentials(securityKey, algorithms);
 
         var token = new System.IdentityModel.Tokens.Jwt.JwtSecurityToken(
-            claims: claims,
+            //claims: claims,
             expires: DateTime.UtcNow.AddDays(30),
             signingCredentials: credentials);
 

@@ -39,6 +39,8 @@ public class EuphoniaMetadata
     public bool AllowDownload { set; get; } = true;
     public bool AllowShare { set; get; } = true;
     public bool ShowAllPlaylist { set; get; } = true;
+
+    public int NormalizationLoudness { set; get; } = -16;
 }
 
 public class EuphoniaInfo
