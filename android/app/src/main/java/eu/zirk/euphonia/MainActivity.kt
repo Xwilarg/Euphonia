@@ -18,6 +18,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 import androidx.core.app.NotificationCompat
 import android.app.NotificationChannel
+import android.util.Log
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
@@ -105,10 +106,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
-            data = Gson().fromJson(File(filesDir, "${currUrl}api/data/info").readText(), MusicData::class.java)
+            data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
             data.musics = data.musics.filter { !it.isArchived }.toTypedArray()
             downloaded = data.musics.toMutableList()
-            metadata = Gson().fromJson(File(filesDir, "${currUrl}api/data/metadata").readText(), Metadata::class.java)
+            metadata = Gson().fromJson(File(filesDir, "${currUrl}metadata.json").readText(), Metadata::class.java)
         }
         catch (e: Exception) { }
 
