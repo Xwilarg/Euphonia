@@ -1,4 +1,4 @@
-package com.example.euphonia
+package eu.zirk.euphonia
 
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -49,7 +49,7 @@ class SetupActivity : AppCompatActivity() {
         executor.execute {
             val text: String
             try {
-                text = URL("https://${url}?json=1").readText()
+                text = URL("https://${url}api/data/info").readText()
             } catch (e: Exception) {
                 findViewById<TextView>(R.id.error).text = e.message.toString()
                 input.text.clear()

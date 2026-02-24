@@ -7,19 +7,19 @@
 
     <fragment
         android:id="@+id/navigation_play"
-        android:name="com.example.euphonia.ui.PlayFragment"
+        android:name="eu.zirk.euphonia.ui.PlayFragment"
         android:label="@string/title_play"
         tools:layout="@layout/fragment_play" />
 
     <fragment
         android:id="@+id/navigation_music"
-        android:name="com.example.euphonia.ui.MusicFragment"
+        android:name="eu.zirk.euphonia.ui.MusicFragment"
         android:label="@string/title_music"
         tools:layout="@layout/fragment_music" />
 
     <fragment
         android:id="@+id/navigation_settings"
-        android:name="com.example.euphonia.ui.SettingsFragment"
+        android:name="eu.zirk.euphonia.ui.SettingsFragment"
         android:label="@string/title_settings"
         tools:layout="@layout/fragment_settings" />
 </navigation>

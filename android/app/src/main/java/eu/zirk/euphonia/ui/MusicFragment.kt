@@ -1,4 +1,4 @@
-package com.example.euphonia.ui
+package eu.zirk.euphonia.ui
 
 import android.app.AlertDialog
 import android.content.Context.MODE_PRIVATE
@@ -24,12 +24,12 @@ import androidx.lifecycle.lifecycleScope
 import androidx.media3.common.MediaItem
 import androidx.media3.common.MediaMetadata
 import androidx.preference.PreferenceManager
-import com.example.euphonia.R
-import com.example.euphonia.SongAdapter
-import com.example.euphonia.data.ExtendedSong
-import com.example.euphonia.data.MusicData
-import com.example.euphonia.data.Song
-import com.example.euphonia.MainActivity
+import eu.zirk.euphonia.R
+import eu.zirk.euphonia.SongAdapter
+import eu.zirk.euphonia.data.ExtendedSong
+import eu.zirk.euphonia.data.MusicData
+import eu.zirk.euphonia.data.Song
+import eu.zirk.euphonia.MainActivity
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.io.File

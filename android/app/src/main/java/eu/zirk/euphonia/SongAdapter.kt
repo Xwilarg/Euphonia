@@ -1,4 +1,4 @@
-package com.example.euphonia
+package eu.zirk.euphonia
 
 import android.app.AlertDialog
 import android.app.Dialog
@@ -15,7 +15,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.media3.common.Label
-import com.example.euphonia.data.ExtendedSong
+import eu.zirk.euphonia.data.ExtendedSong
 import java.io.File
 
 class SongAdapter(private val mContext: Context, list: List<ExtendedSong>, url: String) :

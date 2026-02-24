@@ -1,4 +1,4 @@
-package com.example.euphonia.data
+package eu.zirk.euphonia.data
 
 data class MusicData(
     var musics: Array<Song>,

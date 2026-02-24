@@ -14,7 +14,7 @@ async function initAsync() {
                 document.getElementById("choose-password").classList.remove("is-hidden");
             } else {
                 token = result.token;
-                fetch(`${website}?json=1`) // Get JSON info
+                fetch(`${website}api/data/info`) // Get JSON info
                 .then(resp => resp.ok ? resp.json() : Promise.reject(`Code ${resp.status}`))
                 .then(json => {
                     document.getElementById("choose-loading").classList.add("is-hidden");

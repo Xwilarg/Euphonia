@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'com.example.euphonia'
+    namespace 'eu.zirk.euphonia'
     compileSdk 34
 
     defaultConfig {
-        applicationId "com.example.euphonia"
+        applicationId "eu.zirk.euphonia"
         minSdk 30
         targetSdk 35
         versionCode 1

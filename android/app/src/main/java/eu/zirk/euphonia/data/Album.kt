@@ -1,4 +1,4 @@
-package com.example.euphonia.data
+package eu.zirk.euphonia.data
 
 data class Album(
     val path: String,

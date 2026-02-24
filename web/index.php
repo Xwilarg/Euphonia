@@ -10,7 +10,6 @@ use Symfony\Bridge\Twig\Extension\TranslationExtension;
 
 $loader = new FilesystemLoader(["templates", "templates/modals"]);
 $twig = new Environment($loader);
-$json = isset($_GET["json"]) && $_GET["json"] === "1";
 
 $basePath = (str_starts_with($_SERVER['HTTP_HOST'], 'localhost') ? "" : (empty($_SERVER['HTTPS']) ? 'http' : 'https') . "://$_SERVER[HTTP_HOST]/api/data");
 
@@ -59,50 +58,42 @@ else if (isset($_GET["playlist"]))
     }
 }
 
-if ($json)
-{
-    header('Content-Type: application/json; charset=utf-8');
-    echo $rawInfo;
-}
-else
-{
-    $translator = new Translator("en");
+$translator = new Translator("en");
 
-    $local = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
-    $locals = [];
-    foreach (explode(",", $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $local) {
-        $value = explode(";", $local)[0];
-        if ($value === "*") {
-            array_push($locals, "en");
-            break;
-        }
-        else {
-            array_push($locals, $value);
-        }
+$local = $_SERVER['HTTP_ACCEPT_LANGUAGE'];
+$locals = [];
+foreach (explode(",", $_SERVER['HTTP_ACCEPT_LANGUAGE']) as $local) {
+    $value = explode(";", $local)[0];
+    if ($value === "*") {
+        array_push($locals, "en");
+        break;
     }
-    $translator->setlocale($locals[0]);
-
-    $langs = [ "en", "fr", "es" ];
-    foreach ($langs as $lang) {
-        $translator->addLoader("yml", new YamlFileLoader());
-        $translator->addResource(
-            "yml",
-            __DIR__."/translations/messages.$lang.yml",
-            $lang
-        );
+    else {
+        array_push($locals, $value);
     }
-    $twig->addExtension(new TranslationExtension($translator));
-
-    echo $twig->render("index.html.twig", [
-        "json" => $rawInfo, // Raw data containing all song info
-        "rawMetadata" => $rawMetadata, // Metadata containing how the website should behave
-        "metadata" => $metadata,
-        "og" => [ // https://ogp.me/
-            "name" => $name,
-            "description" => $description,
-            "image" => $image
-        ],
-        "local" => join(", ", $locals), // Detected user languages (for debug)
-        "isReduced" => $isReduced // When sharing a song, we only display it and nothing else
-    ]);
 }
+$translator->setlocale($locals[0]);
+
+$langs = [ "en", "fr", "es" ];
+foreach ($langs as $lang) {
+    $translator->addLoader("yml", new YamlFileLoader());
+    $translator->addResource(
+        "yml",
+        __DIR__."/translations/messages.$lang.yml",
+        $lang
+    );
+}
+$twig->addExtension(new TranslationExtension($translator));
+
+echo $twig->render("index.html.twig", [
+    "json" => $rawInfo, // Raw data containing all song info
+    "rawMetadata" => $rawMetadata, // Metadata containing how the website should behave
+    "metadata" => $metadata,
+    "og" => [ // https://ogp.me/
+        "name" => $name,
+        "description" => $description,
+        "image" => $image
+    ],
+    "local" => join(", ", $locals), // Detected user languages (for debug)
+    "isReduced" => $isReduced // When sharing a song, we only display it and nothing else
+]);

@@ -1,4 +1,4 @@
-package com.example.euphonia
+package eu.zirk.euphonia
 
 import android.app.NotificationManager
 import android.content.ComponentName
@@ -9,7 +9,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
-import com.example.euphonia.databinding.ActivityMainBinding
+import eu.zirk.euphonia.databinding.ActivityMainBinding
 import android.content.Intent
 import androidx.media3.session.MediaController
 import androidx.media3.session.SessionToken
@@ -21,9 +21,9 @@ import android.app.NotificationChannel
 import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.lifecycle.lifecycleScope
-import com.example.euphonia.data.MusicData
-import com.example.euphonia.data.Metadata
-import com.example.euphonia.data.Song
+import eu.zirk.euphonia.data.MusicData
+import eu.zirk.euphonia.data.Metadata
+import eu.zirk.euphonia.data.Song
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -105,10 +105,10 @@ class MainActivity : AppCompatActivity() {
         }
 
         try {
-            data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
+            data = Gson().fromJson(File(filesDir, "${currUrl}api/data/info").readText(), MusicData::class.java)
             data.musics = data.musics.filter { !it.isArchived }.toTypedArray()
             downloaded = data.musics.toMutableList()
-            metadata = Gson().fromJson(File(filesDir, "${currUrl}metadata.json").readText(), Metadata::class.java)
+            metadata = Gson().fromJson(File(filesDir, "${currUrl}api/data/metadata").readText(), Metadata::class.java)
         }
         catch (e: Exception) { }
 
@@ -147,7 +147,7 @@ class MainActivity : AppCompatActivity() {
             // Update data from remove server
             val text: String
             try {
-                text = URL("https://${currUrl}?json=1").readText()
+                text = URL("https://${currUrl}api/data/info").readText()
                 File(filesDir, "${currUrl}info.json").writeText(text)
                 data = Gson().fromJson(File(filesDir, "${currUrl}info.json").readText(), MusicData::class.java)
                 if (data.musics === null) { // No music available, nothing to do for now!
@@ -172,7 +172,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             try {
-                val metadataText = URL("https://${currUrl}/data/metadata.json").readText()
+                val metadataText = URL("https://${currUrl}api/data/metadata").readText()
                 File(filesDir, "${currUrl}metadata.json").writeText(metadataText)
                 metadata = Gson().fromJson(File(filesDir, "${currUrl}metadata.json").readText(), Metadata::class.java)
             } catch (e: Exception) {

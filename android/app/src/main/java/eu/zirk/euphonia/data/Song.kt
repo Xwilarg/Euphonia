@@ -1,4 +1,4 @@
-package com.example.euphonia.data
+package eu.zirk.euphonia.data
 
 data class Song(
     val name: String,

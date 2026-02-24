@@ -1,4 +1,4 @@
-package com.example.euphonia.ui
+package eu.zirk.euphonia.ui
 
 import android.app.AlertDialog
 import android.content.Context.MODE_PRIVATE
@@ -11,10 +11,10 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
-import com.example.euphonia.MainActivity
-import com.example.euphonia.R
-import com.example.euphonia.SetupActivity
-import com.example.euphonia.data.TokenApiResp
+import eu.zirk.euphonia.MainActivity
+import eu.zirk.euphonia.R
+import eu.zirk.euphonia.SetupActivity
+import eu.zirk.euphonia.data.TokenApiResp
 import com.google.gson.Gson
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

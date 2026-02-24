@@ -1,4 +1,4 @@
-package com.example.euphonia.ui
+package eu.zirk.euphonia.ui
 
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
@@ -20,8 +20,8 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.session.MediaController
 import androidx.media3.ui.PlayerView
-import com.example.euphonia.R
-import com.example.euphonia.MainActivity
+import eu.zirk.euphonia.R
+import eu.zirk.euphonia.MainActivity
 import com.google.common.util.concurrent.MoreExecutors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
