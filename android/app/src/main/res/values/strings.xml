@@ -35,4 +35,6 @@
     <string name="song_already_deleted">This song was already deleted, please restart your application to redownload it</string>
     <string name="sort_keep_order">Keep order</string>
     <string name="no_song_available">No music available, download some songs first</string>
+    <string name="pref_advanced">Advanced</string>
+    <string name="pref_force_unpause">Prevent pause from notification</string>
 </resources>

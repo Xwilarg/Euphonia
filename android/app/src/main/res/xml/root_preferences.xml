@@ -61,4 +61,14 @@
             android:layout_height="wrap_content">
         </Preference>
     </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_advanced">
+
+        <SwitchPreference
+            android:key="force_unpause"
+            app:title="@string/pref_force_unpause"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        </SwitchPreference>
+    </PreferenceCategory>
 </PreferenceScreen>

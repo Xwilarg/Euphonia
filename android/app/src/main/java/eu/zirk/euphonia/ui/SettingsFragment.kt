@@ -11,6 +11,7 @@ import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import androidx.preference.SwitchPreference
 import eu.zirk.euphonia.MainActivity
 import eu.zirk.euphonia.R
 import eu.zirk.euphonia.SetupActivity
@@ -27,6 +28,7 @@ import okhttp3.RequestBody
 import okhttp3.Response
 import java.io.File
 import java.io.IOException
+import androidx.core.content.edit
 
 class SettingsFragment : PreferenceFragmentCompat() {
 
@@ -181,6 +183,13 @@ class SettingsFragment : PreferenceFragmentCompat() {
                     resources.getString(R.string.pref_deletion_confirm)
 
                 deleteConfirm = true
+            }
+            true
+        }
+
+        findPreference<SwitchPreference>("force_unpause")!!.setOnPreferenceClickListener {
+            sharedPref.edit {
+                putBoolean("force_unpause", (it as SwitchPreference).isChecked)
             }
             true
         }
