@@ -167,6 +167,7 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     Toast.makeText(applicationContext, "Failed to update info JSON", Toast.LENGTH_SHORT).show()
+                    Log.w("UPDATE_JSON", e)
                     notificationManager.cancel(1)
                 }
                 return@execute
@@ -179,6 +180,7 @@ class MainActivity : AppCompatActivity() {
             } catch (e: Exception) {
                 lifecycleScope.launch(Dispatchers.Main) {
                     Toast.makeText(applicationContext, "Failed to update metadata JSON", Toast.LENGTH_SHORT).show()
+                    Log.w("UPDATE_METADATA", e)
                     notificationManager.cancel(1)
                 }
                 return@execute
