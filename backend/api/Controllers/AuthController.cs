@@ -40,10 +40,24 @@ public class AuthController : ControllerBase
 
         var hashed = HashPassword(password, "Effy");
 
-        if (!System.IO.File.Exists("/data/credentials.json")) return StatusCode(StatusCodes.Status401Unauthorized);
-
-        if (Serialization.Deserialize<EuphoniaCredentials>(System.IO.File.ReadAllText("/data/credentials.json"))?.AdminPwd != hashed)
+        if (!System.IO.File.Exists("/data/credentials.json"))
+        {
+            _logger.LogInformation("Missing credentials file");
             return StatusCode(StatusCodes.Status401Unauthorized);
+        }
+
+        var creds = Serialization.Deserialize<EuphoniaCredentials>(System.IO.File.ReadAllText("/data/credentials.json"));
+        if (creds == null || creds.AdminPwd == null)
+        {
+            _logger.LogInformation("Credentials file exists but isn't logged");
+            return StatusCode(StatusCodes.Status401Unauthorized);
+        }
+
+        if (creds.AdminPwd != hashed)
+        {
+            _logger.LogInformation("Login failed, got {pwd} instead of {expected}", hashed, creds.AdminPwd);
+            return StatusCode(StatusCodes.Status401Unauthorized);
+        }
 
         var data = Encoding.UTF8.GetBytes("EffyIsLoveYouButPleaseINeedABetterPassword");
         var securityKey = new Microsoft.IdentityModel.Tokens.SymmetricSecurityKey(data);

@@ -60,6 +60,52 @@ public class DownloadController : ControllerBase
         return song;
     }
 
+    [HttpPost("repairAll")]
+    [Authorize]
+    public IActionResult RepairAll()
+    {
+        var info = Serialization.Deserialize<EuphoniaInfo>(System.IO.File.ReadAllText($"/data/info.json"));
+
+        int downloaded = 0, ignored = 0;
+
+        foreach (var song in info.Musics)
+        {
+            if (song.Source != null)
+            {
+                var rawPath = GetRawMusicPath(song.RawPath ?? song.Path);
+                var normPath = GetNormalizedMusicPath(song.Path);
+
+                if (!System.IO.File.Exists(normPath))
+                {
+                    if (System.IO.File.Exists(rawPath))
+                    {
+                        _download.QueueToNormalize(song, rawPath, normPath);
+                        downloaded++;
+                    }
+                    else if (song.Source != "localfile")
+                    {
+                        _download.QueueToDownload(song, song.Source, rawPath, normPath);
+                        downloaded++;
+                    }
+                    else ignored++;
+
+                    if (downloaded == 20) break;
+                }
+                else ignored++;
+            }
+            else ignored++;
+        }
+
+        return StatusCode(StatusCodes.Status200OK, new SongRepairRecap()
+        {
+            AmountDownloaded = downloaded,
+            AmountSkipped = ignored,
+
+            Success = true,
+            Reason = null
+        });
+    }
+
     [HttpPost("repair")]
     [Authorize]
     public IActionResult RepairSong([FromForm] SongIdentifier data)
